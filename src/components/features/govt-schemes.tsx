@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import React, { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { summarizeSchemesAction, type SchemeState } from '@/app/actions';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -37,7 +37,7 @@ function SubmitButton() {
 }
 
 export default function GovtSchemes() {
-  const [state, formAction] = useFormState(summarizeSchemesAction, initialState);
+  const [state, formAction] = useActionState(summarizeSchemesAction, initialState);
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
