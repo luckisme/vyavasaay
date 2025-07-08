@@ -5,13 +5,11 @@ import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarFooter,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { Leaf, Search, Landmark, LayoutDashboard, Phone, Sprout } from 'lucide-react';
+import { Leaf, Search, Landmark, LayoutDashboard, Sprout } from 'lucide-react';
 import type { Feature } from '@/app/page';
 
 interface AppSidebarProps {
@@ -72,18 +70,6 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
-      <SidebarSeparator />
-      <SidebarFooter>
-        <div className="p-4 text-sm text-muted-foreground space-y-2">
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-primary" />
-            <span className="font-semibold">Need help offline?</span>
-          </div>
-          <p>
-            Call us on our dedicated line for AI-powered assistance in your local language.
-          </p>
-        </div>
-      </SidebarFooter>
     </Sidebar>
   );
 }
