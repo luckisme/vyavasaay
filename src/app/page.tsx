@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Dashboard from '@/components/dashboard';
 import CropDiagnosis from '@/components/features/crop-diagnosis';
-import AskVyavasay from '@/components/features/ask-vyavasay';
+import AskVyavasaay from '@/components/features/ask-vyavasay';
 import GovtSchemes from '@/components/features/govt-schemes';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -34,7 +34,7 @@ function AppContent() {
       case 'diagnose':
         return <CropDiagnosis />;
       case 'ask':
-        return <AskVyavasay />;
+        return <AskVyavasaay />;
       case 'schemes':
         return <GovtSchemes />;
       case 'dashboard':
@@ -50,7 +50,7 @@ function AppContent() {
         <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
-            <h1 className="text-2xl font-bold text-primary font-headline hidden sm:block">{t('appName', 'Vyavasay')}</h1>
+            <h1 className="text-2xl font-bold text-primary font-headline hidden sm:block">{t('appName', 'Vyavasaay')}</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">

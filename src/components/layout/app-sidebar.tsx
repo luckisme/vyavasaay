@@ -26,7 +26,7 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
       <SidebarHeader>
         <div className="flex items-center gap-2 p-2">
           <Sprout className="w-8 h-8 text-primary" />
-          <h2 className="text-xl font-bold text-primary font-headline">{t('appName', 'Vyavasay')}</h2>
+          <h2 className="text-xl font-bold text-primary font-headline">{t('appName', 'Vyavasaay')}</h2>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -55,10 +55,10 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
             <SidebarMenuButton
               onClick={() => setActiveFeature('ask')}
               isActive={activeFeature === 'ask'}
-              tooltip={{ children: t('sidebar.ask', 'Ask Vyavasay'), side: 'right' }}
+              tooltip={{ children: t('sidebar.ask', 'Ask Vyavasaay'), side: 'right' }}
             >
               <Search />
-              <span>{t('sidebar.ask', 'Ask Vyavasay')}</span>
+              <span>{t('sidebar.ask', 'Ask Vyavasaay')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>

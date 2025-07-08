@@ -39,8 +39,8 @@ export async function diagnoseCropAction(
   }
 }
 
-// Action for Ask Vyavasay (no form state needed, called directly)
-export async function askVyavasayAction(
+// Action for Ask Vyavasaay (no form state needed, called directly)
+export async function askVyavasaayAction(
   question: string,
   location: string,
   language: string

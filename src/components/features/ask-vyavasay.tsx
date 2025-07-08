@@ -7,14 +7,14 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Send, User, Sparkles, Sprout } from 'lucide-react';
-import { askVyavasayAction } from '@/app/actions';
+import { askVyavasaayAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import { languages } from '@/app/page';
 
-export default function AskVyavasay() {
+export default function AskVyavasaay() {
   const { t, language: langCode } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -41,7 +41,7 @@ export default function AskVyavasay() {
     setIsLoading(true);
 
     const currentLanguageName = languages.find(l => l.code === langCode)?.value || 'English';
-    const result = await askVyavasayAction(input, 'farmer-location', currentLanguageName);
+    const result = await askVyavasaayAction(input, 'farmer-location', currentLanguageName);
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {
@@ -66,16 +66,16 @@ export default function AskVyavasay() {
       <CardHeader>
         <CardTitle className="font-headline flex items-center gap-2">
             <Sparkles className="text-accent" />
-            {t('askVyavasay.title')}
+            {t('askVyavasaay.title')}
         </CardTitle>
-        <CardDescription>{t('askVyavasay.description')}</CardDescription>
+        <CardDescription>{t('askVyavasaay.description')}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
         <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.length === 0 && (
                 <div className="text-center text-muted-foreground pt-10">
-                    <p>{t('askVyavasay.initialMessage')}</p>
+                    <p>{t('askVyavasaay.initialMessage')}</p>
                 </div>
             )}
             {messages.map((message) => (
@@ -129,7 +129,7 @@ export default function AskVyavasay() {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={t('askVyavasay.placeholder')}
+            placeholder={t('askVyavasaay.placeholder')}
             disabled={isLoading}
             autoComplete="off"
           />
