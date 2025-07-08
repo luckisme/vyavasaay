@@ -8,8 +8,9 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Leaf, Search, Landmark, LayoutDashboard, Sprout } from 'lucide-react';
+import { Leaf, Search, Landmark, LayoutDashboard, Sprout, Phone } from 'lucide-react';
 import type { Feature } from '@/app/page';
 
 interface AppSidebarProps {
@@ -70,6 +71,16 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter>
+        <div className="p-2">
+            <SidebarMenuButton asChild>
+                <a href="tel:1800-000-0000">
+                    <Phone />
+                    <span>Call Helpline</span>
+                </a>
+            </SidebarMenuButton>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
