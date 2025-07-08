@@ -11,12 +11,11 @@ import { askVyavasayAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
+import { useTranslation } from '@/hooks/use-translation';
+import { languages } from '@/app/page';
 
-interface AskVyavasayProps {
-    language: string;
-}
-
-export default function AskVyavasay({ language }: AskVyavasayProps) {
+export default function AskVyavasay() {
+  const { t, language: langCode } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +40,8 @@ export default function AskVyavasay({ language }: AskVyavasayProps) {
     setInput('');
     setIsLoading(true);
 
-    const result = await askVyavasayAction(input, 'farmer-location', language); // location can be dynamic
+    const currentLanguageName = languages.find(l => l.code === langCode)?.value || 'English';
+    const result = await askVyavasayAction(input, 'farmer-location', currentLanguageName);
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {
@@ -66,16 +66,16 @@ export default function AskVyavasay({ language }: AskVyavasayProps) {
       <CardHeader>
         <CardTitle className="font-headline flex items-center gap-2">
             <Sparkles className="text-accent" />
-            Ask Vyavasay
+            {t('askVyavasay.title')}
         </CardTitle>
-        <CardDescription>Your AI assistant for agricultural questions. Ask about market prices, weather, and more.</CardDescription>
+        <CardDescription>{t('askVyavasay.description')}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
         <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.length === 0 && (
                 <div className="text-center text-muted-foreground pt-10">
-                    <p>No messages yet. Start the conversation!</p>
+                    <p>{t('askVyavasay.initialMessage')}</p>
                 </div>
             )}
             {messages.map((message) => (
@@ -129,7 +129,7 @@ export default function AskVyavasay({ language }: AskVyavasayProps) {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your question here..."
+            placeholder={t('askVyavasay.placeholder')}
             disabled={isLoading}
             autoComplete="off"
           />

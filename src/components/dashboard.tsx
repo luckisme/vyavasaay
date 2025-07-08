@@ -4,38 +4,41 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Leaf, Search, Landmark } from 'lucide-react';
 import type { Feature } from '@/app/page';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface DashboardProps {
   setActiveFeature: (feature: Feature) => void;
 }
 
-const features = [
-  {
-    name: 'Crop Diagnosis',
-    description: 'Upload an image to detect crop diseases and get solutions.',
-    icon: Leaf,
-    feature: 'diagnose' as Feature,
-  },
-  {
-    name: 'Ask Vyavasay',
-    description: 'Get answers about market prices, weather, and more.',
-    icon: Search,
-    feature: 'ask' as Feature,
-  },
-  {
-    name: 'Government Schemes',
-    description: 'Find relevant government schemes tailored for you.',
-    icon: Landmark,
-    feature: 'schemes' as Feature,
-  },
-];
-
 export default function Dashboard({ setActiveFeature }: DashboardProps) {
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      name: t('dashboard.features.diagnose.title'),
+      description: t('dashboard.features.diagnose.description'),
+      icon: Leaf,
+      feature: 'diagnose' as Feature,
+    },
+    {
+      name: t('dashboard.features.ask.title'),
+      description: t('dashboard.features.ask.description'),
+      icon: Search,
+      feature: 'ask' as Feature,
+    },
+    {
+      name: t('dashboard.features.schemes.title'),
+      description: t('dashboard.features.schemes.description'),
+      icon: Landmark,
+      feature: 'schemes' as Feature,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground font-headline">Welcome, Farmer!</h1>
-        <p className="text-muted-foreground">Your AI-powered agricultural assistant is ready to help.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-headline">{t('dashboard.welcome')}</h1>
+        <p className="text-muted-foreground">{t('dashboard.welcome_message')}</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

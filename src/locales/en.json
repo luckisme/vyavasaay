@@ -1,0 +1,70 @@
+{
+  "appName": "Vyavasay",
+  "appDescription": "AI-powered assistant for farmers",
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, Farmer!",
+    "welcome_message": "Your AI-powered agricultural assistant is ready to help.",
+    "features": {
+      "diagnose": {
+        "title": "Crop Diagnosis",
+        "description": "Upload an image to detect crop diseases and get solutions."
+      },
+      "ask": {
+        "title": "Ask Vyavasay",
+        "description": "Get answers about market prices, weather, and more."
+      },
+      "schemes": {
+        "title": "Government Schemes",
+        "description": "Find relevant government schemes tailored for you."
+      }
+    }
+  },
+  "cropDiagnosis": {
+    "title": "Crop Diagnosis",
+    "uploadTitle": "Upload Crop Image",
+    "uploadDescription": "Select a clear image of the affected plant for an AI-powered diagnosis.",
+    "uploadArea": "Drag & drop or click to upload",
+    "button": "Diagnose Crop",
+    "button_pending": "Diagnosing...",
+    "resultTitle": "Diagnosis Result",
+    "resultDescription": "The AI analysis of your crop will appear here.",
+    "resultPlaceholder": "Upload an image and click diagnose to see the results.",
+    "confidence": "Confidence",
+    "recommendedActions": "Recommended Actions",
+    "error": "Error",
+    "imagePreviewAlt": "Crop preview"
+  },
+  "askVyavasay": {
+    "title": "Ask Vyavasay",
+    "description": "Your AI assistant for agricultural questions. Ask about market prices, weather, and more.",
+    "placeholder": "Type your question here...",
+    "initialMessage": "No messages yet. Start the conversation!"
+  },
+  "govtSchemes": {
+    "title": "Govt. Schemes",
+    "findTitle": "Find Government Schemes",
+    "findDescription": "Enter your details to find government schemes tailored to your needs.",
+    "yourDetails": "Your Details",
+    "detailsPlaceholder": "Describe your location, crops, farm size, and challenges...",
+    "button": "Find Relevant Schemes",
+    "button_pending": "Finding Schemes...",
+    "resultTitle": "Relevant Schemes",
+    "resultDescription": "Personalized scheme information will appear here.",
+    "resultPlaceholder": "Enter your details and click the button to find schemes.",
+    "summaryBenefits": "Summary & Benefits",
+    "eligibility": "Eligibility",
+    "applicationProcess": "Application Process"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "diagnose": "Crop Diagnosis",
+    "ask": "Ask Vyavasay",
+    "schemes": "Govt. Schemes",
+    "callHelpline": "Call Helpline"
+  },
+  "header": {
+    "avatarAlt": "Farmer avatar",
+    "language": "Language"
+  }
+}

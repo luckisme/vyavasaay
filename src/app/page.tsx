@@ -11,29 +11,30 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Globe } from 'lucide-react';
+import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
 
 export type Feature = 'dashboard' | 'diagnose' | 'ask' | 'schemes';
 
-const languages = [
-    { value: 'English', label: 'English' },
-    { value: 'Hindi', label: 'हिन्दी' },
-    { value: 'Marathi', label: 'मराठी' },
-    { value: 'Tamil', label: 'தமிழ்' },
-    { value: 'Telugu', label: 'తెలుగు' },
-    { value: 'Bengali', label: 'বাংলা' },
-    { value: 'Kannada', label: 'ಕನ್ನಡ' },
+export const languages = [
+    { value: 'English', label: 'English', code: 'en' },
+    { value: 'Hindi', label: 'हिन्दी', code: 'hi' },
+    { value: 'Marathi', label: 'मराठी', code: 'mr' },
+    { value: 'Tamil', label: 'தமிழ்', code: 'ta' },
+    { value: 'Telugu', label: 'తెలుగు', code: 'te' },
+    { value: 'Bengali', label: 'বাংলা', code: 'bn' },
+    { value: 'Kannada', label: 'ಕನ್ನಡ', code: 'kn' },
 ];
 
-export default function Home() {
+function AppContent() {
   const [activeFeature, setActiveFeature] = useState<Feature>('dashboard');
-  const [language, setLanguage] = useState<string>('English');
+  const { language, setLanguage, t } = useTranslation();
 
   const renderFeature = () => {
     switch (activeFeature) {
       case 'diagnose':
         return <CropDiagnosis />;
       case 'ask':
-        return <AskVyavasay language={language} />;
+        return <AskVyavasay />;
       case 'schemes':
         return <GovtSchemes />;
       case 'dashboard':
@@ -49,18 +50,18 @@ export default function Home() {
         <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
-            <h1 className="text-2xl font-bold text-primary font-headline hidden sm:block">Vyavasay</h1>
+            <h1 className="text-2xl font-bold text-primary font-headline hidden sm:block">{t('appName', 'Vyavasay')}</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
                 <Globe className="h-5 w-5 text-muted-foreground" />
                 <Select value={language} onValueChange={setLanguage}>
                   <SelectTrigger className="w-[120px] border-none focus:ring-0 bg-transparent">
-                    <SelectValue placeholder="Language" />
+                    <SelectValue placeholder={t('header.language', 'Language')} />
                   </SelectTrigger>
                   <SelectContent>
                     {languages.map((lang) => (
-                      <SelectItem key={lang.value} value={lang.value}>
+                      <SelectItem key={lang.code} value={lang.code}>
                         {lang.label}
                       </SelectItem>
                     ))}
@@ -68,7 +69,7 @@ export default function Home() {
                 </Select>
             </div>
             <Avatar>
-              <Image src="https://placehold.co/40x40.png" alt="Farmer avatar" width={40} height={40} data-ai-hint="farmer avatar" />
+              <Image src="https://placehold.co/40x40.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} data-ai-hint="farmer avatar" />
               <AvatarFallback>FA</AvatarFallback>
             </Avatar>
           </div>
@@ -81,4 +82,13 @@ export default function Home() {
       </div>
     </SidebarProvider>
   );
+}
+
+export default function Home() {
+  // The provider needs to be at the root, so we wrap the main content.
+  return (
+    <TranslationProvider initialLanguage="en">
+        <AppContent />
+    </TranslationProvider>
+  )
 }

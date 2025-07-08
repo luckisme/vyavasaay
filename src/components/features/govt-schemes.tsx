@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/hooks/use-translation';
 
 const initialState: SchemeState = {
   data: null,
@@ -28,32 +29,34 @@ const exampleSchemeDatabase = `
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const { t } = useTranslation();
   return (
     <Button type="submit" disabled={pending} className="w-full">
       {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      {pending ? 'Finding Schemes...' : 'Find Relevant Schemes'}
+      {pending ? t('govtSchemes.button_pending') : t('govtSchemes.button')}
     </Button>
   );
 }
 
 export default function GovtSchemes() {
   const [state, formAction] = useActionState(summarizeSchemesAction, initialState);
+  const { t } = useTranslation();
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <Card>
         <form action={formAction}>
           <CardHeader>
-            <CardTitle className="font-headline">Find Government Schemes</CardTitle>
-            <CardDescription>Enter your details to find government schemes tailored to your needs.</CardDescription>
+            <CardTitle className="font-headline">{t('govtSchemes.findTitle')}</CardTitle>
+            <CardDescription>{t('govtSchemes.findDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="farmerDetails">Your Details</Label>
+              <Label htmlFor="farmerDetails">{t('govtSchemes.yourDetails')}</Label>
               <Textarea
                 id="farmerDetails"
                 name="farmerDetails"
-                placeholder="Describe your location, crops, farm size, and challenges..."
+                placeholder={t('govtSchemes.detailsPlaceholder')}
                 rows={6}
                 defaultValue={exampleFarmerDetails}
                 required
@@ -63,7 +66,7 @@ export default function GovtSchemes() {
             {state.error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
+                <AlertTitle>{t('cropDiagnosis.error')}</AlertTitle>
                 <AlertDescription>{state.error}</AlertDescription>
               </Alert>
             )}
@@ -76,8 +79,8 @@ export default function GovtSchemes() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Relevant Schemes</CardTitle>
-          <CardDescription>Personalized scheme information will appear here.</CardDescription>
+          <CardTitle className="font-headline">{t('govtSchemes.resultTitle')}</CardTitle>
+          <CardDescription>{t('govtSchemes.resultDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <SchemeResults data={state.data} />
@@ -89,6 +92,7 @@ export default function GovtSchemes() {
 
 function SchemeResults({ data }: { data: SchemeState['data'] }) {
     const { pending } = useFormStatus();
+    const { t } = useTranslation();
 
     if(pending) {
         return (
@@ -106,7 +110,7 @@ function SchemeResults({ data }: { data: SchemeState['data'] }) {
     }
 
     if (!data) {
-        return <p className="text-muted-foreground">Enter your details and click the button to find schemes.</p>;
+        return <p className="text-muted-foreground">{t('govtSchemes.resultPlaceholder')}</p>;
     }
 
     return (
@@ -116,15 +120,15 @@ function SchemeResults({ data }: { data: SchemeState['data'] }) {
                     <AccordionTrigger className="font-semibold text-primary">{scheme.schemeName}</AccordionTrigger>
                     <AccordionContent className="space-y-4 text-muted-foreground">
                         <div>
-                            <h4 className="font-semibold text-foreground">Summary & Benefits</h4>
+                            <h4 className="font-semibold text-foreground">{t('govtSchemes.summaryBenefits')}</h4>
                             <p>{scheme.summary}</p>
                         </div>
                         <div>
-                            <h4 className="font-semibold text-foreground">Eligibility</h4>
+                            <h4 className="font-semibold text-foreground">{t('govtSchemes.eligibility')}</h4>
                             <p>{scheme.eligibility}</p>
                         </div>
                         <div>
-                            <h4 className="font-semibold text-foreground">Application Process</h4>
+                            <h4 className="font-semibold text-foreground">{t('govtSchemes.applicationProcess')}</h4>
                             <p>{scheme.applicationProcess}</p>
                         </div>
                     </AccordionContent>
