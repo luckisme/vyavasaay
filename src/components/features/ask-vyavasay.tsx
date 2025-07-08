@@ -12,7 +12,11 @@ import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 
-export default function AskVyavasay() {
+interface AskVyavasayProps {
+    language: string;
+}
+
+export default function AskVyavasay({ language }: AskVyavasayProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +41,7 @@ export default function AskVyavasay() {
     setInput('');
     setIsLoading(true);
 
-    const result = await askVyavasayAction(input, 'farmer-location'); // location can be dynamic
+    const result = await askVyavasayAction(input, 'farmer-location', language); // location can be dynamic
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {

@@ -15,6 +15,7 @@ import {z} from 'genkit';
 const AnswerFarmerQuestionInputSchema = z.object({
   question: z.string().describe('The farmer’s question about market prices, government schemes, or weather.'),
   location: z.string().optional().describe('The location of the farmer, to provide localized information.'),
+  language: z.string().describe('The language for the answer.'),
 });
 export type AnswerFarmerQuestionInput = z.infer<typeof AnswerFarmerQuestionInputSchema>;
 
@@ -33,7 +34,7 @@ const prompt = ai.definePrompt({
   output: {schema: AnswerFarmerQuestionOutputSchema},
   prompt: `You are an AI assistant helping farmers by answering their questions about market prices, government schemes, or weather.
 
-  Please provide a simple, localized answer to the farmer’s question.  Use simple language, avoiding jargon.
+  Please provide a simple, localized answer to the farmer’s question in {{{language}}}. Use simple language, avoiding jargon.
 
   Question: {{{question}}}
   Location: {{{location}}}

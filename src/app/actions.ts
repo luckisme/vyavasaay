@@ -42,13 +42,14 @@ export async function diagnoseCropAction(
 // Action for Ask Vyavasay (no form state needed, called directly)
 export async function askVyavasayAction(
   question: string,
-  location: string
+  location: string,
+  language: string
 ): Promise<{ answer: string } | { error: string }> {
   if (!question) {
     return { error: 'Question cannot be empty.' };
   }
   try {
-    const result = await answerFarmerQuestion({ question, location });
+    const result = await answerFarmerQuestion({ question, location, language });
     return { answer: result.answer };
   } catch (e) {
     console.error(e);
