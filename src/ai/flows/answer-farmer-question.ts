@@ -11,6 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import wav from 'wav';
 
 const AnswerFarmerQuestionInputSchema = z.object({
   question: z.string().describe('The farmer’s question about market prices, government schemes, or weather.'),
@@ -21,6 +22,7 @@ export type AnswerFarmerQuestionInput = z.infer<typeof AnswerFarmerQuestionInput
 
 const AnswerFarmerQuestionOutputSchema = z.object({
   answer: z.string().describe('A simple, localized answer to the farmer’s question.'),
+  answerAudio: z.string().describe('The audio data of the answer in WAV format as a data URI.'),
 });
 export type AnswerFarmerQuestionOutput = z.infer<typeof AnswerFarmerQuestionOutputSchema>;
 
@@ -31,7 +33,6 @@ export async function answerFarmerQuestion(input: AnswerFarmerQuestionInput): Pr
 const prompt = ai.definePrompt({
   name: 'answerFarmerQuestionPrompt',
   input: {schema: AnswerFarmerQuestionInputSchema},
-  output: {schema: AnswerFarmerQuestionOutputSchema},
   prompt: `You are an AI assistant helping farmers by answering their questions about market prices, government schemes, or weather.
 
   Please provide a simple, localized answer to the farmer’s question in {{{language}}}. Use simple language, avoiding jargon.
@@ -48,7 +49,60 @@ const answerFarmerQuestionFlow = ai.defineFlow(
     outputSchema: AnswerFarmerQuestionOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const {text} = await prompt(input);
+
+    const {media} = await ai.generate({
+      model: 'googleai/gemini-2.5-flash-preview-tts',
+      config: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: {voiceName: 'Algenib'},
+          },
+        },
+      },
+      prompt: text!,
+    });
+
+    if (!media) {
+      throw new Error('no media returned');
+    }
+
+    const audioBuffer = Buffer.from(
+      media.url.substring(media.url.indexOf(',') + 1),
+      'base64'
+    );
+
+    const answerAudio = 'data:audio/wav;base64,' + (await toWav(audioBuffer));
+
+    return { answer: text!, answerAudio };
   }
 );
+
+
+async function toWav(
+  pcmData: Buffer,
+  channels = 1,
+  rate = 24000,
+  sampleWidth = 2
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const writer = new wav.Writer({
+      channels,
+      sampleRate: rate,
+      bitDepth: sampleWidth * 8,
+    });
+
+    let bufs = [] as any[];
+    writer.on('error', reject);
+    writer.on('data', function (d) {
+      bufs.push(d);
+    });
+    writer.on('end', function () {
+      resolve(Buffer.concat(bufs).toString('base64'));
+    });
+
+    writer.write(pcmData);
+    writer.end();
+  });
+}

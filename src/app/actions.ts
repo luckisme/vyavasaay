@@ -44,13 +44,13 @@ export async function askVyavasaayAction(
   question: string,
   location: string,
   language: string
-): Promise<{ answer: string } | { error: string }> {
+): Promise<{ answer: string; answerAudio?: string; } | { error: string }> {
   if (!question) {
     return { error: 'Question cannot be empty.' };
   }
   try {
     const result = await answerFarmerQuestion({ question, location, language });
-    return { answer: result.answer };
+    return { answer: result.answer, answerAudio: result.answerAudio };
   } catch (e) {
     console.error(e);
     return { error: 'Sorry, I could not get an answer for that. Please try rephrasing your question.' };

@@ -39,6 +39,7 @@
     "title": "Ask Vyavasaay",
     "description": "Your AI assistant for agricultural questions. Ask about market prices, weather, and more.",
     "placeholder": "Type your question here...",
+    "listening": "Listening... speak now.",
     "initialMessage": "No messages yet. Start the conversation!"
   },
   "govtSchemes": {
