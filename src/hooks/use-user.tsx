@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 export interface UserProfile {
   name: string;
@@ -18,28 +18,10 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(true);
-
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('vyavasaay-user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
-    } finally {
-        setIsUserLoading(false);
-    }
-  }, []);
+  const [isUserLoading, setIsUserLoading] = useState(false);
 
   const setUserProfile = useCallback((profile: UserProfile) => {
-    try {
-      localStorage.setItem('vyavasaay-user', JSON.stringify(profile));
-      setUser(profile);
-    } catch (error) {
-        console.error("Failed to save user to localStorage", error);
-    }
+    setUser(profile);
   }, []);
 
   const value = { user, setUserProfile, isUserLoading };
