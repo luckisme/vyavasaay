@@ -11,14 +11,6 @@ import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 
-const exampleSchemeDatabase = `
-- Pradhan Mantri Fasal Bima Yojana (PMFBY): A crop insurance scheme to protect against crop failure due to natural calamities. Eligibility: All farmers including sharecroppers and tenant farmers growing notified crops in notified areas are eligible.
-- PM-Kisan Samman Nidhi: Provides income support of ₹6,000 per year to all farmer families. Eligibility: All landholding farmer families, subject to certain exclusion criteria.
-- National Food Security Mission (NFSM): Aims to increase the production of rice, wheat, pulses, and coarse cereals through area expansion and productivity enhancement.
-- Rashtriya Krishi Vikas Yojana (RKVY): Allows states to choose their own agriculture and allied sector development activities.
-- Soil Health Card Scheme: Provides farmers with soil health cards to help them manage soil nutrients and improve productivity.
-`;
-
 export default function GovtSchemes() {
   const { t } = useTranslation();
   const { user } = useUser();
@@ -42,7 +34,7 @@ export default function GovtSchemes() {
     const fetchSchemes = async () => {
         setState(s => ({ ...s, loading: true, error: null }));
         try {
-            const result = await summarizeSchemesAction(farmerDetails, exampleSchemeDatabase);
+            const result = await summarizeSchemesAction(farmerDetails);
             setState({ data: result, error: null, loading: false });
         } catch (e) {
             const error = e instanceof Error ? e.message : "An unknown error occurred.";

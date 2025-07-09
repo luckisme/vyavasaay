@@ -63,14 +63,13 @@ export async function askVyavasaayAction(
 
 // Action for Government Schemes (programmatic call)
 export async function summarizeSchemesAction(
-    farmerDetails: string,
-    schemeDatabase: string
+    farmerDetails: string
 ): Promise<GovernmentSchemeOutput> {
-    if (!farmerDetails || !schemeDatabase) {
-        throw new Error('Farmer details and scheme data are required.');
+    if (!farmerDetails) {
+        throw new Error('Farmer details are required.');
     }
     try {
-        const result = await summarizeGovernmentScheme({ farmerDetails, schemeDatabase });
+        const result = await summarizeGovernmentScheme({ farmerDetails });
         if (!result.relevantSchemes || result.relevantSchemes.length === 0) {
             throw new Error("No relevant schemes found based on the details provided. Try adding more information.");
         }
