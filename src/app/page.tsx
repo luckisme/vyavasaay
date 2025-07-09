@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Dashboard from '@/components/dashboard';
 import CropDiagnosis from '@/components/features/crop-diagnosis';
-import AskVyavasaay, { MarketAnalysis } from '@/components/features/ask-vyavasay';
+import AskVyavasaay from '@/components/features/ask-vyavasay';
+import MarketAnalysis from '@/components/features/market-analysis';
 import GovtSchemes from '@/components/features/govt-schemes';
 import OnboardingModal from '@/components/onboarding-modal';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
@@ -13,28 +14,40 @@ import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Globe } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
-import { UserProvider, useUser } from '@/hooks/use-user';
+import { UserProvider, useUser, UserProfile } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export type Feature = 'dashboard' | 'market' | 'schemes';
+export type Feature = 'dashboard' | 'diagnose' | 'market' | 'schemes';
 
 export const languages = [
-    { value: 'English', label: 'English', code: 'en' },
-    { value: 'Hindi', label: 'हिन्दी', code: 'hi' },
-    { value: 'Marathi', label: 'मराठी', code: 'mr' },
-    { value: 'Tamil', label: 'தமிழ்', code: 'ta' },
-    { value: 'Telugu', label: 'తెలుగు', code: 'te' },
-    { value: 'Bengali', label: 'বাংলা', code: 'bn' },
-    { value: 'Kannada', label: 'ಕನ್ನಡ', code: 'kn' },
+    { value: 'en', label: 'English' },
+    { value: 'hi', label: 'हिन्दी' },
+    { value: 'mr', label: 'मराठी' },
+    { value: 'ta', label: 'தமிழ்' },
+    { value: 'te', label: 'తెలుగు' },
+    { value: 'bn', label: 'বাংলা' },
+    { value: 'kn', label: 'ಕನ್ನಡ' },
 ];
 
-function AppContent() {
+function AppCore() {
+  const { user, setUserProfile } = useUser();
+  const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('dashboard');
-  const { language, setLanguage, t } = useTranslation();
-  const { user, isUserLoading } = useUser();
+
+  useEffect(() => {
+    if (user?.language) {
+      setLanguage(user.language);
+    }
+  }, [user?.language, setLanguage]);
+
+  const handleLanguageChange = (langCode: string) => {
+    if (user) {
+      setUserProfile({ ...user, language: langCode });
+    }
+  };
 
   const renderFeature = () => {
-    if (!user) return null; // Or show a loader/message
+    if (!user) return null;
     switch (activeFeature) {
       case 'diagnose':
         return <CropDiagnosis />;
@@ -47,14 +60,6 @@ function AppContent() {
         return <Dashboard setActiveFeature={setActiveFeature} userName={user.name} />;
     }
   };
-
-  if (isUserLoading) {
-    return (
-        <div className="flex h-screen w-screen items-center justify-center">
-            <Skeleton className="h-24 w-24 rounded-full" />
-        </div>
-    )
-  }
 
   return (
     <>
@@ -71,13 +76,13 @@ function AppContent() {
                 <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                     <Globe className="h-5 w-5 text-muted-foreground" />
-                    <Select value={language} onValueChange={setLanguage}>
+                    <Select value={language} onValueChange={handleLanguageChange}>
                     <SelectTrigger className="w-[120px] border-none focus:ring-0 bg-transparent">
                         <SelectValue placeholder={t('header.language', 'Language')} />
                     </SelectTrigger>
                     <SelectContent>
                         {languages.map((lang) => (
-                        <SelectItem key={lang.code} value={lang.code}>
+                        <SelectItem key={lang.value} value={lang.value}>
                             {lang.label}
                         </SelectItem>
                         ))}
@@ -103,13 +108,29 @@ function AppContent() {
   );
 }
 
+function AppContent() {
+    const { isUserLoading } = useUser();
+
+    if (isUserLoading) {
+        return (
+            <div className="flex h-screen w-screen items-center justify-center">
+                <Skeleton className="h-24 w-24 rounded-full" />
+            </div>
+        )
+    }
+
+    return (
+        <TranslationProvider>
+            <AppCore />
+        </TranslationProvider>
+    );
+}
+
+
 export default function Home() {
-  // The providers need to be at the root, so we wrap the main content.
   return (
-    <TranslationProvider initialLanguage="en">
-        <UserProvider>
-            <AppContent />
-        </UserProvider>
-    </TranslationProvider>
+    <UserProvider>
+        <AppContent />
+    </UserProvider>
   )
 }

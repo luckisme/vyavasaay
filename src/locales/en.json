@@ -46,7 +46,24 @@
     "title": "Market Analysis",
     "description": "Your AI assistant for agricultural market data. Ask about crop prices, trends, and more.",
     "placeholder": "Ask about crop prices...",
-    "initialMessage": "Ask a question to get started with market analysis."
+    "initialMessage": "Ask a question to get started with market analysis.",
+    "noData": "No market analysis data available at this time.",
+    "summaryTitle": "Market Summary",
+    "summaryDescription": "A brief overview of the current agricultural market conditions in your area.",
+    "detailedTitle": "Detailed Crop Analysis",
+    "recommendationsTitle": "AI Recommendations",
+    "recommendationsDescription": "Actionable advice based on the current market analysis.",
+    "table": {
+      "crop": "Crop",
+      "price": "Price",
+      "trend": "Trend",
+      "outlook": "Outlook"
+    },
+    "trends": {
+      "up": "Up",
+      "down": "Down",
+      "stable": "Stable"
+    }
   },
   "govtSchemes": {
     "title": "Govt. Schemes",
@@ -57,9 +74,9 @@
     "detailsDefault": "I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.",
     "button": "Find Relevant Schemes",
     "button_pending": "Finding Schemes...",
-    "resultTitle": "Relevant Schemes",
-    "resultDescription": "Personalized scheme information will appear here.",
-    "resultPlaceholder": "Enter your details and click the button to find schemes.",
+    "resultTitle": "Relevant Schemes For You",
+    "resultDescription": "Here are government schemes we found based on your profile.",
+    "resultPlaceholder": "Personalized schemes will be loaded here based on your profile.",
     "summaryBenefits": "Summary & Benefits",
     "eligibility": "Eligibility",
     "applicationProcess": "Application Process"

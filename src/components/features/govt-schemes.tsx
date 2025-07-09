@@ -1,141 +1,121 @@
 'use client';
 
-import React, { useActionState, useMemo } from 'react';
-import { useFormStatus } from 'react-dom';
-import { summarizeSchemesAction, type SchemeState } from '@/app/actions';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, useMemo } from 'react';
+import { summarizeSchemesAction } from '@/app/actions';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
-
-const initialState: SchemeState = {
-  data: null,
-  error: null,
-};
+import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 
 const exampleSchemeDatabase = `
-- Pradhan Mantri Fasal Bima Yojana (PMFBY): A crop insurance scheme to protect against crop failure due to natural calamities.
-- PM-Kisan Samman Nidhi: Provides income support of ₹6,000 per year to all farmer families.
+- Pradhan Mantri Fasal Bima Yojana (PMFBY): A crop insurance scheme to protect against crop failure due to natural calamities. Eligibility: All farmers including sharecroppers and tenant farmers growing notified crops in notified areas are eligible.
+- PM-Kisan Samman Nidhi: Provides income support of ₹6,000 per year to all farmer families. Eligibility: All landholding farmer families, subject to certain exclusion criteria.
 - National Food Security Mission (NFSM): Aims to increase the production of rice, wheat, pulses, and coarse cereals through area expansion and productivity enhancement.
 - Rashtriya Krishi Vikas Yojana (RKVY): Allows states to choose their own agriculture and allied sector development activities.
 - Soil Health Card Scheme: Provides farmers with soil health cards to help them manage soil nutrients and improve productivity.
 `;
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  const { t } = useTranslation();
-  return (
-    <Button type="submit" disabled={pending} className="w-full">
-      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      {pending ? t('govtSchemes.button_pending') : t('govtSchemes.button')}
-    </Button>
-  );
-}
-
 export default function GovtSchemes() {
-  const [state, formAction] = useActionState(summarizeSchemesAction, initialState);
   const { t } = useTranslation();
   const { user } = useUser();
+  const [state, setState] = useState<{
+    data: GovernmentSchemeOutput | null;
+    error: string | null;
+    loading: boolean;
+  }>({ data: null, error: null, loading: true });
 
-  const farmerDetailsDefault = useMemo(() => {
+  const farmerDetails = useMemo(() => {
     if (!user) return '';
     return t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
   }, [user, t]);
 
-  return (
-    <div className="grid gap-8 md:grid-cols-2">
-      <Card>
-        <form action={formAction}>
-          <CardHeader>
-            <CardTitle className="font-headline">{t('govtSchemes.findTitle')}</CardTitle>
-            <CardDescription>{t('govtSchemes.findDescription')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="farmerDetails">{t('govtSchemes.yourDetails')}</Label>
-              <Textarea
-                id="farmerDetails"
-                name="farmerDetails"
-                placeholder={t('govtSchemes.detailsPlaceholder')}
-                rows={6}
-                defaultValue={farmerDetailsDefault}
-                required
-              />
-            </div>
-            <input type="hidden" name="schemeDatabase" value={exampleSchemeDatabase} />
-            {state.error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>{t('cropDiagnosis.error')}</AlertTitle>
-                <AlertDescription>{state.error}</AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-          <CardFooter>
-            <SubmitButton />
-          </CardFooter>
-        </form>
-      </Card>
+  useEffect(() => {
+    if (!user || !farmerDetails) {
+        setState({ data: null, error: null, loading: false});
+        return;
+    };
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline">{t('govtSchemes.resultTitle')}</CardTitle>
-          <CardDescription>{t('govtSchemes.resultDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SchemeResults data={state.data} />
-        </CardContent>
-      </Card>
-    </div>
+    const fetchSchemes = async () => {
+        setState(s => ({ ...s, loading: true, error: null }));
+        try {
+            const result = await summarizeSchemesAction(farmerDetails, exampleSchemeDatabase);
+            setState({ data: result, error: null, loading: false });
+        } catch (e) {
+            const error = e instanceof Error ? e.message : "An unknown error occurred.";
+            setState({ data: null, error, loading: false });
+        }
+    };
+    
+    fetchSchemes();
+  }, [user, farmerDetails]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-headline">{t('govtSchemes.resultTitle')}</CardTitle>
+        <CardDescription>{t('govtSchemes.resultDescription')}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <SchemeResults state={state} />
+      </CardContent>
+    </Card>
   );
 }
 
-function SchemeResults({ data }: { data: SchemeState['data'] }) {
-    const { pending } = useFormStatus();
+function SchemeResults({ state }: { state: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; } }) {
     const { t } = useTranslation();
 
-    if(pending) {
+    if (state.loading) {
         return (
             <div className="space-y-4">
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-20 w-full" />
+                <div className="flex items-center space-x-4">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary"/>
+                    <p className="text-muted-foreground">{t('govtSchemes.button_pending')}</p>
                 </div>
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-20 w-full" />
+                 <div className="space-y-2 pt-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
                 </div>
             </div>
         )
     }
+    
+    if (state.error) {
+        return (
+             <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>{t('cropDiagnosis.error')}</AlertTitle>
+                <AlertDescription>{state.error}</AlertDescription>
+            </Alert>
+        )
+    }
 
-    if (!data) {
+    if (!state.data) {
         return <p className="text-muted-foreground">{t('govtSchemes.resultPlaceholder')}</p>;
     }
 
     return (
         <Accordion type="single" collapsible className="w-full">
-            {data.relevantSchemes.map((scheme, index) => (
+            {state.data.relevantSchemes.map((scheme, index) => (
                 <AccordionItem value={`item-${index}`} key={index}>
                     <AccordionTrigger className="font-semibold text-primary">{scheme.schemeName}</AccordionTrigger>
                     <AccordionContent className="space-y-4 text-muted-foreground">
                         <div>
                             <h4 className="font-semibold text-foreground">{t('govtSchemes.summaryBenefits')}</h4>
-                            <p>{scheme.summary}</p>
+                            <p className="whitespace-pre-wrap">{scheme.summary}</p>
                         </div>
                         <div>
                             <h4 className="font-semibold text-foreground">{t('govtSchemes.eligibility')}</h4>
-                            <p>{scheme.eligibility}</p>
+                            <p className="whitespace-pre-wrap">{scheme.eligibility}</p>
                         </div>
                         <div>
                             <h4 className="font-semibold text-foreground">{t('govtSchemes.applicationProcess')}</h4>
-                            <p>{scheme.applicationProcess}</p>
+                            <p className="whitespace-pre-wrap">{scheme.applicationProcess}</p>
                         </div>
                     </AccordionContent>
                 </AccordionItem>

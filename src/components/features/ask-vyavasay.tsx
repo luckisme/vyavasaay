@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Send, User, Sparkles, Sprout, Mic, Loader2, Volume2, Pause, TrendingUp, MessageSquare } from 'lucide-react';
+import { User, Sparkles, Sprout, Mic, Pause, Volume2, Send, MessageSquare } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { askVyavasaayAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
@@ -74,22 +74,42 @@ const useChatLogic = () => {
     }
   }, [isRecording]);
 
-  const playAudio = useCallback((message: ChatMessage) => {
-    if (!audioRef.current || !message.audio) return;
-
-    if (activeAudioId === message.id) {
+  const playAudio = useCallback((audioDataUri: string, messageId: string) => {
+    if (!audioRef.current) return;
+    
+    if (activeAudioId === messageId && !audioRef.current.paused) {
       audioRef.current.pause();
       setActiveAudioId(null);
     } else {
-      audioRef.current.src = message.audio;
+      if (audioRef.current.src !== audioDataUri) {
+        audioRef.current.src = audioDataUri;
+      }
       audioRef.current.play();
-      setActiveAudioId(message.id);
+      setActiveAudioId(messageId);
     }
   }, [activeAudioId]);
 
+  useEffect(() => {
+    const currentAudio = audioRef.current;
+    const onEnded = () => setActiveAudioId(null);
+    const onPause = () => {
+        if(audioRef.current?.currentTime === audioRef.current?.duration) {
+            setActiveAudioId(null);
+        }
+    };
+
+    currentAudio?.addEventListener('ended', onEnded);
+    currentAudio?.addEventListener('pause', onPause);
+
+    return () => {
+      currentAudio?.removeEventListener('ended', onEnded);
+      currentAudio?.removeEventListener('pause', onPause);
+    };
+  }, []);
+
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
-    if (!input.trim() || isLoading || !user) return;
+    if (!input.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -100,8 +120,8 @@ const useChatLogic = () => {
     setInput('');
     setIsLoading(true);
 
-    const currentLanguageName = languages.find(l => l.code === langCode)?.value || 'English';
-    const result = await askVyavasaayAction(input, user.location, currentLanguageName);
+    const currentLanguageName = languages.find(l => l.value === langCode)?.label || 'English';
+    const result = await askVyavasaayAction(input, user?.location || 'an unspecified location', currentLanguageName);
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {
@@ -194,7 +214,7 @@ const ChatInterface = ({
                     >
                         <span className="whitespace-pre-wrap">{message.content}</span>
                         {message.role === 'assistant' && message.audio && (
-                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => playAudio(message)}>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => playAudio(message.audio!, message.id)}>
                             {activeAudioId === message.id ? <Pause className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                         </Button>
                         )}
@@ -240,39 +260,13 @@ const ChatInterface = ({
     )
 }
 
-export function MarketAnalysis() {
-  const chatLogic = useChatLogic();
-  const { t, audioRef } = chatLogic;
-  return (
-    <>
-      <audio ref={audioRef} onEnded={() => chatLogic.playAudio({id: '', role: 'assistant', content: ''})} onPause={() => chatLogic.playAudio({id: '', role: 'assistant', content: ''})} />
-      <Card className="h-[75vh] flex flex-col">
-        <CardHeader>
-          <CardTitle className="font-headline flex items-center gap-2">
-            <TrendingUp className="text-accent" />
-            {t('marketAnalysis.title')}
-          </CardTitle>
-          <CardDescription>{t('marketAnalysis.description')}</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
-            <ChatInterface 
-                chatLogic={chatLogic}
-                placeholder={t('marketAnalysis.placeholder')}
-                initialMessage={t('marketAnalysis.initialMessage')}
-            />
-        </CardContent>
-      </Card>
-    </>
-  );
-}
-
 export default function AskVyavasaay() {
   const chatLogic = useChatLogic();
   const { t, audioRef } = chatLogic;
 
   return (
     <>
-        <audio ref={audioRef} onEnded={() => chatLogic.playAudio({id: '', role: 'assistant', content: ''})} onPause={() => chatLogic.playAudio({id: '', role: 'assistant', content: ''})} />
+        <audio ref={audioRef} />
         <Popover>
             <PopoverTrigger asChild>
                 <Button className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg" size="icon">

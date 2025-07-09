@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 export interface UserProfile {
   name: string;
   location: string;
+  language: string;
 }
 
 interface UserContextType {

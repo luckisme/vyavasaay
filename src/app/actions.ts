@@ -4,8 +4,10 @@ import { z } from 'zod';
 import { diagnoseCropFromImage } from '@/ai/flows/diagnose-crop-from-image';
 import { answerFarmerQuestion } from '@/ai/flows/answer-farmer-question';
 import { summarizeGovernmentScheme } from '@/ai/flows/summarize-government-scheme';
+import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
+import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 
 // State for Crop Diagnosis Action
 export interface DiagnoseState {
@@ -59,41 +61,38 @@ export async function askVyavasaayAction(
   }
 }
 
-
-// State for Government Scheme Action
-export interface SchemeState {
-    data: GovernmentSchemeOutput | null;
-    error: string | null;
-}
-const schemeSchema = z.object({
-    farmerDetails: z.string().min(10, 'Please provide more details about your farm and needs.'),
-    schemeDatabase: z.string().min(1, 'Scheme data is required.'),
-});
-
+// Action for Government Schemes (programmatic call)
 export async function summarizeSchemesAction(
-    prevState: SchemeState,
-    formData: FormData
-): Promise<SchemeState> {
-    const validatedFields = schemeSchema.safeParse({
-        farmerDetails: formData.get('farmerDetails'),
-        schemeDatabase: formData.get('schemeDatabase'),
-    });
-
-    if (!validatedFields.success) {
-        return {
-            data: null,
-            error: validatedFields.error.flatten().fieldErrors.farmerDetails?.[0] || 'Invalid input.'
-        }
+    farmerDetails: string,
+    schemeDatabase: string
+): Promise<GovernmentSchemeOutput> {
+    if (!farmerDetails || !schemeDatabase) {
+        throw new Error('Farmer details and scheme data are required.');
     }
-
     try {
-        const result = await summarizeGovernmentScheme(validatedFields.data);
+        const result = await summarizeGovernmentScheme({ farmerDetails, schemeDatabase });
         if (!result.relevantSchemes || result.relevantSchemes.length === 0) {
-            return { data: null, error: "No relevant schemes found based on the details provided. Try adding more information."}
+            throw new Error("No relevant schemes found based on the details provided. Try adding more information.");
         }
-        return { data: result, error: null };
+        return result;
     } catch (e) {
         console.error(e);
-        return { data: null, error: 'An unexpected error occurred while fetching schemes.' };
+        const errorMessage = e instanceof Error ? e.message : 'An unexpected error occurred while fetching schemes.';
+        throw new Error(errorMessage);
+    }
+}
+
+
+// Action for Market Analysis (programmatic call)
+export async function getMarketAnalysisAction(location: string): Promise<MarketAnalysisOutput> {
+    if (!location) {
+        throw new Error('Location is required for market analysis.');
+    }
+    try {
+        const result = await getMarketAnalysis({ location });
+        return result;
+    } catch (e) {
+        console.error(e);
+        throw new Error('An unexpected error occurred while fetching market analysis.');
     }
 }
