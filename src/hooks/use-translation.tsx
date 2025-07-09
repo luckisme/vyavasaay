@@ -7,7 +7,7 @@ type Translations = Record<string, any>;
 interface TranslationContextType {
   language: string;
   setLanguage: (language: string) => void;
-  t: (key: string, fallback?: string) => string;
+  t: (key: string, fallback?: string, replacements?: Record<string, string>) => string;
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
@@ -52,17 +52,27 @@ export const TranslationProvider = ({ children, initialLanguage = 'en' }: { chil
     fetchTranslations(language);
   }, [language]);
 
-  const t = useCallback((key: string, fallback?: string): string => {
+  const t = useCallback((key: string, fallback?: string, replacements?: Record<string, string>): string => {
     const keys = key.split('.');
-    let result = translations;
+    let result: any = translations;
     for (const k of keys) {
       if (result && typeof result === 'object' && k in result) {
         result = result[k];
       } else {
-        return fallback || key; // Return the fallback or key itself if not found
+        result = fallback || key;
+        break;
       }
     }
-    return typeof result === 'string' ? result : (fallback || key);
+    
+    let strResult = typeof result === 'string' ? result : (fallback || key);
+
+    if (replacements) {
+        for(const placeholder in replacements) {
+            strResult = strResult.replace(`{{${placeholder}}}`, replacements[placeholder]);
+        }
+    }
+
+    return strResult;
   }, [translations]);
 
   const value = { language, setLanguage, t };

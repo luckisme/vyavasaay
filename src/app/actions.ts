@@ -17,6 +17,8 @@ export async function diagnoseCropAction(
   formData: FormData
 ): Promise<DiagnoseState> {
   const file = formData.get('photo') as File;
+  const location = formData.get('location') as string;
+
   if (!file || file.size === 0) {
     return { data: null, error: 'Please select an image file.' };
   }
@@ -31,7 +33,7 @@ export async function diagnoseCropAction(
     const base64 = Buffer.from(buffer).toString('base64');
     const photoDataUri = `data:${file.type};base64,${base64}`;
 
-    const result = await diagnoseCropFromImage({ photoDataUri });
+    const result = await diagnoseCropFromImage({ photoDataUri, location });
     return { data: result, error: null };
   } catch (e) {
     console.error(e);

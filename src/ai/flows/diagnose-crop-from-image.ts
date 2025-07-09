@@ -16,6 +16,7 @@ const DiagnoseCropFromImageInputSchema = z.object({
     .describe(
       "A photo of a crop, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
+    location: z.string().optional().describe('The location (e.g., city, state) where the crop is being grown.')
 });
 export type DiagnoseCropFromImageInput = z.infer<typeof DiagnoseCropFromImageInputSchema>;
 
@@ -37,6 +38,8 @@ const prompt = ai.definePrompt({
   input: {schema: DiagnoseCropFromImageInputSchema},
   output: {schema: DiagnoseCropFromImageOutputSchema},
   prompt: `You are an expert in plant pathology. Analyze the image of the crop provided and provide a diagnosis, including the likely disease or issue, a confidence level, and recommended actions.
+
+Consider the location of the crop, if provided: {{{location}}}. This can help in identifying region-specific pests and diseases.
 
 Crop Image: {{media url=photoDataUri}}
 

@@ -13,10 +13,12 @@ import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
+import { useUser } from '@/hooks/use-user';
 import { languages } from '@/app/page';
 
 const useChatLogic = () => {
   const { t, language: langCode } = useTranslation();
+  const { user } = useUser();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +89,7 @@ const useChatLogic = () => {
 
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !user) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -99,7 +101,7 @@ const useChatLogic = () => {
     setIsLoading(true);
 
     const currentLanguageName = languages.find(l => l.code === langCode)?.value || 'English';
-    const result = await askVyavasaayAction(input, 'farmer-location', currentLanguageName);
+    const result = await askVyavasaayAction(input, user.location, currentLanguageName);
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {

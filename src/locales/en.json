@@ -3,7 +3,7 @@
   "appDescription": "AI-powered assistant for farmers",
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome, Rohan",
+    "welcome": "Welcome, {{name}}",
     "welcome_message": "Your AI-powered agricultural assistant is ready to help.",
     "features": {
       "diagnose": {
@@ -54,6 +54,7 @@
     "findDescription": "Enter your details to find government schemes tailored to your needs.",
     "yourDetails": "Your Details",
     "detailsPlaceholder": "Describe your location, crops, farm size, and challenges...",
+    "detailsDefault": "I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.",
     "button": "Find Relevant Schemes",
     "button_pending": "Finding Schemes...",
     "resultTitle": "Relevant Schemes",
@@ -73,5 +74,14 @@
   "header": {
     "avatarAlt": "Farmer avatar",
     "language": "Language"
+  },
+  "onboarding": {
+    "title": "Welcome to Vyavasaay",
+    "description": "Please enter your details to get personalized information.",
+    "name": "Name",
+    "namePlaceholder": "e.g. Rohan",
+    "location": "Location",
+    "locationPlaceholder": "e.g. Nashik, Maharashtra",
+    "button": "Save and Continue"
   }
 }

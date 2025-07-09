@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useActionState } from 'react';
+import React, { useActionState, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
 import { summarizeSchemesAction, type SchemeState } from '@/app/actions';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,13 +12,13 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
+import { useUser } from '@/hooks/use-user';
 
 const initialState: SchemeState = {
   data: null,
   error: null,
 };
 
-const exampleFarmerDetails = "I am a small-scale farmer in Maharashtra, India. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.";
 const exampleSchemeDatabase = `
 - Pradhan Mantri Fasal Bima Yojana (PMFBY): A crop insurance scheme to protect against crop failure due to natural calamities.
 - PM-Kisan Samman Nidhi: Provides income support of ₹6,000 per year to all farmer families.
@@ -41,6 +41,12 @@ function SubmitButton() {
 export default function GovtSchemes() {
   const [state, formAction] = useActionState(summarizeSchemesAction, initialState);
   const { t } = useTranslation();
+  const { user } = useUser();
+
+  const farmerDetailsDefault = useMemo(() => {
+    if (!user) return '';
+    return t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
+  }, [user, t]);
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
@@ -58,7 +64,7 @@ export default function GovtSchemes() {
                 name="farmerDetails"
                 placeholder={t('govtSchemes.detailsPlaceholder')}
                 rows={6}
-                defaultValue={exampleFarmerDetails}
+                defaultValue={farmerDetailsDefault}
                 required
               />
             </div>

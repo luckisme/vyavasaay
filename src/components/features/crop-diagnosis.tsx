@@ -12,6 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { UploadCloud, X, AlertCircle } from 'lucide-react';
 import { diagnoseCropAction, type DiagnoseState } from '@/app/actions';
 import { useTranslation } from '@/hooks/use-translation';
+import { useUser } from '@/hooks/use-user';
 
 const initialState: DiagnoseState = {
   data: null,
@@ -30,6 +31,7 @@ function SubmitButton() {
 
 export default function CropDiagnosis() {
   const { t } = useTranslation();
+  const { user } = useUser();
   const [state, formAction] = useActionState(diagnoseCropAction, initialState);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -84,6 +86,7 @@ export default function CropDiagnosis() {
                         )}
                     </div>
                     <Input id="photo" name="photo" type="file" accept="image/*" required onChange={handleFileChange} ref={fileInputRef} className="file:text-primary"/>
+                    <input type="hidden" name="location" value={user?.location || ''} />
                     {state.error && (
                         <Alert variant="destructive">
                             <AlertCircle className="h-4 w-4" />

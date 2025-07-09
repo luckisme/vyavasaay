@@ -8,9 +8,10 @@ import { useTranslation } from '@/hooks/use-translation';
 
 interface DashboardProps {
   setActiveFeature: (feature: Feature) => void;
+  userName: string;
 }
 
-export default function Dashboard({ setActiveFeature }: DashboardProps) {
+export default function Dashboard({ setActiveFeature, userName }: DashboardProps) {
   const { t } = useTranslation();
 
   const features = [
@@ -37,7 +38,7 @@ export default function Dashboard({ setActiveFeature }: DashboardProps) {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground font-headline">{t('dashboard.welcome')}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-headline">{t('dashboard.welcome', `Welcome, ${userName}`, { name: userName })}</h1>
         <p className="text-muted-foreground">{t('dashboard.welcome_message')}</p>
       </div>
 
@@ -53,7 +54,7 @@ export default function Dashboard({ setActiveFeature }: DashboardProps) {
                 <item.icon className="w-8 h-8" />
               </div>
               <div>
-                <CardTitle className="font-headline">{item.name}</CardTitle>
+                <CardTitle className="font-headline break-words">{item.name}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
