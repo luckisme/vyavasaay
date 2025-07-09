@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Leaf, Search, Landmark, LayoutDashboard, Sprout, Phone } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, LayoutDashboard, Sprout, Phone } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -53,12 +53,12 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={() => setActiveFeature('ask')}
-              isActive={activeFeature === 'ask'}
-              tooltip={{ children: t('sidebar.ask', 'Ask Vyavasaay'), side: 'right' }}
+              onClick={() => setActiveFeature('market')}
+              isActive={activeFeature === 'market'}
+              tooltip={{ children: t('sidebar.marketAnalysis', 'Market Analysis'), side: 'right' }}
             >
-              <Search />
-              <span>{t('sidebar.ask', 'Ask Vyavasaay')}</span>
+              <TrendingUp />
+              <span>{t('sidebar.marketAnalysis', 'Market Analysis')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>

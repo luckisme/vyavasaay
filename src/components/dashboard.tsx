@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Leaf, Search, Landmark } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -21,10 +21,10 @@ export default function Dashboard({ setActiveFeature }: DashboardProps) {
       feature: 'diagnose' as Feature,
     },
     {
-      name: t('dashboard.features.ask.title'),
-      description: t('dashboard.features.ask.description'),
-      icon: Search,
-      feature: 'ask' as Feature,
+      name: t('dashboard.features.marketAnalysis.title'),
+      description: t('dashboard.features.marketAnalysis.description'),
+      icon: TrendingUp,
+      feature: 'market' as Feature,
     },
     {
       name: t('dashboard.features.schemes.title'),

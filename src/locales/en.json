@@ -10,9 +10,9 @@
         "title": "Crop Diagnosis",
         "description": "Upload an image to detect crop diseases and get solutions."
       },
-      "ask": {
-        "title": "Ask Vyavasaay",
-        "description": "Get answers about market prices, weather, and more."
+      "marketAnalysis": {
+        "title": "Market Analysis",
+        "description": "Get real-time market prices for your crops."
       },
       "schemes": {
         "title": "Government Schemes",
@@ -42,6 +42,12 @@
     "listening": "Listening... speak now.",
     "initialMessage": "No messages yet. Start the conversation!"
   },
+  "marketAnalysis": {
+    "title": "Market Analysis",
+    "description": "Your AI assistant for agricultural market data. Ask about crop prices, trends, and more.",
+    "placeholder": "Ask about crop prices...",
+    "initialMessage": "Ask a question to get started with market analysis."
+  },
   "govtSchemes": {
     "title": "Govt. Schemes",
     "findTitle": "Find Government Schemes",
@@ -60,7 +66,7 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "diagnose": "Crop Diagnosis",
-    "ask": "Ask Vyavasaay",
+    "marketAnalysis": "Market Analysis",
     "schemes": "Govt. Schemes",
     "callHelpline": "Call Helpline"
   },

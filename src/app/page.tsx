@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Dashboard from '@/components/dashboard';
 import CropDiagnosis from '@/components/features/crop-diagnosis';
-import AskVyavasaay from '@/components/features/ask-vyavasay';
+import AskVyavasaay, { MarketAnalysis } from '@/components/features/ask-vyavasay';
 import GovtSchemes from '@/components/features/govt-schemes';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -13,7 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Globe } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
 
-export type Feature = 'dashboard' | 'diagnose' | 'ask' | 'schemes';
+
+export type Feature = 'dashboard' | 'diagnose' | 'market' | 'schemes';
 
 export const languages = [
     { value: 'English', label: 'English', code: 'en' },
@@ -33,8 +34,8 @@ function AppContent() {
     switch (activeFeature) {
       case 'diagnose':
         return <CropDiagnosis />;
-      case 'ask':
-        return <AskVyavasaay />;
+      case 'market':
+        return <MarketAnalysis />;
       case 'schemes':
         return <GovtSchemes />;
       case 'dashboard':
@@ -80,6 +81,7 @@ function AppContent() {
           </main>
         </SidebarInset>
       </div>
+      <AskVyavasaay />
     </SidebarProvider>
   );
 }
