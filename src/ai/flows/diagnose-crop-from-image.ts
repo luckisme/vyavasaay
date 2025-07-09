@@ -16,7 +16,8 @@ const DiagnoseCropFromImageInputSchema = z.object({
     .describe(
       "A photo of a crop, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
-    location: z.string().optional().describe('The location (e.g., city, state) where the crop is being grown.')
+    location: z.string().optional().describe('The location (e.g., city, state) where the crop is being grown.'),
+    language: z.string().describe('The language for the response.'),
 });
 export type DiagnoseCropFromImageInput = z.infer<typeof DiagnoseCropFromImageInputSchema>;
 
@@ -43,7 +44,7 @@ Consider the location of the crop, if provided: {{{location}}}. This can help in
 
 Crop Image: {{media url=photoDataUri}}
 
-Ensure the diagnosis is clear and actionable for farmers.`,config: {
+Ensure the diagnosis is clear and actionable for farmers. Provide the entire response in {{{language}}}.`,config: {
     safetySettings: [
       {
         category: 'HARM_CATEGORY_HATE_SPEECH',

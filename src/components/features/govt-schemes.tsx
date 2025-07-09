@@ -10,9 +10,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
+import { languages } from '@/app/page';
 
 export default function GovtSchemes() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { user } = useUser();
   const [state, setState] = useState<{
     data: GovernmentSchemeOutput | null;
@@ -33,8 +34,9 @@ export default function GovtSchemes() {
 
     const fetchSchemes = async () => {
         setState(s => ({ ...s, loading: true, error: null }));
+        const languageName = languages.find(l => l.value === language)?.label || 'English';
         try {
-            const result = await summarizeSchemesAction(farmerDetails);
+            const result = await summarizeSchemesAction(farmerDetails, languageName);
             setState({ data: result, error: null, loading: false });
         } catch (e) {
             const error = e instanceof Error ? e.message : "An unknown error occurred.";
@@ -43,7 +45,7 @@ export default function GovtSchemes() {
     };
     
     fetchSchemes();
-  }, [user, farmerDetails]);
+  }, [user, farmerDetails, language]);
 
   return (
     <Card>

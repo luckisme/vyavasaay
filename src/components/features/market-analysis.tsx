@@ -11,6 +11,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import { Badge } from '@/components/ui/badge';
+import { languages } from '@/app/page';
 
 const TrendIcon = ({ trend }: { trend: 'up' | 'down' | 'stable' }) => {
     switch (trend) {
@@ -25,7 +26,7 @@ const TrendIcon = ({ trend }: { trend: 'up' | 'down' | 'stable' }) => {
 };
 
 export default function MarketAnalysis() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { user } = useUser();
   const [state, setState] = useState<{
     data: MarketAnalysisOutput | null;
@@ -41,8 +42,9 @@ export default function MarketAnalysis() {
 
     const fetchAnalysis = async () => {
         setState({ loading: true, error: null, data: null });
+        const languageName = languages.find(l => l.value === language)?.label || 'English';
         try {
-            const result = await getMarketAnalysisAction(user.location);
+            const result = await getMarketAnalysisAction(user.location, languageName);
             setState({ loading: false, error: null, data: result });
         } catch (e) {
             const error = e instanceof Error ? e.message : "An unknown error occurred.";
@@ -51,7 +53,7 @@ export default function MarketAnalysis() {
     };
 
     fetchAnalysis();
-  }, [user]);
+  }, [user, language]);
 
   if (state.loading) {
     return (

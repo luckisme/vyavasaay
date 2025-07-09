@@ -30,7 +30,7 @@ function SubmitButton() {
 }
 
 export default function CropDiagnosis() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { user } = useUser();
   const [state, formAction] = useActionState(diagnoseCropAction, initialState);
   const [preview, setPreview] = useState<string | null>(null);
@@ -87,6 +87,7 @@ export default function CropDiagnosis() {
                     </div>
                     <Input id="photo" name="photo" type="file" accept="image/*" required onChange={handleFileChange} ref={fileInputRef} className="file:text-primary"/>
                     <input type="hidden" name="location" value={user?.location || ''} />
+                    <input type="hidden" name="language" value={language} />
                     {state.error && (
                         <Alert variant="destructive">
                             <AlertCircle className="h-4 w-4" />

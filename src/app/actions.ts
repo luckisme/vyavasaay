@@ -8,6 +8,7 @@ import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
+import { languages } from './page';
 
 // State for Crop Diagnosis Action
 export interface DiagnoseState {
@@ -20,6 +21,8 @@ export async function diagnoseCropAction(
 ): Promise<DiagnoseState> {
   const file = formData.get('photo') as File;
   const location = formData.get('location') as string;
+  const languageCode = formData.get('language') as string;
+  const language = languages.find(l => l.value === languageCode)?.label || 'English';
 
   if (!file || file.size === 0) {
     return { data: null, error: 'Please select an image file.' };
@@ -35,7 +38,7 @@ export async function diagnoseCropAction(
     const base64 = Buffer.from(buffer).toString('base64');
     const photoDataUri = `data:${file.type};base64,${base64}`;
 
-    const result = await diagnoseCropFromImage({ photoDataUri, location });
+    const result = await diagnoseCropFromImage({ photoDataUri, location, language });
     return { data: result, error: null };
   } catch (e) {
     console.error(e);
@@ -63,13 +66,14 @@ export async function askVyavasaayAction(
 
 // Action for Government Schemes (programmatic call)
 export async function summarizeSchemesAction(
-    farmerDetails: string
+    farmerDetails: string,
+    language: string
 ): Promise<GovernmentSchemeOutput> {
     if (!farmerDetails) {
         throw new Error('Farmer details are required.');
     }
     try {
-        const result = await summarizeGovernmentScheme({ farmerDetails });
+        const result = await summarizeGovernmentScheme({ farmerDetails, language });
         if (!result.relevantSchemes || result.relevantSchemes.length === 0) {
             throw new Error("No relevant schemes found based on the details provided. Try adding more information.");
         }
@@ -83,12 +87,12 @@ export async function summarizeSchemesAction(
 
 
 // Action for Market Analysis (programmatic call)
-export async function getMarketAnalysisAction(location: string): Promise<MarketAnalysisOutput> {
+export async function getMarketAnalysisAction(location: string, language: string): Promise<MarketAnalysisOutput> {
     if (!location) {
         throw new Error('Location is required for market analysis.');
     }
     try {
-        const result = await getMarketAnalysis({ location });
+        const result = await getMarketAnalysis({ location, language });
         return result;
     } catch (e) {
         console.error(e);

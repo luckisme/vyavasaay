@@ -1,5 +1,3 @@
-// Summarizes government schemes and tailors the information to the specific needs of a farmer.
-
 'use server';
 
 import {ai} from '@/ai/genkit';
@@ -7,6 +5,7 @@ import {z} from 'genkit';
 
 const GovernmentSchemeInputSchema = z.object({
   farmerDetails: z.string().describe('Details about the farmer, including their location, crops grown, and any specific needs or challenges they face.'),
+  language: z.string().describe('The language for the response.'),
 });
 export type GovernmentSchemeInput = z.infer<typeof GovernmentSchemeInputSchema>;
 
@@ -35,7 +34,7 @@ const prompt = ai.definePrompt({
   Farmer's Profile:
   {{{farmerDetails}}}
 
-  Based on the farmer's profile (especially their location and crops), use your knowledge to find and list the most relevant central and state-level government schemes. For each scheme, provide a tailored summary, its specific benefits, the eligibility criteria, and a clear application process. Ensure all monetary values are in Indian Rupees (₹). Structure the output according to the schema.
+  Based on the farmer's profile (especially their location and crops), use your knowledge to find and list the most relevant central and state-level government schemes. For each scheme, provide a tailored summary, its specific benefits, the eligibility criteria, and a clear application process. Ensure all monetary values are in Indian Rupees (₹). Structure the output according to the schema and provide the entire response in {{{language}}}.
   `,
 });
 

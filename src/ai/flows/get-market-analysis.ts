@@ -14,6 +14,7 @@ import { z } from 'genkit';
 const MarketAnalysisInputSchema = z.object({
   location: z.string().describe('The geographical location (e.g., city, state) for the market analysis.'),
   crops: z.array(z.string()).optional().describe('A list of specific crops to focus on.'),
+  language: z.string().describe('The language for the response.'),
 });
 export type MarketAnalysisInput = z.infer<typeof MarketAnalysisInputSchema>;
 
@@ -48,7 +49,7 @@ const prompt = ai.definePrompt({
   2.  Detailed analysis for 3-5 key crops relevant to the location, including current prices and recent trends (up, down, or stable).
   3.  Actionable recommendations for the farmer.
 
-  Structure your response according to the output schema. Ensure all prices are in Indian Rupees (₹).
+  Structure your response according to the output schema. Ensure all prices are in Indian Rupees (₹) and the entire response is in {{{language}}}.
   `,
 });
 
