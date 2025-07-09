@@ -39,7 +39,7 @@ const prompt = ai.definePrompt({
   And the following database of government schemes:
   {{schemeDatabase}}
 
-  Identify the schemes that are most relevant to the farmer and provide a tailored summary of each scheme, including eligibility criteria and how to apply. Return the list of relevant schemes in the format specified by the schema.
+  Identify the schemes that are most relevant to the farmer and provide a tailored summary of each scheme, including eligibility criteria and how to apply. Use the Indian Rupee symbol (₹) for any currency values. Return the list of relevant schemes in the format specified by the schema.
   `,
 });
 

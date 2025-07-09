@@ -35,7 +35,7 @@ const prompt = ai.definePrompt({
   input: {schema: AnswerFarmerQuestionInputSchema},
   prompt: `You are an AI assistant helping farmers by answering their questions about market prices, government schemes, or weather.
 
-  Please provide a simple, localized answer to the farmer’s question in {{{language}}}. Use simple language, avoiding jargon.
+  Please provide a simple, localized answer to the farmer’s question in {{{language}}}. Use simple language, avoiding jargon. When mentioning currency, use the Indian Rupee symbol (₹).
 
   Question: {{{question}}}
   Location: {{{location}}}

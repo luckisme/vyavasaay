@@ -48,7 +48,7 @@ const prompt = ai.definePrompt({
   2.  Detailed analysis for 3-5 key crops relevant to the location, including current prices and recent trends (up, down, or stable).
   3.  Actionable recommendations for the farmer.
 
-  Structure your response according to the output schema.
+  Structure your response according to the output schema. Ensure all prices are in Indian Rupees (₹).
   `,
 });
 

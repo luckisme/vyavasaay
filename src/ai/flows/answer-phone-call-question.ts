@@ -37,7 +37,7 @@ const prompt = ai.definePrompt({
 
   Question: {{{question}}}
 
-  Please provide a concise and helpful answer in {{{language}}}. Then, convert the answer to audio using the Text-to-Speech model.
+  Please provide a concise and helpful answer in {{{language}}}. When mentioning currency, use the Indian Rupee symbol (₹). Then, convert the answer to audio using the Text-to-Speech model.
   `,
 });
 
