@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   Sidebar,
   SidebarHeader,
@@ -10,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Leaf, TrendingUp, Landmark, LayoutDashboard, Sprout, Phone } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, LayoutDashboard, Phone } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -25,7 +26,7 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2 p-2">
-          <Sprout className="w-8 h-8 text-primary" />
+          <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-2.png" alt="Vyavasaay Logo" width={32} height={32} />
           <h2 className="text-xl font-bold text-primary font-headline">{t('appName', 'Vyavasaay')}</h2>
         </div>
       </SidebarHeader>
