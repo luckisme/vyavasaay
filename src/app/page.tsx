@@ -71,7 +71,7 @@ function AppCore() {
             <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
                 <div className="flex items-center gap-2">
                 <SidebarTrigger className="md:hidden" />
-                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={48} height={48} />
+                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={64} height={64} />
                 </div>
                 <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
