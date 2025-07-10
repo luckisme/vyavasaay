@@ -90,7 +90,7 @@ function AppCore() {
                     </Select>
                 </div>
                 <Avatar>
-                  <Image src="https://placehold.co/40x40.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} data-ai-hint="farmer avatar" />
+                  <Image src="https://storage.googleapis.com/aai-web-samples/vyavasaay/farmer-avatar.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
                   <AvatarFallback>{user.name?.substring(0,2).toUpperCase() || 'FA'}</AvatarFallback>
                 </Avatar>
                 </div>
