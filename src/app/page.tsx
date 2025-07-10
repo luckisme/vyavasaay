@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -68,38 +69,34 @@ function AppCore() {
          <SidebarProvider>
             <AppSidebar activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
             <div className="flex flex-col w-full min-h-screen">
-            <header className="sticky top-0 z-10 flex h-20 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
-                <div className="flex items-center gap-2">
-                <SidebarTrigger className="md:hidden" />
-                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={80} height={80} />
-                </div>
-                <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                    <Globe className="h-5 w-5 text-muted-foreground" />
-                    <Select value={language} onValueChange={handleLanguageChange}>
-                    <SelectTrigger className="w-[120px] border-none focus:ring-0 bg-transparent">
-                        <SelectValue placeholder={t('header.language', 'Language')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {languages.map((lang) => (
-                        <SelectItem key={lang.value} value={lang.value}>
-                            {lang.label}
-                        </SelectItem>
-                        ))}
-                    </SelectContent>
-                    </Select>
-                </div>
-                <Avatar>
-                  <Image src="/images/image.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
-                  <AvatarFallback>{user.name?.substring(0,2).toUpperCase() || 'FA'}</AvatarFallback>
-                </Avatar>
-                </div>
-            </header>
-            <SidebarInset>
-                <main className="flex-1 p-4 sm:p-6 overflow-auto">
-                {renderFeature()}
-                </main>
-            </SidebarInset>
+                <header className="sticky top-0 z-10 flex h-20 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
+                    <div className="flex items-center gap-2">
+                        <SidebarTrigger className="md:hidden" />
+                        <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={180} height={180} />
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Select value={language} onValueChange={handleLanguageChange}>
+                        <SelectTrigger className="w-[120px] border-none focus:ring-0 bg-transparent flex items-center gap-2">
+                            <Globe className="h-5 w-5 text-muted-foreground" />
+                            <SelectValue placeholder={t('header.language', 'Language')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {languages.map((lang) => (
+                            <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                            ))}
+                        </SelectContent>
+                        </Select>
+                        <Avatar>
+                            <Image src="/images/image.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
+                            <AvatarFallback>{user.name?.substring(0,2).toUpperCase() || 'FA'}</AvatarFallback>
+                        </Avatar>
+                    </div>
+                </header>
+                <SidebarInset>
+                    <main className="flex-1 p-4 sm:p-6 overflow-auto">
+                    {renderFeature()}
+                    </main>
+                </SidebarInset>
             </div>
             <AskVyavasaay />
         </SidebarProvider>
