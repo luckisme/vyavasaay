@@ -76,8 +76,8 @@ function AppCore() {
                     </div>
                     <div className="flex items-center gap-4">
                         <Select value={language} onValueChange={handleLanguageChange}>
-                        <SelectTrigger className="w-[120px] border-none focus:ring-0 bg-transparent flex items-center gap-2">
-                            <Globe className="h-5 w-5 text-muted-foreground" />
+                        <SelectTrigger className="w-auto sm:w-[120px] border-none focus:ring-0 bg-transparent flex items-center gap-2">
+                            <Globe className="h-5 w-5 text-muted-foreground hidden sm:block" />
                             <SelectValue placeholder={t('header.language', 'Language')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -109,8 +109,6 @@ function AppContent() {
     const { isUserLoading, setIsUserLoading, setUserProfile } = useUser();
     
     useEffect(() => {
-        // This logic is now handled in the UserProvider, but we keep the effect
-        // to set loading to false after the initial check.
         setIsUserLoading(false);
     }, [setIsUserLoading]);
 
