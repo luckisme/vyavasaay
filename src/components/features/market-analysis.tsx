@@ -7,13 +7,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, ArrowDown, ArrowRight, ArrowUp, BarChart, FileText, Bot } from 'lucide-react';
+import { AlertCircle, ArrowDown, ArrowRight, ArrowUp, BarChart, FileText, Bot, ChevronDown } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import { Badge } from '@/components/ui/badge';
 import { languages } from '@/app/page';
 import { ChatInterface } from './ask-vyavasay';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 
 const TrendIcon = ({ trend }: { trend: 'up' | 'down' | 'stable' }) => {
     switch (trend) {
@@ -25,6 +30,26 @@ const TrendIcon = ({ trend }: { trend: 'up' | 'down' | 'stable' }) => {
         default:
             return <ArrowRight className="h-4 w-4 text-gray-500" />;
     }
+};
+
+const CollapsibleOutlook = ({ text, className }: { text: string, className?: string }) => {
+    const { t } = useTranslation();
+    const [isOpen, setIsOpen] = useState(false);
+    const preview = text.split(' ').slice(0, 10).join(' ') + (text.split(' ').length > 10 ? '...' : '');
+
+    return (
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn("space-y-2", className)}>
+            <p className="text-muted-foreground">{isOpen ? text : preview}</p>
+            {text.split(' ').length > 10 && (
+                 <CollapsibleTrigger asChild>
+                    <Button variant="link" className="p-0 h-auto text-sm">
+                        {isOpen ? t('marketAnalysis.showLess', 'Show less') : t('marketAnalysis.showMore', 'Show more')}
+                        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform", isOpen && "rotate-180")} />
+                    </Button>
+                </CollapsibleTrigger>
+            )}
+        </Collapsible>
+    );
 };
 
 export default function MarketAnalysis() {
@@ -57,6 +82,8 @@ export default function MarketAnalysis() {
     fetchAnalysis();
   }, [user, language]);
 
+  const isMobile = useIsMobile();
+
   const MainContent = () => {
     if (state.loading) {
         return (
@@ -78,9 +105,9 @@ export default function MarketAnalysis() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            <Skeleton className="h-10 w-full" />
-                            <Skeleton className="h-10 w-full" />
-                            <Skeleton className="h-10 w-full" />
+                            <Skeleton className="h-16 w-full" />
+                            <Skeleton className="h-16 w-full" />
+                            <Skeleton className="h-16 w-full" />
                         </div>
                     </CardContent>
                 </Card>
@@ -129,31 +156,62 @@ export default function MarketAnalysis() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{t('marketAnalysis.table.crop', 'Crop')}</TableHead>
-                                <TableHead>{t('marketAnalysis.table.price', 'Price')}</TableHead>
-                                <TableHead>{t('marketAnalysis.table.trend', 'Trend')}</TableHead>
-                                <TableHead>{t('marketAnalysis.table.outlook', 'Outlook')}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
+                    { isMobile ? (
+                        <div className="space-y-4">
                             {detailedAnalysis.map((crop) => (
-                                <TableRow key={crop.cropName}>
-                                    <TableCell className="font-medium">{crop.cropName}</TableCell>
-                                    <TableCell>{crop.price}</TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline" className="flex items-center gap-1 w-24 justify-center">
-                                            <TrendIcon trend={crop.trend} />
-                                            <span>{t(`marketAnalysis.trends.${crop.trend}`, crop.trend)}</span>
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-muted-foreground">{crop.outlook}</TableCell>
-                                </TableRow>
+                                <Card key={crop.cropName} className="bg-muted/50">
+                                    <CardHeader className="pb-4">
+                                        <CardTitle className="text-lg">{crop.cropName}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-3">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-medium text-muted-foreground">{t('marketAnalysis.table.price', 'Price')}</span>
+                                            <span className="font-semibold">{crop.price}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-medium text-muted-foreground">{t('marketAnalysis.table.trend', 'Trend')}</span>
+                                             <Badge variant="outline" className="flex items-center gap-1 w-24 justify-center">
+                                                <TrendIcon trend={crop.trend} />
+                                                <span>{t(`marketAnalysis.trends.${crop.trend}`, crop.trend)}</span>
+                                            </Badge>
+                                        </div>
+                                        <div className="space-y-1 pt-2">
+                                            <h4 className="font-medium text-muted-foreground">{t('marketAnalysis.table.outlook', 'Outlook')}</h4>
+                                            <CollapsibleOutlook text={crop.outlook} />
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             ))}
-                        </TableBody>
-                    </Table>
+                        </div>
+                    ) : (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>{t('marketAnalysis.table.crop', 'Crop')}</TableHead>
+                                    <TableHead>{t('marketAnalysis.table.price', 'Price')}</TableHead>
+                                    <TableHead>{t('marketAnalysis.table.trend', 'Trend')}</TableHead>
+                                    <TableHead className="w-[40%]">{t('marketAnalysis.table.outlook', 'Outlook')}</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {detailedAnalysis.map((crop) => (
+                                    <TableRow key={crop.cropName}>
+                                        <TableCell className="font-medium">{crop.cropName}</TableCell>
+                                        <TableCell>{crop.price}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className="flex items-center gap-1 w-24 justify-center">
+                                                <TrendIcon trend={crop.trend} />
+                                                <span>{t(`marketAnalysis.trends.${crop.trend}`, crop.trend)}</span>
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <CollapsibleOutlook text={crop.outlook} />
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    )}
                 </CardContent>
             </Card>
 

@@ -71,7 +71,9 @@
       "stable": "Stable"
     },
     "chatPlaceholder": "Ask about prices or trends...",
-    "chatInitialMessage": "Use this chat to ask for more details on the market analysis."
+    "chatInitialMessage": "Use this chat to ask for more details on the market analysis.",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "govtSchemes": {
     "title": "Govt. Schemes",
