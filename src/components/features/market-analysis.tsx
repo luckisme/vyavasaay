@@ -152,7 +152,7 @@ export default function MarketAnalysis() {
                 <CardHeader>
                     <CardTitle className="font-headline flex items-center gap-2">
                         <BarChart className="text-primary"/>
-                        {t('marketAnalysis.detailedTitle', 'Detailed Crop Analysis')}
+                        {t('marketAnalysis.detailedTitle', 'Crop Market Analysis')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

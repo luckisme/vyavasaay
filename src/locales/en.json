@@ -56,7 +56,7 @@
     "noData": "No market analysis data available at this time.",
     "summaryTitle": "Market Summary",
     "summaryDescription": "A brief overview of the current agricultural market conditions in your area.",
-    "detailedTitle": "Detailed Crop Analysis",
+    "detailedTitle": "Crop Market Analysis",
     "recommendationsTitle": "AI Recommendations",
     "recommendationsDescription": "Actionable advice based on the current market analysis.",
     "table": {
