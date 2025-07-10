@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -6,8 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, Sparkles, Sprout, Mic, Pause, Volume2, Send, MessageSquare } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { User, Sparkles, Sprout, Mic, Pause, Volume2, Send } from 'lucide-react';
 import { askVyavasaayAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/types';
@@ -158,15 +158,16 @@ const useChatLogic = () => {
   };
 };
 
-const ChatInterface = ({
-    chatLogic,
+export const ChatInterface = ({
     placeholder,
-    initialMessage
+    initialMessage,
+    className
 } : {
-    chatLogic: ReturnType<typeof useChatLogic>,
     placeholder: string,
-    initialMessage: string
+    initialMessage: string,
+    className?: string,
 }) => {
+    const chatLogic = useChatLogic();
     const {
         t,
         messages,
@@ -176,122 +177,110 @@ const ChatInterface = ({
         isRecording,
         activeAudioId,
         scrollAreaRef,
+        audioRef,
         handleMicClick,
         playAudio,
         handleSubmit,
     } = chatLogic;
+
     return (
-        <>
-            <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
-                <div className="space-y-4">
-                {messages.length === 0 && (
-                    <div className="text-center text-muted-foreground pt-10">
-                    <p>{initialMessage}</p>
-                    </div>
-                )}
-                {messages.map((message) => (
-                    <div
-                    key={message.id}
-                    className={cn(
-                        'flex items-start gap-3',
-                        message.role === 'user' ? 'justify-end' : 'justify-start'
-                    )}
-                    >
-                    {message.role === 'assistant' && (
-                        <Avatar className="w-8 h-8 border-2 border-primary">
-                        <div className="w-full h-full flex items-center justify-center bg-primary/20">
-                            <Sprout className="w-4 h-4 text-primary" />
-                        </div>
-                        </Avatar>
-                    )}
-                    <div
-                        className={cn(
-                        'max-w-[75%] rounded-lg p-3 text-sm flex items-center gap-2',
-                        message.role === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground'
-                        )}
-                    >
-                        <span className="whitespace-pre-wrap">{message.content}</span>
-                        {message.role === 'assistant' && message.audio && (
-                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => playAudio(message.audio!, message.id)}>
-                            {activeAudioId === message.id ? <Pause className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                        </Button>
-                        )}
-                    </div>
-                    {message.role === 'user' && (
-                        <Avatar className="w-8 h-8">
-                        <AvatarFallback><User className="w-4 h-4" /></AvatarFallback>
-                        </Avatar>
-                    )}
-                    </div>
-                ))}
-                {isLoading && (
-                    <div className="flex items-start gap-3 justify-start">
-                    <Avatar className="w-8 h-8 border-2 border-primary">
-                        <div className="w-full h-full flex items-center justify-center bg-primary/20">
-                        <Sprout className="w-4 h-4 text-primary" />
-                        </div>
-                    </Avatar>
-                    <div className="bg-muted rounded-lg p-3 space-y-2">
-                        <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-4 w-24" />
-                    </div>
-                    </div>
-                )}
+      <>
+        <audio ref={audioRef} className="sr-only"/>
+        <Card className={cn("flex flex-col h-full", className)}>
+            <CardHeader className='flex-row items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                    <Sparkles className="text-accent h-5 w-5" />
+                    <CardTitle className="font-headline text-lg">{t('askVyavasaay.title')}</CardTitle>
                 </div>
-            </ScrollArea>
-            <form onSubmit={handleSubmit} className="flex items-center gap-2 pt-4 border-t">
-                <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={isRecording ? t('askVyavasaay.listening') : placeholder}
-                disabled={isLoading}
-                autoComplete="off"
-                />
-                <Button type="button" size="icon" onClick={handleMicClick} variant={isRecording ? 'destructive' : 'outline'} disabled={isLoading}>
-                <Mic className="w-4 h-4" />
-                </Button>
-                <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
-                <Send className="w-4 h-4" />
-                </Button>
-            </form>
-        </>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden p-4 pt-0">
+                <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
+                    <div className="space-y-4">
+                    {messages.length === 0 && (
+                        <div className="text-center text-muted-foreground pt-10">
+                        <p>{initialMessage}</p>
+                        </div>
+                    )}
+                    {messages.map((message) => (
+                        <div
+                        key={message.id}
+                        className={cn(
+                            'flex items-start gap-3',
+                            message.role === 'user' ? 'justify-end' : 'justify-start'
+                        )}
+                        >
+                        {message.role === 'assistant' && (
+                            <Avatar className="w-8 h-8 border-2 border-primary">
+                            <div className="w-full h-full flex items-center justify-center bg-primary/20">
+                                <Sprout className="w-4 h-4 text-primary" />
+                            </div>
+                            </Avatar>
+                        )}
+                        <div
+                            className={cn(
+                            'max-w-[75%] rounded-lg p-3 text-sm flex items-center gap-2',
+                            message.role === 'user'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted text-muted-foreground'
+                            )}
+                        >
+                            <span className="whitespace-pre-wrap">{message.content}</span>
+                            {message.role === 'assistant' && message.audio && (
+                            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => playAudio(message.audio!, message.id)}>
+                                {activeAudioId === message.id ? <Pause className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                            </Button>
+                            )}
+                        </div>
+                        {message.role === 'user' && (
+                            <Avatar className="w-8 h-8">
+                            <AvatarFallback><User className="w-4 h-4" /></AvatarFallback>
+                            </Avatar>
+                        )}
+                        </div>
+                    ))}
+                    {isLoading && (
+                        <div className="flex items-start gap-3 justify-start">
+                        <Avatar className="w-8 h-8 border-2 border-primary">
+                            <div className="w-full h-full flex items-center justify-center bg-primary/20">
+                            <Sprout className="w-4 h-4 text-primary" />
+                            </div>
+                        </Avatar>
+                        <div className="bg-muted rounded-lg p-3 space-y-2">
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-4 w-24" />
+                        </div>
+                        </div>
+                    )}
+                    </div>
+                </ScrollArea>
+                <form onSubmit={handleSubmit} className="flex items-center gap-2 pt-4 border-t">
+                    <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder={isRecording ? t('askVyavasaay.listening') : placeholder}
+                    disabled={isLoading}
+                    autoComplete="off"
+                    />
+                    <Button type="button" size="icon" onClick={handleMicClick} variant={isRecording ? 'destructive' : 'outline'} disabled={isLoading}>
+                    <Mic className="w-4 h-4" />
+                    </Button>
+                    <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+                    <Send className="w-4 h-4" />
+                    </Button>
+                </form>
+            </CardContent>
+        </Card>
+      </>
     )
 }
 
+// This default export is now unused, but kept to avoid breaking imports if any.
 export default function AskVyavasaay() {
-  const chatLogic = useChatLogic();
-  const { t, audioRef } = chatLogic;
-
+  const { t } = useTranslation();
   return (
-    <>
-        <audio ref={audioRef} />
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg" size="icon">
-                    <MessageSquare className="h-8 w-8" />
-                    <span className="sr-only">{t('askVyavasaay.title')}</span>
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 h-[60vh] mr-4 p-0 flex flex-col border-2" sideOffset={10}>
-                <Card className="flex-1 flex flex-col h-full border-none shadow-none">
-                    <CardHeader className='flex-row items-center justify-between'>
-                        <div className='flex items-center gap-2'>
-                            <Sparkles className="text-accent h-5 w-5" />
-                            <CardTitle className="font-headline text-lg">{t('askVyavasaay.title')}</CardTitle>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden p-4 pt-0">
-                        <ChatInterface 
-                            chatLogic={chatLogic}
-                            placeholder={t('askVyavasaay.placeholder')}
-                            initialMessage={t('askVyavasaay.initialMessage')}
-                        />
-                    </CardContent>
-                </Card>
-            </PopoverContent>
-        </Popover>
-    </>
+    <ChatInterface 
+        placeholder={t('askVyavasaay.placeholder')}
+        initialMessage={t('askVyavasaay.initialMessage')}
+    />
   );
 }

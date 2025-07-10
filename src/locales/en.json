@@ -37,7 +37,9 @@
     "confidence": "Confidence",
     "recommendedActions": "Recommended Actions",
     "error": "Error",
-    "imagePreviewAlt": "Crop preview"
+    "imagePreviewAlt": "Crop preview",
+    "chatPlaceholder": "Ask about this diagnosis...",
+    "chatInitialMessage": "Your diagnosis will appear above. Ask follow-up questions here."
   },
   "askVyavasaay": {
     "title": "Ask Vyavasaay",
@@ -67,7 +69,9 @@
       "up": "Up",
       "down": "Down",
       "stable": "Stable"
-    }
+    },
+    "chatPlaceholder": "Ask about prices or trends...",
+    "chatInitialMessage": "Use this chat to ask for more details on the market analysis."
   },
   "govtSchemes": {
     "title": "Govt. Schemes",
@@ -83,7 +87,9 @@
     "resultPlaceholder": "Personalized schemes will be loaded here based on your profile.",
     "summaryBenefits": "Summary & Benefits",
     "eligibility": "Eligibility",
-    "applicationProcess": "Application Process"
+    "applicationProcess": "Application Process",
+    "chatPlaceholder": "Ask about eligibility or how to apply...",
+    "chatInitialMessage": "Ask for more details about the schemes listed or find other schemes."
   },
   "sidebar": {
     "discover": "Discover",

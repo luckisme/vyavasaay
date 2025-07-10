@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef, useEffect, useActionState } from 'react';
@@ -13,6 +14,7 @@ import { UploadCloud, X, AlertCircle } from 'lucide-react';
 import { diagnoseCropAction, type DiagnoseState } from '@/app/actions';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
+import { ChatInterface } from './ask-vyavasay';
 
 const initialState: DiagnoseState = {
   data: null,
@@ -62,46 +64,52 @@ export default function CropDiagnosis() {
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline">{t('cropDiagnosis.uploadTitle')}</CardTitle>
-          <CardDescription>{t('cropDiagnosis.uploadDescription')}</CardDescription>
-        </CardHeader>
-        <form action={formAction}>
-            <CardContent>
-                <div className="space-y-4">
-                    <div className="w-full h-64 border-2 border-dashed rounded-lg flex items-center justify-center relative">
-                        {preview ? (
-                        <>
-                            <Image src={preview} alt={t('cropDiagnosis.imagePreviewAlt')} layout="fill" objectFit="contain" className="rounded-md" />
-                            <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 h-8 w-8" onClick={handleRemoveImage}>
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </>
-                        ) : (
-                        <div className="text-center space-y-2 text-muted-foreground">
-                            <UploadCloud className="mx-auto h-12 w-12" />
-                            <p>{t('cropDiagnosis.uploadArea')}</p>
-                        </div>
-                        )}
-                    </div>
-                    <Input id="photo" name="photo" type="file" accept="image/*" required onChange={handleFileChange} ref={fileInputRef} className="file:text-primary"/>
-                    <input type="hidden" name="location" value={user?.location || ''} />
-                    <input type="hidden" name="language" value={language} />
-                    {state.error && (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>{t('cropDiagnosis.error')}</AlertTitle>
-                            <AlertDescription>{state.error}</AlertDescription>
-                        </Alert>
-                    )}
-                </div>
-            </CardContent>
-            <CardFooter>
-                <SubmitButton />
-            </CardFooter>
-        </form>
-      </Card>
+      <div className="space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-headline">{t('cropDiagnosis.uploadTitle')}</CardTitle>
+            <CardDescription>{t('cropDiagnosis.uploadDescription')}</CardDescription>
+          </CardHeader>
+          <form action={formAction}>
+              <CardContent>
+                  <div className="space-y-4">
+                      <div className="w-full h-64 border-2 border-dashed rounded-lg flex items-center justify-center relative">
+                          {preview ? (
+                          <>
+                              <Image src={preview} alt={t('cropDiagnosis.imagePreviewAlt')} layout="fill" objectFit="contain" className="rounded-md" />
+                              <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 h-8 w-8" onClick={handleRemoveImage}>
+                                  <X className="h-4 w-4" />
+                              </Button>
+                          </>
+                          ) : (
+                          <div className="text-center space-y-2 text-muted-foreground">
+                              <UploadCloud className="mx-auto h-12 w-12" />
+                              <p>{t('cropDiagnosis.uploadArea')}</p>
+                          </div>
+                          )}
+                      </div>
+                      <Input id="photo" name="photo" type="file" accept="image/*" required onChange={handleFileChange} ref={fileInputRef} className="file:text-primary"/>
+                      <input type="hidden" name="location" value={user?.location || ''} />
+                      <input type="hidden" name="language" value={language} />
+                      {state.error && (
+                          <Alert variant="destructive">
+                              <AlertCircle className="h-4 w-4" />
+                              <AlertTitle>{t('cropDiagnosis.error')}</AlertTitle>
+                              <AlertDescription>{state.error}</AlertDescription>
+                          </Alert>
+                      )}
+                  </div>
+              </CardContent>
+              <CardFooter>
+                  <SubmitButton />
+              </CardFooter>
+          </form>
+        </Card>
+        <ChatInterface
+            placeholder={t('cropDiagnosis.chatPlaceholder', 'Ask about this diagnosis...')}
+            initialMessage={t('cropDiagnosis.chatInitialMessage', 'Your diagnosis will appear above. Ask follow-up questions here.')}
+        />
+      </div>
       
       <Card>
         <CardHeader>

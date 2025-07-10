@@ -108,7 +108,6 @@ function AppCore() {
                     </main>
                 </SidebarInset>
             </div>
-            <AskVyavasaay />
             <BottomNav activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
         </SidebarProvider>
       )}

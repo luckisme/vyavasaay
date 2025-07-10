@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -11,6 +12,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import { languages } from '@/app/page';
+import { ChatInterface } from './ask-vyavasay';
 
 export default function GovtSchemes() {
   const { t, language } = useTranslation();
@@ -48,15 +50,23 @@ export default function GovtSchemes() {
   }, [user, farmerDetails, language]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-headline">{t('govtSchemes.resultTitle')}</CardTitle>
-        <CardDescription>{t('govtSchemes.resultDescription')}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <SchemeResults state={state} />
-      </CardContent>
-    </Card>
+    <div className="grid md:grid-cols-2 gap-8 items-start">
+        <Card>
+            <CardHeader>
+                <CardTitle className="font-headline">{t('govtSchemes.resultTitle')}</CardTitle>
+                <CardDescription>{t('govtSchemes.resultDescription')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <SchemeResults state={state} />
+            </CardContent>
+        </Card>
+        <div className="md:sticky md:top-24">
+            <ChatInterface
+                placeholder={t('govtSchemes.chatPlaceholder', 'Ask about eligibility or how to apply...')}
+                initialMessage={t('govtSchemes.chatInitialMessage', 'Ask for more details about the schemes listed or find other schemes.')}
+            />
+        </div>
+    </div>
   );
 }
 
