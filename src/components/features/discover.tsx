@@ -46,7 +46,7 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
       type: 'video',
       source: 'YouTube',
       icon: Youtube,
-      imageUrl: 'https://placehold.co/600x400',
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM.jpeg",
       dataAiHint: 'soil test farm',
     },
      {
@@ -54,7 +54,7 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
       type: 'news',
       source: 'AgriNews',
       icon: Newspaper,
-      imageUrl: 'https://placehold.co/600x400',
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (1).jpeg",
       dataAiHint: 'farm subsidy',
     },
     {
@@ -62,7 +62,7 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
       type: 'link',
       source: 'kvk.icar.gov.in',
       icon: LinkIcon,
-      imageUrl: 'https://placehold.co/600x400',
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg",
       dataAiHint: 'farm education',
     }
   ]
