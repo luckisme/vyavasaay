@@ -8,7 +8,18 @@ import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
-import { languages } from './page';
+
+// Define languages directly in the server action file to avoid import issues from client components.
+const languages = [
+    { value: 'en', label: 'English' },
+    { value: 'hi', label: 'हिन्दी' },
+    { value: 'mr', label: 'मराठी' },
+    { value: 'ta', label: 'தமிழ்' },
+    { value: 'te', label: 'తెలుగు' },
+    { value: 'bn', label: 'বাংলা' },
+    { value: 'kn', label: 'ಕನ್ನಡ' },
+];
+
 
 // State for Crop Diagnosis Action
 export interface DiagnoseState {
@@ -50,13 +61,14 @@ export async function diagnoseCropAction(
 export async function askVyavasaayAction(
   question: string,
   location: string,
-  language: string
+  languageCode: string
 ): Promise<{ answer: string; answerAudio?: string; } | { error: string }> {
   if (!question) {
     return { error: 'Question cannot be empty.' };
   }
   try {
-    const result = await answerFarmerQuestion({ question, location, language });
+    const languageName = languages.find(l => l.value === languageCode)?.label || 'English';
+    const result = await answerFarmerQuestion({ question, location, language: languageName });
     return { answer: result.answer, answerAudio: result.answerAudio };
   } catch (e) {
     console.error(e);

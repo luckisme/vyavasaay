@@ -7,14 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, Sparkles, Sprout, Mic, Pause, Volume2, Send } from 'lucide-react';
+import { User, Sprout, Mic, Pause, Volume2, Send } from 'lucide-react';
 import { askVyavasaayAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
-import { languages } from '@/app/page';
 
 const useChatLogic = () => {
   const { t, language: langCode } = useTranslation();
@@ -120,8 +119,7 @@ const useChatLogic = () => {
     setInput('');
     setIsLoading(true);
 
-    const currentLanguageName = languages.find(l => l.value === langCode)?.label || 'English';
-    const result = await askVyavasaayAction(input, user?.location || 'an unspecified location', currentLanguageName);
+    const result = await askVyavasaayAction(input, user?.location || 'an unspecified location', langCode);
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {
@@ -189,7 +187,6 @@ export const ChatInterface = ({
         <Card className={cn("flex flex-col h-full", className)}>
             <CardHeader className='flex-row items-center justify-between'>
                 <div className='flex items-center gap-2'>
-                    <Sparkles className="text-accent h-5 w-5" />
                     <CardTitle className="font-headline text-lg">{t('askVyavasaay.title')}</CardTitle>
                 </div>
             </CardHeader>
