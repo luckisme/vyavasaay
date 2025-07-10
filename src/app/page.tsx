@@ -13,11 +13,12 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Globe } from 'lucide-react';
+import { Globe, Bell } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
 import { UserProvider, useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
+import { Button } from '@/components/ui/button';
 
 export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes';
 
@@ -71,6 +72,9 @@ function AppCore() {
             <AppSidebar activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
             <div className="flex flex-col w-full min-h-screen">
                 <header className="sticky top-0 z-10 flex h-20 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
+                    <div className="flex items-center gap-2 md:hidden">
+                        {/* <SidebarTrigger /> */}
+                    </div>
                     <div className="flex items-center gap-2">
                         <button onClick={() => setActiveFeature('discover')} className="flex items-center gap-2">
                             <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={180} height={180} />
@@ -88,6 +92,10 @@ function AppCore() {
                             ))}
                         </SelectContent>
                         </Select>
+                        <Button variant="ghost" size="icon">
+                            <Bell className="h-5 w-5" />
+                            <span className="sr-only">Notifications</span>
+                        </Button>
                         <Avatar>
                             <Image src="/images/image.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
                             <AvatarFallback>{user.name?.substring(0,2).toUpperCase() || 'FA'}</AvatarFallback>
