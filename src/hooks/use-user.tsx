@@ -10,21 +10,28 @@ export interface UserProfile {
 
 interface UserContextType {
   user: UserProfile | null;
-  setUserProfile: (profile: UserProfile) => void;
+  setUserProfile: (profile: UserProfile | null) => void;
   isUserLoading: boolean;
+  setIsUserLoading: (isLoading: boolean) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(false);
+  const [isUserLoading, setIsUserLoading] = useState(true);
 
-  const setUserProfile = useCallback((profile: UserProfile) => {
-    setUser(profile);
+  const setUserProfile = useCallback((profile: UserProfile | null) => {
+    if (profile) {
+        localStorage.setItem('vyavasaay-user', JSON.stringify(profile));
+        setUser(profile);
+    } else {
+        localStorage.removeItem('vyavasaay-user');
+        setUser(null);
+    }
   }, []);
 
-  const value = { user, setUserProfile, isUserLoading };
+  const value = { user, setUserProfile, isUserLoading, setIsUserLoading };
 
   return (
     <UserContext.Provider value={value}>

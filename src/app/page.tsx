@@ -71,7 +71,7 @@ function AppCore() {
             <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
                 <div className="flex items-center gap-2">
                 <SidebarTrigger className="md:hidden" />
-                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={40} height={40} className="hidden sm:block" />
+                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={48} height={48} />
                 </div>
                 <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
@@ -112,12 +112,10 @@ function AppContent() {
     const { isUserLoading, setIsUserLoading, setUserProfile } = useUser();
     
     useEffect(() => {
-        const storedUser = localStorage.getItem('vyavasaay-user');
-        if(storedUser) {
-            setUserProfile(JSON.parse(storedUser));
-        }
+        // This logic is now handled in the UserProvider, but we keep the effect
+        // to set loading to false after the initial check.
         setIsUserLoading(false);
-    }, [setUserProfile, setIsUserLoading]);
+    }, [setIsUserLoading]);
 
     if (isUserLoading) {
         return (
