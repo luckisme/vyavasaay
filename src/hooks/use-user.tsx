@@ -22,17 +22,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isUserLoading, setIsUserLoading] = useState(true);
 
   useEffect(() => {
-    // This effect runs once on mount to check for a stored user
-    const storedUser = localStorage.getItem('vyavasaay-user-temp');
-    if (storedUser) {
-        setUser(JSON.parse(storedUser));
-    }
+    // For prototyping, we clear the user on every reload to show the onboarding.
+    localStorage.removeItem('vyavasaay-user-temp');
     setIsUserLoading(false);
   }, []);
 
   const setUserProfile = useCallback((profile: UserProfile | null) => {
     if (profile) {
-        // We'll use a temporary key for prototyping to ensure onboarding always shows on a fresh start
+        // We'll use a temporary key for prototyping.
         localStorage.setItem('vyavasaay-user-temp', JSON.stringify(profile));
         setUser(profile);
     } else {

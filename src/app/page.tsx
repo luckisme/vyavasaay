@@ -23,13 +23,13 @@ import { Button } from '@/components/ui/button';
 export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes';
 
 export const languages = [
-    { value: 'en', label: 'English' },
-    { value: 'hi', label: 'हिन्दी' },
-    { value: 'mr', label: 'मराठी' },
-    { value: 'ta', label: 'தமிழ்' },
-    { value: 'te', label: 'తెలుగు' },
-    { value: 'bn', label: 'বাংলা' },
-    { value: 'kn', label: 'ಕನ್ನಡ' },
+    { value: 'en', label: 'English', short: 'En' },
+    { value: 'hi', label: 'हिन्दी', short: 'हि' },
+    { value: 'mr', label: 'मराठी', short: 'म' },
+    { value: 'ta', label: 'தமிழ்', short: 'த' },
+    { value: 'te', label: 'తెలుగు', short: 'తె' },
+    { value: 'bn', label: 'বাংলা', short: 'বা' },
+    { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ' },
 ];
 
 function AppCore() {
@@ -63,6 +63,8 @@ function AppCore() {
         return <Discover setActiveFeature={setActiveFeature} userName={user.name} />;
     }
   };
+  
+  const currentLanguage = languages.find(l => l.value === language) || languages[0];
 
   return (
     <>
@@ -73,7 +75,6 @@ function AppCore() {
             <div className="flex flex-col w-full min-h-screen">
                 <header className="sticky top-0 z-10 flex h-20 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
                     <div className="flex items-center gap-2 md:hidden">
-                        {/* <SidebarTrigger /> */}
                     </div>
                     <div className="flex items-center gap-2">
                         <button onClick={() => setActiveFeature('discover')} className="flex items-center gap-2">
@@ -84,7 +85,10 @@ function AppCore() {
                         <Select value={language} onValueChange={handleLanguageChange}>
                         <SelectTrigger className="w-auto sm:w-[120px] border-none focus:ring-0 bg-transparent flex items-center gap-2">
                             <Globe className="h-5 w-5 text-muted-foreground hidden sm:block" />
-                            <SelectValue placeholder={t('header.language', 'Language')} />
+                            <SelectValue>
+                                <span className="sm:hidden">{currentLanguage.short}</span>
+                                <span className="hidden sm:inline">{currentLanguage.label}</span>
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             {languages.map((lang) => (
