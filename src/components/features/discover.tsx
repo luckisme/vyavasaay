@@ -73,6 +73,26 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
         <h1 className="text-3xl font-bold tracking-tight text-foreground font-headline">{t('dashboard.welcome', `Welcome, ${userName}`, { name: userName })}</h1>
         <p className="text-muted-foreground">{t('dashboard.welcome_message', 'Your AI-powered agricultural assistant is ready to help.')}</p>
       </div>
+      
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
+         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {resources.map((res) => (
+                <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1">
+                    <div className="relative h-40 w-full">
+                        <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
+                    </div>
+                    <CardHeader>
+                        <CardTitle className="text-lg">{res.title}</CardTitle>
+                        <CardDescription className="flex items-center gap-2 pt-2">
+                            <res.icon className="w-4 h-4 text-muted-foreground" />
+                            <span>{res.source}</span>
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+            ))}
+        </div>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {features.map((item) => (
@@ -94,26 +114,6 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
             </CardContent>
           </Card>
         ))}
-      </div>
-      
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
-         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {resources.map((res) => (
-                <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1">
-                    <div className="relative h-40 w-full">
-                        <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
-                    </div>
-                    <CardHeader>
-                        <CardTitle className="text-lg">{res.title}</CardTitle>
-                        <CardDescription className="flex items-center gap-2 pt-2">
-                            <res.icon className="w-4 h-4 text-muted-foreground" />
-                            <span>{res.source}</span>
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
-            ))}
-        </div>
       </div>
     </div>
   );

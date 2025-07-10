@@ -9,7 +9,7 @@ import AskVyavasaay from '@/components/features/ask-vyavasay';
 import MarketAnalysis from '@/components/features/market-analysis';
 import GovtSchemes from '@/components/features/govt-schemes';
 import OnboardingModal from '@/components/onboarding-modal';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -72,7 +72,6 @@ function AppCore() {
             <div className="flex flex-col w-full min-h-screen">
                 <header className="sticky top-0 z-10 flex h-20 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
                     <div className="flex items-center gap-2">
-                        <SidebarTrigger className="md:hidden" />
                         <button onClick={() => setActiveFeature('discover')} className="flex items-center gap-2">
                             <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={180} height={180} />
                         </button>
