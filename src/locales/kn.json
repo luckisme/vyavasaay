@@ -1,3 +1,4 @@
+
 {
   "appName": "ವ್ಯಾವಸಾಯ",
   "appDescription": "ರೈತರಿಗಾಗಿ AI-ಚಾಲಿತ ಸಹಾಯಕ",
@@ -19,6 +20,9 @@
         "description": "ನಿಮಗಾಗಿ ಸೂಕ್ತವಾದ ಸಂಬಂಧಿತ ಸರ್ಕಾರಿ ಯೋಜನೆಗಳನ್ನು ಹುಡುಕಿ."
       }
     }
+  },
+  "discover": {
+    "resourcesTitle": "ಕೃಷಿ ಸಂಪನ್ಮೂಲಗಳು"
   },
   "cropDiagnosis": {
     "title": "ಬೆಳೆ ರೋಗನಿರ್ಣಯ",
@@ -65,6 +69,7 @@
     "applicationProcess": "ಅರ್ಜಿ ಪ್ರಕ್ರಿಯೆ"
   },
   "sidebar": {
+    "discover": "ಅನ್ವೇಷಿಸಿ",
     "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
     "diagnose": "ಬೆಳೆ ರೋಗನಿರ್ಣಯ",
     "marketAnalysis": "ಮಾರುಕಟ್ಟೆ ವಿಶ್ಲೇಷಣೆ",

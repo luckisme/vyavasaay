@@ -1,17 +1,16 @@
+
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import {
   Sidebar,
-  SidebarHeader,
   SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Leaf, TrendingUp, Landmark, LayoutDashboard, Phone } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Compass, Phone } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -24,18 +23,16 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
   const { t } = useTranslation();
   return (
     <Sidebar>
-      <SidebarHeader>
-      </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={() => setActiveFeature('dashboard')}
-              isActive={activeFeature === 'dashboard'}
-              tooltip={{ children: t('sidebar.dashboard', 'Dashboard'), side: 'right' }}
+              onClick={() => setActiveFeature('discover')}
+              isActive={activeFeature === 'discover'}
+              tooltip={{ children: t('sidebar.discover', 'Discover'), side: 'right' }}
             >
-              <LayoutDashboard />
-              <span>{t('sidebar.dashboard', 'Dashboard')}</span>
+              <Compass />
+              <span>{t('sidebar.discover', 'Discover')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>

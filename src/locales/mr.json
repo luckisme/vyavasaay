@@ -1,3 +1,4 @@
+
 {
   "appName": "व्यावसाय",
   "appDescription": "शेतकऱ्यांसाठी एआय-चालित सहाय्यक",
@@ -19,6 +20,9 @@
         "description": "तुमच्यासाठी तयार केलेल्या संबंधित सरकारी योजना शोधा."
       }
     }
+  },
+  "discover": {
+    "resourcesTitle": "शेती संसाधने"
   },
   "cropDiagnosis": {
     "title": "पीक निदान",
@@ -65,6 +69,7 @@
     "applicationProcess": "अर्ज प्रक्रिया"
   },
   "sidebar": {
+    "discover": "शोधा",
     "dashboard": "डॅशबोर्ड",
     "diagnose": "पीक निदान",
     "marketAnalysis": "बाजार विश्लेषण",

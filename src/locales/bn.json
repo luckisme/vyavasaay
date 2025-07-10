@@ -1,3 +1,4 @@
+
 {
   "appName": "ব্যবসায়",
   "appDescription": "কৃষকদের জন্য এআই-চালিত সহকারী",
@@ -19,6 +20,9 @@
         "description": "আপনার জন্য উপযুক্ত প্রাসঙ্গিক সরকারি প্রকল্পগুলি খুঁজুন।"
       }
     }
+  },
+  "discover": {
+    "resourcesTitle": "কৃষি সম্পদ"
   },
   "cropDiagnosis": {
     "title": "ফসল নির্ণয়",
@@ -65,6 +69,7 @@
     "applicationProcess": "আবেদন প্রক্রিয়া"
   },
   "sidebar": {
+    "discover": "আবিষ্কার",
     "dashboard": "ড্যাশবোর্ড",
     "diagnose": "ফসল নির্ণয়",
     "marketAnalysis": "বাজার বিশ্লেষণ",

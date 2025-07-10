@@ -1,3 +1,4 @@
+
 {
   "appName": "వ్యవసాయ్",
   "appDescription": "రైతుల కోసం AI-ఆధారిత సహాయకుడు",
@@ -19,6 +20,9 @@
         "description": "మీ కోసం రూపొందించిన సంబంధిత ప్రభుత్వ పథకాలను కనుగొనండి."
       }
     }
+  },
+  "discover": {
+    "resourcesTitle": "వ్యవసాయ వనరులు"
   },
   "cropDiagnosis": {
     "title": "పంట నిర్ధారణ",
@@ -65,6 +69,7 @@
     "applicationProcess": "దరఖాస్తు ప్రక్రియ"
   },
   "sidebar": {
+    "discover": "కనుగొనండి",
     "dashboard": "డాష్‌బోర్డ్",
     "diagnose": "పంట నిర్ధారణ",
     "marketAnalysis": "మార్కెట్ విశ్లేషణ",

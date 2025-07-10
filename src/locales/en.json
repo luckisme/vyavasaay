@@ -1,3 +1,4 @@
+
 {
   "appName": "Vyavasaay",
   "appDescription": "AI-powered assistant for farmers",
@@ -19,6 +20,9 @@
         "description": "Find relevant government schemes tailored for you."
       }
     }
+  },
+  "discover": {
+    "resourcesTitle": "Farming Resources"
   },
   "cropDiagnosis": {
     "title": "Crop Diagnosis",
@@ -82,6 +86,7 @@
     "applicationProcess": "Application Process"
   },
   "sidebar": {
+    "discover": "Discover",
     "dashboard": "Dashboard",
     "diagnose": "Crop Diagnosis",
     "marketAnalysis": "Market Analysis",

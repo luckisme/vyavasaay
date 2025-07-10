@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AppSidebar from '@/components/layout/app-sidebar';
-import Dashboard from '@/components/dashboard';
+import Discover from '@/components/features/discover';
 import CropDiagnosis from '@/components/features/crop-diagnosis';
 import AskVyavasaay from '@/components/features/ask-vyavasay';
 import MarketAnalysis from '@/components/features/market-analysis';
@@ -15,10 +15,11 @@ import Image from 'next/image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Globe } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
-import { UserProvider, useUser, UserProfile } from '@/hooks/use-user';
+import { UserProvider, useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
+import BottomNav from '@/components/layout/bottom-nav';
 
-export type Feature = 'dashboard' | 'diagnose' | 'market' | 'schemes';
+export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes';
 
 export const languages = [
     { value: 'en', label: 'English' },
@@ -33,7 +34,7 @@ export const languages = [
 function AppCore() {
   const { user, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();
-  const [activeFeature, setActiveFeature] = useState<Feature>('dashboard');
+  const [activeFeature, setActiveFeature] = useState<Feature>('discover');
 
   useEffect(() => {
     if (user?.language) {
@@ -56,9 +57,9 @@ function AppCore() {
         return <MarketAnalysis />;
       case 'schemes':
         return <GovtSchemes />;
-      case 'dashboard':
+      case 'discover':
       default:
-        return <Dashboard setActiveFeature={setActiveFeature} userName={user.name} />;
+        return <Discover setActiveFeature={setActiveFeature} userName={user.name} />;
     }
   };
 
@@ -72,7 +73,9 @@ function AppCore() {
                 <header className="sticky top-0 z-10 flex h-20 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="md:hidden" />
-                        <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={180} height={180} />
+                        <button onClick={() => setActiveFeature('discover')} className="flex items-center gap-2">
+                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={180} height={180} />
+                        </button>
                     </div>
                     <div className="flex items-center gap-4">
                         <Select value={language} onValueChange={handleLanguageChange}>
@@ -93,12 +96,13 @@ function AppCore() {
                     </div>
                 </header>
                 <SidebarInset>
-                    <main className="flex-1 p-4 sm:p-6 overflow-auto">
+                    <main className="flex-1 p-4 sm:p-6 pb-24 md:pb-6 overflow-auto">
                     {renderFeature()}
                     </main>
                 </SidebarInset>
             </div>
             <AskVyavasaay />
+            <BottomNav activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
         </SidebarProvider>
       )}
     </>
@@ -106,12 +110,8 @@ function AppCore() {
 }
 
 function AppContent() {
-    const { isUserLoading, setIsUserLoading, setUserProfile } = useUser();
+    const { isUserLoading } = useUser();
     
-    useEffect(() => {
-        setIsUserLoading(false);
-    }, [setIsUserLoading]);
-
     if (isUserLoading) {
         return (
             <div className="flex h-screen w-screen items-center justify-center">
