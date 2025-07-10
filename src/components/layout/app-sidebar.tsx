@@ -8,7 +8,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Leaf, TrendingUp, Landmark, Compass, Phone } from 'lucide-react';
 import type { Feature } from '@/app/page';
@@ -67,16 +66,6 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="p-2">
-            <SidebarMenuButton asChild>
-                <a href="tel:1800-000-0000">
-                    <Phone />
-                    <span>{t('sidebar.callHelpline', 'Call Helpline')}</span>
-                </a>
-            </SidebarMenuButton>
-        </div>
-      </SidebarFooter>
     </Sidebar>
   );
 }
