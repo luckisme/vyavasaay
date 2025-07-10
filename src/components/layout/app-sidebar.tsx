@@ -25,9 +25,8 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 p-2">
-          <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-2.png" alt="Vyavasaay Logo" width={32} height={32} />
-          <h2 className="text-xl font-bold text-primary font-headline">{t('appName', 'Vyavasaay')}</h2>
+        <div className="flex items-center justify-center p-2">
+          <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={48} height={48} />
         </div>
       </SidebarHeader>
       <SidebarContent>
