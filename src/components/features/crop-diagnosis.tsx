@@ -15,6 +15,8 @@ import { diagnoseCropAction, type DiagnoseState } from '@/app/actions';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import { ChatInterface } from './ask-vyavasay';
+import type { ChatMessage } from '@/lib/types';
+import { useFormState } from 'react-dom';
 
 const initialState: DiagnoseState = {
   data: null,
@@ -31,18 +33,51 @@ function SubmitButton() {
   );
 }
 
+const DiagnosisResult = ({ result }: { result: DiagnoseState['data'] }) => {
+    const { t } = useTranslation();
+    if (!result) return null;
+
+    const { diagnosis } = result;
+
+    return (
+        <div className="space-y-4">
+            <div>
+                <h3 className="text-lg font-semibold text-primary">{diagnosis.disease}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                    <Progress value={diagnosis.confidence * 100} className="w-full h-3" />
+                    <span className="text-sm font-medium">{Math.round(diagnosis.confidence * 100)}% {t('cropDiagnosis.confidence')}</span>
+                </div>
+            </div>
+            
+            <div>
+                <h4 className="font-semibold">{t('cropDiagnosis.recommendedActions')}</h4>
+                <p className="whitespace-pre-wrap">{diagnosis.recommendedActions}</p>
+            </div>
+        </div>
+    );
+};
+
+
 export default function CropDiagnosis() {
   const { t, language } = useTranslation();
   const { user } = useUser();
-  const [state, formAction] = useActionState(diagnoseCropAction, initialState);
+  const [state, formAction] = useFormState(diagnoseCropAction, initialState);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
-    if (state.error) {
-        // Potentially show a toast notification here
+    if (state.data) {
+        setInitialMessages([{
+            id: 'diagnosis-result-' + Date.now(),
+            role: 'assistant',
+            content: <DiagnosisResult result={state.data} />
+        }]);
+    } else if (state.error) {
+        // Optionally handle error display, e.g., in a toast
     }
-  }, [state.error]);
+  }, [state]);
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,7 +98,7 @@ export default function CropDiagnosis() {
   }
 
   return (
-    <div className="grid gap-8 md:grid-cols-2">
+    <div className="grid gap-8 md:grid-cols-2 items-start">
       <div className="space-y-8">
         <Card>
           <CardHeader>
@@ -105,63 +140,17 @@ export default function CropDiagnosis() {
               </CardFooter>
           </form>
         </Card>
-        <ChatInterface
-            placeholder={t('cropDiagnosis.chatPlaceholder', 'Ask about this diagnosis...')}
-            initialMessage={t('cropDiagnosis.chatInitialMessage', 'Your diagnosis will appear above. Ask follow-up questions here.')}
-        />
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline">{t('cropDiagnosis.resultTitle')}</CardTitle>
-          <CardDescription>{t('cropDiagnosis.resultDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FormStatusContent result={state.data} />
-        </CardContent>
-      </Card>
+      <div className="md:sticky md:top-24">
+        <ChatInterface
+            title={t('cropDiagnosis.resultTitle')}
+            placeholder={t('cropDiagnosis.chatPlaceholder')}
+            initialMessage={t('cropDiagnosis.chatInitialMessage')}
+            initialMessages={initialMessages}
+            key={initialMessages[0]?.id} // Re-mounts chat when a new diagnosis is made
+        />
+      </div>
     </div>
   );
-}
-
-
-function FormStatusContent({ result }: { result: DiagnoseState['data'] }) {
-    const { pending } = useFormStatus();
-    const { t } = useTranslation();
-
-    if (pending) {
-        return (
-            <div className="space-y-4">
-                <Skeleton className="h-8 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <div className="space-y-2 pt-4">
-                    <Skeleton className="h-6 w-1/4" />
-                    <Skeleton className="h-20 w-full" />
-                </div>
-            </div>
-        )
-    }
-
-    if (!result) {
-        return <p className="text-muted-foreground">{t('cropDiagnosis.resultPlaceholder')}</p>
-    }
-
-    const { diagnosis } = result;
-
-    return (
-        <div className="space-y-4">
-            <div>
-                <h3 className="text-lg font-semibold text-primary">{diagnosis.disease}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                    <Progress value={diagnosis.confidence * 100} className="w-full h-3" />
-                    <span className="text-sm font-medium text-muted-foreground">{Math.round(diagnosis.confidence * 100)}% {t('cropDiagnosis.confidence')}</span>
-                </div>
-            </div>
-            
-            <div>
-                <h4 className="font-semibold">{t('cropDiagnosis.recommendedActions')}</h4>
-                <p className="text-muted-foreground whitespace-pre-wrap">{diagnosis.recommendedActions}</p>
-            </div>
-        </div>
-    )
 }

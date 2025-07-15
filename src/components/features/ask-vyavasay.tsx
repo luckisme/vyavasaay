@@ -15,10 +15,10 @@ import { Skeleton } from '../ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 
-const useChatLogic = () => {
+const useChatLogic = (initialMessages: ChatMessage[] = []) => {
   const { t, language: langCode } = useTranslation();
   const { user } = useUser();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([...initialMessages]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -157,15 +157,19 @@ const useChatLogic = () => {
 };
 
 export const ChatInterface = ({
+    title,
     placeholder,
     initialMessage,
+    initialMessages,
     className
 } : {
-    placeholder: string,
-    initialMessage: string,
-    className?: string,
+    title: string;
+    placeholder: string;
+    initialMessage: string;
+    initialMessages?: ChatMessage[];
+    className?: string;
 }) => {
-    const chatLogic = useChatLogic();
+    const chatLogic = useChatLogic(initialMessages);
     const {
         t,
         messages,
@@ -185,10 +189,8 @@ export const ChatInterface = ({
       <>
         <audio ref={audioRef} className="sr-only"/>
         <Card className={cn("flex flex-col h-full", className)}>
-            <CardHeader className='flex-row items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                    <CardTitle className="font-headline text-lg">{t('askVyavasaay.title')}</CardTitle>
-                </div>
+            <CardHeader>
+                <CardTitle className="font-headline text-lg">{title}</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden p-4 pt-0">
                 <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
@@ -215,15 +217,15 @@ export const ChatInterface = ({
                         )}
                         <div
                             className={cn(
-                            'max-w-[75%] rounded-lg p-3 text-sm flex items-center gap-2',
+                            'max-w-[85%] rounded-lg p-3 text-sm flex items-center gap-2',
                             message.role === 'user'
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted text-muted-foreground'
                             )}
                         >
-                            <span className="whitespace-pre-wrap">{message.content}</span>
+                            <div className="whitespace-pre-wrap">{message.content}</div>
                             {message.role === 'assistant' && message.audio && (
-                            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => playAudio(message.audio!, message.id)}>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0 self-center" onClick={() => playAudio(message.audio!, message.id)}>
                                 {activeAudioId === message.id ? <Pause className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                             </Button>
                             )}
@@ -276,6 +278,7 @@ export default function AskVyavasaay() {
   const { t } = useTranslation();
   return (
     <ChatInterface 
+        title={t('askVyavasaay.title')}
         placeholder={t('askVyavasaay.placeholder')}
         initialMessage={t('askVyavasaay.initialMessage')}
     />
