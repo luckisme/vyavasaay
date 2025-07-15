@@ -18,6 +18,10 @@
       "schemes": {
         "title": "Government Schemes",
         "description": "Find relevant government schemes tailored for you."
+      },
+      "weather": {
+        "title": "Weather",
+        "description": "Get real-time weather updates and forecasts for your location."
       }
     }
   },
@@ -93,12 +97,25 @@
     "chatPlaceholder": "Ask about eligibility or how to apply...",
     "chatInitialMessage": "Ask for more details about the schemes listed or find other schemes."
   },
+  "weather": {
+    "title": "Weather",
+    "currentTitle": "Current Weather in {{location}}",
+    "lastUpdated": "Last updated just now.",
+    "feelsLike": "Feels Like",
+    "humidity": "Humidity",
+    "windSpeed": "Wind Speed",
+    "errorTitle": "Error Fetching Weather",
+    "chatTitle": "Ask About Weather",
+    "chatPlaceholder": "e.g., Will it rain tomorrow?",
+    "chatInitialMessage": "Ask for a forecast, or any other weather-related questions."
+  },
   "sidebar": {
     "discover": "Discover",
     "dashboard": "Dashboard",
     "diagnose": "Crop Diagnosis",
     "marketAnalysis": "Market Analysis",
     "schemes": "Govt. Schemes",
+    "weather": "Weather",
     "callHelpline": "Call Helpline"
   },
   "header": {

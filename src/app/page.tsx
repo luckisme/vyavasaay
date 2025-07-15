@@ -5,9 +5,9 @@ import React, { useState, useEffect } from 'react';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Discover from '@/components/features/discover';
 import CropDiagnosis from '@/components/features/crop-diagnosis';
-import AskVyavasaay from '@/components/features/ask-vyavasay';
 import MarketAnalysis from '@/components/features/market-analysis';
 import GovtSchemes from '@/components/features/govt-schemes';
+import Weather from '@/components/features/weather';
 import OnboardingModal from '@/components/onboarding-modal';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -20,7 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
 
-export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes';
+export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather';
 
 export const languages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -58,6 +58,8 @@ function AppCore() {
         return <MarketAnalysis />;
       case 'schemes':
         return <GovtSchemes />;
+      case 'weather':
+        return <Weather />;
       case 'discover':
       default:
         return <Discover setActiveFeature={setActiveFeature} userName={user.name} />;

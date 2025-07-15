@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, Phone } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, Phone, CloudSun } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
@@ -38,6 +38,13 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
       feature: 'schemes' as Feature,
       color: 'bg-yellow-100 text-yellow-800',
     },
+    {
+      name: t('dashboard.features.weather.title', 'Weather Forecast'),
+      description: t('dashboard.features.weather.description', 'Get current weather and forecasts for your location.'),
+      icon: CloudSun,
+      feature: 'weather' as Feature,
+      color: 'bg-indigo-100 text-indigo-800',
+    }
   ];
   
   const resources = [
@@ -106,7 +113,7 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
         {features.map((item) => (
           <Card
             key={item.name}

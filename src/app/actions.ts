@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -109,5 +110,56 @@ export async function getMarketAnalysisAction(location: string, language: string
     } catch (e) {
         console.error(e);
         throw new Error('An unexpected error occurred while fetching market analysis.');
+    }
+}
+
+// Action for getting weather data
+export interface WeatherData {
+    temperature: number;
+    feelsLike: number;
+    description: string;
+    iconUrl: string;
+    humidity: number;
+    windSpeed: number;
+    location: string;
+}
+
+export async function getWeatherAction(location: string): Promise<WeatherData | { error: string }> {
+    if (!location) {
+        return { error: 'Location is required.' };
+    }
+
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+    if (!apiKey) {
+        console.error("OpenWeather API key is not set.");
+        return { error: 'Server configuration error: Weather service is unavailable.' };
+    }
+    
+    // City name might have a state, e.g., "Nashik, Maharashtra". We'll use the city part.
+    const city = location.split(',')[0].trim();
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+    
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('OpenWeather API Error:', errorData);
+            return { error: `Could not fetch weather for "${city}". Please check the location name.` };
+        }
+        const data = await response.json();
+
+        return {
+            temperature: data.main.temp,
+            feelsLike: data.main.feels_like,
+            description: data.weather[0].description,
+            iconUrl: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+            humidity: data.main.humidity,
+            windSpeed: data.wind.speed,
+            location: data.name,
+        };
+    } catch (e) {
+        console.error(e);
+        return { error: 'An unexpected error occurred while fetching weather data.' };
     }
 }

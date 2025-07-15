@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import { Leaf, TrendingUp, Landmark, Compass, Phone } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Compass, CloudSun } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -62,6 +62,16 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
             >
               <Landmark />
               <span>{t('sidebar.schemes', 'Govt. Schemes')}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => setActiveFeature('weather')}
+              isActive={activeFeature === 'weather'}
+              tooltip={{ children: t('sidebar.weather', 'Weather'), side: 'right' }}
+            >
+              <CloudSun />
+              <span>{t('sidebar.weather', 'Weather')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

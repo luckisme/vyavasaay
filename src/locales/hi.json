@@ -18,6 +18,10 @@
       "schemes": {
         "title": "सरकारी योजनाएं",
         "description": "आपके लिए तैयार की गई प्रासंगिक सरकारी योजनाएं खोजें।"
+      },
+       "weather": {
+        "title": "मौसम",
+        "description": "अपने स्थान के लिए वास्तविक समय के मौसम अपडेट और पूर्वानुमान प्राप्त करें।"
       }
     }
   },
@@ -85,12 +89,25 @@
     "eligibility": "पात्रता",
     "applicationProcess": "आवेदन प्रक्रिया"
   },
+   "weather": {
+    "title": "मौसम",
+    "currentTitle": "{{location}} में वर्तमान मौसम",
+    "lastUpdated": "अभी-अभी अपडेट किया गया।",
+    "feelsLike": "महसूस होता है",
+    "humidity": "आर्द्रता",
+    "windSpeed": "हवा की गति",
+    "errorTitle": "मौसम की जानकारी प्राप्त करने में त्रुटि",
+    "chatTitle": "मौसम के बारे में पूछें",
+    "chatPlaceholder": "जैसे, क्या कल बारिश होगी?",
+    "chatInitialMessage": "पूर्वानुमान, या किसी अन्य मौसम-संबंधी प्रश्न के लिए पूछें।"
+  },
   "sidebar": {
     "discover": "खोज",
     "dashboard": "डैशबोर्ड",
     "diagnose": "फसल निदान",
     "marketAnalysis": "बाजार विश्लेषण",
     "schemes": "सरकारी योजनाएं",
+    "weather": "मौसम",
     "callHelpline": "हेल्पलाइन पर कॉल करें"
   },
   "header": {

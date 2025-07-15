@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { Compass, Leaf, Landmark, TrendingUp } from 'lucide-react';
+import { Compass, Leaf, Landmark, TrendingUp, CloudSun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
@@ -36,11 +36,16 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
       icon: Landmark,
       label: t('sidebar.schemes', 'Schemes'),
     },
+     {
+      feature: 'weather' as Feature,
+      icon: CloudSun,
+      label: t('sidebar.weather', 'Weather'),
+    },
   ];
 
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+      <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
         {navItems.map((item) => (
           <button
             key={item.feature}
