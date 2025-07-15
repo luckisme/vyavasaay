@@ -16,7 +16,6 @@ import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import { ChatInterface } from './ask-vyavasay';
 import type { ChatMessage } from '@/lib/types';
-import { useFormState } from 'react-dom';
 
 const initialState: DiagnoseState = {
   data: null,
@@ -61,7 +60,7 @@ const DiagnosisResult = ({ result }: { result: DiagnoseState['data'] }) => {
 export default function CropDiagnosis() {
   const { t, language } = useTranslation();
   const { user } = useUser();
-  const [state, formAction] = useFormState(diagnoseCropAction, initialState);
+  const [state, formAction] = useActionState(diagnoseCropAction, initialState);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
