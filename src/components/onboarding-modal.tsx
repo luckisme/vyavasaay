@@ -22,7 +22,7 @@ export default function OnboardingModal({ isOpen }: OnboardingModalProps) {
     const [selectedLanguage, setSelectedLanguage] = useState('en');
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
-    const [voice, setVoice] = useState('Algenib');
+    const [voice, setVoice] = useState('Achernar');
 
     const handleLanguageSelect = (langCode: string) => {
         setSelectedLanguage(langCode);

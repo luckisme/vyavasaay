@@ -1,3 +1,4 @@
+
 // src/ai/flows/answer-farmer-question.ts
 'use server';
 
@@ -58,7 +59,7 @@ const answerFarmerQuestionFlow = ai.defineFlow(
         responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: {voiceName: input.voice || 'Algenib'},
+            prebuiltVoiceConfig: {voiceName: input.voice || 'Achernar'},
           },
         },
       },

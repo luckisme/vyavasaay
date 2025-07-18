@@ -33,10 +33,8 @@ export const languages = [
 ];
 
 export const voices = [
-    { value: 'Algenib', label: 'Algenib (Female)'},
-    { value: 'Sirius', label: 'Sirius (Male)'},
-    { value: 'Achernar', label: 'Achernar (Female)'},
-    { value: 'Hadar', label: 'Hadar (Male)'},
+    { value: 'Achernar', label: 'Female' },
+    { value: 'Sirius', label: 'Male' },
 ];
 
 function AppCore() {
