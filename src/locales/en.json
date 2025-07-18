@@ -129,6 +129,8 @@
     "namePlaceholder": "e.g. Rohan",
     "location": "Location",
     "locationPlaceholder": "e.g. Nashik, Maharashtra",
+    "voice": "Voice",
+    "voicePlaceholder": "Select a voice",
     "button": "Save and Continue"
   }
 }

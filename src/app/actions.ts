@@ -9,6 +9,7 @@ import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
+import type { UserProfile } from '@/hooks/use-user';
 
 // Define languages directly in the server action file to avoid import issues from client components.
 const languages = [
@@ -61,7 +62,7 @@ export async function diagnoseCropAction(
 // Action for Ask Vyavasaay (no form state needed, called directly)
 export async function askVyavasaayAction(
   question: string,
-  location: string,
+  user: UserProfile,
   languageCode: string
 ): Promise<{ answer: string; answerAudio?: string; } | { error: string }> {
   if (!question) {
@@ -69,7 +70,12 @@ export async function askVyavasaayAction(
   }
   try {
     const languageName = languages.find(l => l.value === languageCode)?.label || 'English';
-    const result = await answerFarmerQuestion({ question, location, language: languageName });
+    const result = await answerFarmerQuestion({ 
+        question, 
+        location: user.location, 
+        language: languageName,
+        voice: user.voice,
+    });
     return { answer: result.answer, answerAudio: result.answerAudio };
   } catch (e) {
     console.error(e);

@@ -121,6 +121,8 @@
     "namePlaceholder": "उदा. रोहन",
     "location": "स्थान",
     "locationPlaceholder": "उदा. नासिक, महाराष्ट्र",
+    "voice": "आवाज़",
+    "voicePlaceholder": "एक आवाज़ चुनें",
     "button": "सहेजें और जारी रखें"
   }
 }

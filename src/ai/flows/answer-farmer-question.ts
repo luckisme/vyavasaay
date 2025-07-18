@@ -17,6 +17,7 @@ const AnswerFarmerQuestionInputSchema = z.object({
   question: z.string().describe('The farmer’s question about market prices, government schemes, or weather.'),
   location: z.string().optional().describe('The location of the farmer, to provide localized information.'),
   language: z.string().describe('The language for the answer.'),
+  voice: z.string().optional().describe('The prebuilt voice to use for the text-to-speech response.'),
 });
 export type AnswerFarmerQuestionInput = z.infer<typeof AnswerFarmerQuestionInputSchema>;
 
@@ -57,7 +58,7 @@ const answerFarmerQuestionFlow = ai.defineFlow(
         responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: {voiceName: 'Algenib'},
+            prebuiltVoiceConfig: {voiceName: input.voice || 'Algenib'},
           },
         },
       },

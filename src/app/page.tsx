@@ -32,6 +32,13 @@ export const languages = [
     { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ' },
 ];
 
+export const voices = [
+    { value: 'Algenib', label: 'Algenib (Female)'},
+    { value: 'Sirius', label: 'Sirius (Male)'},
+    { value: 'Achernar', label: 'Achernar (Female)'},
+    { value: 'Hadar', label: 'Hadar (Male)'},
+];
+
 function AppCore() {
   const { user, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();

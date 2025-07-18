@@ -7,6 +7,7 @@ export interface UserProfile {
   name: string;
   location: string;
   language: string;
+  voice: string;
 }
 
 interface UserContextType {

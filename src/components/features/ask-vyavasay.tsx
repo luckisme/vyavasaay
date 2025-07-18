@@ -108,7 +108,7 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
 
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !user) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -119,7 +119,7 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
     setInput('');
     setIsLoading(true);
 
-    const result = await askVyavasaayAction(input, user?.location || 'an unspecified location', langCode);
+    const result = await askVyavasaayAction(input, user, langCode);
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {

@@ -18,6 +18,7 @@ import wav from 'wav';
 const AnswerPhoneCallQuestionInputSchema = z.object({
   question: z.string().describe('The question asked by the farmer.'),
   language: z.string().describe('The language in which the answer should be provided.'),
+  voice: z.string().optional().describe('The prebuilt voice to use for the text-to-speech response.'),
 });
 export type AnswerPhoneCallQuestionInput = z.infer<typeof AnswerPhoneCallQuestionInputSchema>;
 
@@ -56,7 +57,7 @@ const answerPhoneCallQuestionFlow = ai.defineFlow(
         responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: {voiceName: 'Algenib'},
+            prebuiltVoiceConfig: {voiceName: input.voice || 'Algenib'},
           },
         },
       },
