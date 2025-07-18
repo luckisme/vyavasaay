@@ -74,6 +74,8 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
     }
   ]
 
+  const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -81,17 +83,19 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
         <p className="text-muted-foreground">{t('dashboard.welcome_message', 'Your AI-powered agricultural assistant is ready to help.')}</p>
       </div>
 
-      <a href="tel:1800-000-0000" className="md:hidden">
-          <Card className="bg-primary text-primary-foreground border-accent shadow-lg transition-transform hover:scale-105">
-              <CardHeader className="flex-row items-center gap-4">
-                  <Phone className="h-8 w-8 text-accent"/>
-                  <div>
-                      <CardTitle className="font-headline text-lg">Call our offline AI assistant</CardTitle>
-                      <CardDescription className="text-primary-foreground/80">Get instant answers over the phone, no internet needed!</CardDescription>
-                  </div>
-              </CardHeader>
-          </Card>
-      </a>
+      {offlineCallNumber && (
+        <a href={`tel:${offlineCallNumber}`} className="md:hidden">
+            <Card className="bg-primary text-primary-foreground border-accent shadow-lg transition-transform hover:scale-105">
+                <CardHeader className="flex-row items-center gap-4">
+                    <Phone className="h-8 w-8 text-accent"/>
+                    <div>
+                        <CardTitle className="font-headline text-lg">Call our offline AI assistant</CardTitle>
+                        <CardDescription className="text-primary-foreground/80">Get instant answers over the phone, no internet needed!</CardDescription>
+                    </div>
+                </CardHeader>
+            </Card>
+        </a>
+      )}
       
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
