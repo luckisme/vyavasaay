@@ -38,10 +38,14 @@ export async function answerPhoneCallQuestion(input: AnswerPhoneCallQuestionInpu
 const conversationalPrompt = ai.definePrompt({
     name: 'answerPhoneCallConversationalPrompt',
     input: { schema: AnswerPhoneCallQuestionInputSchema },
-    prompt: `You are an AI assistant helping farmers by answering their questions about crops, market prices, government schemes, and weather in their local language.
-  
-    This is a voice conversation. Keep your answers concise and to the point.
-  
+    prompt: `You are a helpful and friendly AI assistant for farmers named Vyavasaay. You are speaking to a farmer on the phone.
+
+    This is a voice conversation. Keep your answers concise, clear, and to the point.
+    If the farmer just started the conversation by saying "Hello" or something similar, greet them warmly and ask how you can help.
+    
+    Answer questions about crops, market prices, government schemes, and weather in their local language.
+    When mentioning currency, use the Indian Rupee symbol (₹).
+
     Conversation History:
     {{#each conversationHistory}}
       {{#if (eq role 'user')}}Farmer: {{content}}{{/if}}
@@ -50,7 +54,7 @@ const conversationalPrompt = ai.definePrompt({
   
     New Question from Farmer: {{{question}}}
   
-    Please provide a helpful answer in {{{language}}}. When mentioning currency, use the Indian Rupee symbol (₹).
+    Please provide a helpful answer in {{{language}}}.
     `,
 });
 

@@ -11,7 +11,7 @@ const conversationStore: Record<string, { history: any[], language: string, from
 const exotelWebhookSchema = z.object({
   CallSid: z.string(),
   SpeechResult: z.string().optional(),
-  Digits: z.string().optional(), // Exotel might send digits
+  Digits: z.string().optional(),
   Language: z.string().optional(),
   CallStatus: z.string().optional(),
   From: z.string().optional(),
@@ -29,7 +29,6 @@ async function sendSms(to: string, summary: string) {
         return;
     }
 
-    // IMPORTANT: Ensure the 'From' number is an Exotel virtual number (ExoPhone)
     const fromNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
     if (!fromNumber) {
         console.error("NEXT_PUBLIC_OFFLINE_CALL_NUMBER is not set.");
@@ -79,7 +78,8 @@ export async function POST(req: NextRequest) {
     if (CallStatus && ['completed', 'failed', 'busy', 'no-answer'].includes(CallStatus)) {
         if (conversationStore[CallSid]) {
             const { history, language, from: callerNumber } = conversationStore[CallSid];
-            if (history.length > 0 && callerNumber) {
+            // Only send summary if there was a meaningful conversation
+            if (history.length > 1 && callerNumber) {
                 const summary = await getConversationSummaryFlow({ conversationHistory: history, language });
                 await sendSms(callerNumber, summary);
             }
@@ -88,31 +88,31 @@ export async function POST(req: NextRequest) {
         return new NextResponse('<Response><Hangup/></Response>', { headers: { 'Content-Type': 'application/xml' } });
     }
 
-    const question = SpeechResult;
     // Default to a common Indian language BCP-47 code if not provided
     const bcp47Language = Language || 'en-IN'; 
     const languageName = new Intl.DisplayNames([bcp47Language.split('-')[0]], { type: 'language' }).of(bcp47Language.split('-')[0])!;
     
+    // Initialize conversation history if it's a new call
     if (!conversationStore[CallSid]) {
-      // Store the caller's number to send the SMS later
       conversationStore[CallSid] = { history: [], language: languageName, from: From || null };
     }
     
-    const currentHistory = conversationStore[CallSid].history;
+    const currentConversation = conversationStore[CallSid];
     
-    if(question) {
-        currentHistory.push({ role: 'user', content: question });
-    }
+    // The farmer's question is in SpeechResult. If it's empty, it's the first turn.
+    const question = SpeechResult || "Hello"; // Use "Hello" to trigger the initial greeting from the AI.
+    
+    currentConversation.history.push({ role: 'user', content: question });
 
     const { answerAudio, answerText } = await answerPhoneCallQuestion({
-      question: question || "Hello, I am Vyavasaay's AI assistant. How can I help you today?",
+      question: question,
       language: languageName,
       voice: 'Achernar', // You can customize this
-      conversationHistory: currentHistory,
+      conversationHistory: currentConversation.history,
       callSid: CallSid,
     });
     
-    currentHistory.push({ role: 'model', content: answerText });
+    currentConversation.history.push({ role: 'model', content: answerText });
     
     const base64Audio = answerAudio.split(',')[1];
     
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
 
     return new NextResponse(exotelResponse, {
       status: 200,
-      headers: { 'Content-Type': 'text/xml' }, // Use text/xml for Exotel
+      headers: { 'Content-Type': 'text/xml' },
     });
 
   } catch (error) {
