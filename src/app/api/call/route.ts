@@ -150,3 +150,18 @@ export async function POST(req: NextRequest) {
     });
   }
 }
+
+export async function GET(req: NextRequest) {
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say voice="female">Welcome to Vyavasaay! Please say something after the beep.</Say>
+  <Gather action="${req.nextUrl.href}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#">
+    <Say>I did not catch that. Can you please repeat?</Say>
+  </Gather>
+</Response>`;
+
+  return new NextResponse(xml, {
+    status: 200,
+    headers: { 'Content-Type': 'text/xml' },
+  });
+}
