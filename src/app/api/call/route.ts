@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Play>data:audio/wav;base64,${base64Audio}</Play>
-    <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto">
+    <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" language="${bcp47Language}">
         <SpeechModel model="phone_call" enhanced="true"/>
     </Gather>
 </Response>`;
