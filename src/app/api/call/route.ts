@@ -5,19 +5,20 @@ import { z } from 'zod';
 
 // This is a simple in-memory store for prototyping. 
 // In a production app, you would use a database like Firestore or Redis.
-const conversationStore: Record<string, { history: any[], language: string }> = {};
+const conversationStore: Record<string, { history: any[], language: string, from: string | null }> = {};
 
 
-const twilioWebhookSchema = z.object({
+const exotelWebhookSchema = z.object({
   CallSid: z.string(),
   SpeechResult: z.string().optional(),
+  Digits: z.string().optional(), // Exotel might send digits
   Language: z.string().optional(),
   CallStatus: z.string().optional(),
   From: z.string().optional(),
+  Direction: z.string().optional(),
 });
 
 // This function sends an SMS using Exotel's API.
-// IMPORTANT: You need to add EXOTEL_API_KEY and EXOTEL_API_TOKEN to your Vercel environment variables.
 async function sendSms(to: string, summary: string) {
     const apiKey = process.env.EXOTEL_API_KEY;
     const apiToken = process.env.EXOTEL_API_TOKEN;
@@ -25,6 +26,13 @@ async function sendSms(to: string, summary: string) {
 
     if (!apiKey || !apiToken || !exotelSid) {
         console.error("Exotel credentials are not set in environment variables.");
+        return;
+    }
+
+    // IMPORTANT: Ensure the 'From' number is an Exotel virtual number (ExoPhone)
+    const fromNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
+    if (!fromNumber) {
+        console.error("NEXT_PUBLIC_OFFLINE_CALL_NUMBER is not set.");
         return;
     }
 
@@ -37,7 +45,7 @@ async function sendSms(to: string, summary: string) {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-            From: process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER!,
+            From: fromNumber,
             To: to,
             Body: summary,
         }),
@@ -57,30 +65,37 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const body = Object.fromEntries(formData.entries());
     
-    const parsedBody = twilioWebhookSchema.safeParse(body);
+    console.log("Received webhook from Exotel:", body);
+
+    const parsedBody = exotelWebhookSchema.safeParse(body);
     if (!parsedBody.success) {
-      return new NextResponse('Invalid request body', { status: 400 });
+      console.error("Invalid request body from Exotel:", parsedBody.error);
+      return new NextResponse('<Response><Say>Invalid request.</Say><Hangup/></Response>', { status: 400, headers: { 'Content-Type': 'application/xml' } });
     }
 
     const { CallSid, SpeechResult, Language, CallStatus, From } = parsedBody.data;
 
-    // If the call is completed, we generate and send the SMS summary.
-    if (CallStatus === 'completed' || CallStatus === 'failed') {
-        if (conversationStore[CallSid] && From) {
-            const { history, language } = conversationStore[CallSid];
-            const summary = await getConversationSummaryFlow({ conversationHistory: history, language });
-            await sendSms(From, summary);
+    // Handle the end of the call: generate and send SMS
+    if (CallStatus && ['completed', 'failed', 'busy', 'no-answer'].includes(CallStatus)) {
+        if (conversationStore[CallSid]) {
+            const { history, language, from: callerNumber } = conversationStore[CallSid];
+            if (history.length > 0 && callerNumber) {
+                const summary = await getConversationSummaryFlow({ conversationHistory: history, language });
+                await sendSms(callerNumber, summary);
+            }
             delete conversationStore[CallSid]; // Clean up memory
         }
         return new NextResponse('<Response><Hangup/></Response>', { headers: { 'Content-Type': 'application/xml' } });
     }
 
     const question = SpeechResult;
+    // Default to a common Indian language BCP-47 code if not provided
     const bcp47Language = Language || 'en-IN'; 
     const languageName = new Intl.DisplayNames([bcp47Language.split('-')[0]], { type: 'language' }).of(bcp47Language.split('-')[0])!;
     
     if (!conversationStore[CallSid]) {
-      conversationStore[CallSid] = { history: [], language: languageName };
+      // Store the caller's number to send the SMS later
+      conversationStore[CallSid] = { history: [], language: languageName, from: From || null };
     }
     
     const currentHistory = conversationStore[CallSid].history;
@@ -90,9 +105,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { answerAudio, answerText } = await answerPhoneCallQuestion({
-      question: question || "Hello, please introduce yourself.",
+      question: question || "Hello, I am Vyavasaay's AI assistant. How can I help you today?",
       language: languageName,
-      voice: 'Achernar',
+      voice: 'Achernar', // You can customize this
       conversationHistory: currentHistory,
       callSid: CallSid,
     });
@@ -100,27 +115,28 @@ export async function POST(req: NextRequest) {
     currentHistory.push({ role: 'model', content: answerText });
     
     const base64Audio = answerAudio.split(',')[1];
-    const gatherUrl = req.nextUrl.clone();
-
-    // The TwiML response to play the audio and then immediately listen for the next input.
-    // The <Redirect> makes the conversation loop back to this same API endpoint.
-    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+    
+    // This is the Exotel-compatible XML response
+    // It plays the audio and then immediately uses a new <Gather> to listen for the next input.
+    // The action URL points back to this same endpoint to create the conversation loop.
+    const gatherUrl = req.nextUrl.href;
+    const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Play>data:audio/wav;base64,${base64Audio}</Play>
-    <Gather input="speech" action="${gatherUrl.href}" speechTimeout="auto" method="POST">
+    <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto">
         <SpeechModel model="phone_call" enhanced="true"/>
     </Gather>
-    <Redirect method="POST">${gatherUrl.href}</Redirect>
 </Response>`;
 
-    return new NextResponse(twiml, {
+    return new NextResponse(exotelResponse, {
       status: 200,
-      headers: { 'Content-Type': 'application/xml' },
+      headers: { 'Content-Type': 'text/xml' }, // Use text/xml for Exotel
     });
 
   } catch (error) {
     console.error('Error processing call:', error);
     const errorMessage = "I'm sorry, I encountered an error. Please try again later.";
+    // Using <Say> is a safe fallback for errors.
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say>${errorMessage}</Say>
@@ -129,7 +145,7 @@ export async function POST(req: NextRequest) {
 
     return new NextResponse(errorTwiml, {
       status: 500,
-      headers: { 'Content-Type': 'application/xml' },
+      headers: { 'Content-Type': 'text/xml' },
     });
   }
 }
