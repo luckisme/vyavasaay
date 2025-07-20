@@ -23,14 +23,20 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isUserLoading, setIsUserLoading] = useState(true);
 
   useEffect(() => {
-    // For prototyping, we clear the user on every reload to show the onboarding.
-    localStorage.removeItem('vyavasaay-user-temp');
-    setIsUserLoading(false);
+    try {
+      const storedUser = localStorage.getItem('vyavasaay-user-temp');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+        console.error("Failed to parse user from localStorage", error);
+    } finally {
+        setIsUserLoading(false);
+    }
   }, []);
 
   const setUserProfile = useCallback((profile: UserProfile | null) => {
     if (profile) {
-        // We'll use a temporary key for prototyping.
         localStorage.setItem('vyavasaay-user-temp', JSON.stringify(profile));
         setUser(profile);
     } else {
