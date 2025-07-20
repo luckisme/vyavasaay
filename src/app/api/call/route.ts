@@ -90,7 +90,8 @@ export async function POST(req: NextRequest) {
 
     // Default to a common Indian language BCP-47 code if not provided
     const bcp47Language = Language || 'en-IN'; 
-    const languageName = new Intl.DisplayNames([bcp47Language.split('-')[0]], { type: 'language' }).of(bcp47Language.split('-')[0])!;
+    const languageCode = bcp47Language.split('-')[0];
+    const languageName = new Intl.DisplayNames([languageCode], { type: 'language' }).of(languageCode)!;
     
     // Initialize conversation history if it's a new call
     if (!conversationStore[CallSid]) {
@@ -123,8 +124,8 @@ export async function POST(req: NextRequest) {
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Play>data:audio/wav;base64,${base64Audio}</Play>
-    <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" language="${bcp47Language}">
-        <SpeechModel model="phone_call" enhanced="true"/>
+    <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="${bcp47Language}">
+        <Say>You can ask another question now.</Say>
     </Gather>
 </Response>`;
 
@@ -139,12 +140,12 @@ export async function POST(req: NextRequest) {
     // Using <Say> is a safe fallback for errors.
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say>${errorMessage}</Say>
+  <Say voice="female">${errorMessage}</Say>
   <Hangup/>
 </Response>`;
 
     return new NextResponse(errorTwiml, {
-      status: 500,
+      status: 200, // Return 200 OK so Exotel plays the error message
       headers: { 'Content-Type': 'text/xml' },
     });
   }
