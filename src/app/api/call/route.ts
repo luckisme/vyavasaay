@@ -158,7 +158,6 @@ export async function GET(req: NextRequest) {
     <Say>I did not catch that. Can you please repeat?</Say>
   </Gather>
 </Response>`;
-
   return new NextResponse(xml, {
     status: 200,
     headers: { 'Content-Type': 'application/xml' },
