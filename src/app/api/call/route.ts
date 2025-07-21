@@ -8,7 +8,8 @@ const exotelWebhookSchema = z.object({
   CallSid: z.string(),
   SpeechResult: z.string().optional(),
   Digits: z.string().optional(),
-  Language: z.string().optional(),
+  // Use .catch() to handle cases where 'Language' might not be sent
+  Language: z.string().optional().catch(() => 'en-IN'),
   CallStatus: z.string().optional(),
   From: z.string().optional(),
   Direction: z.string().optional(),
@@ -78,6 +79,11 @@ export async function POST(req: NextRequest) {
 
     const { CallSid, SpeechResult, Language, CallStatus, From } = parsedBody.data;
 
+    // Initialize conversation if it's the first time we see this CallSid
+    if (!conversationStore[CallSid]) {
+      conversationStore[CallSid] = { history: [], language: 'English', from: From || null };
+    }
+
     if (CallStatus && ['completed', 'failed', 'busy', 'no-answer'].includes(CallStatus)) {
       if (conversationStore[CallSid]) {
         const { history, language, from: callerNumber } = conversationStore[CallSid];
@@ -100,20 +106,19 @@ export async function POST(req: NextRequest) {
     const languageCode = bcp47Language.split('-')[0];
     const languageName = (() => {
       try {
+        // Handle simple codes directly to avoid errors with new Intl.DisplayNames
+        if (languageCode === 'en') return 'English';
+        if (languageCode === 'hi') return 'Hindi';
         return new Intl.DisplayNames([languageCode], { type: 'language' }).of(languageCode) || 'English';
       } catch {
         return 'English';
       }
     })();
-
-    if (!conversationStore[CallSid]) {
-      // This case handles the first POST request after the initial GET->Passthru
-      conversationStore[CallSid] = { history: [], language: languageName, from: From || null };
-    }
+    
+    conversationStore[CallSid].language = languageName;
 
     const currentConversation = conversationStore[CallSid];
-    // If there's no SpeechResult, the user might have been silent.
-    // We treat it as "Hello" to kickstart the conversation gracefully.
+    // If there's no SpeechResult, it means the user was silent. We should prompt them again.
     const question = SpeechResult || "Hello";
 
     currentConversation.history.push({ role: 'user', content: question });
@@ -131,7 +136,6 @@ export async function POST(req: NextRequest) {
     const base64Audio = answerAudio.split(',')[1];
     const gatherUrl = req.nextUrl.href;
 
-    // This response continues the conversation loop
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Play>data:audio/wav;base64,${base64Audio}</Play>
@@ -149,7 +153,7 @@ export async function POST(req: NextRequest) {
     console.error('Error in POST handler:', error);
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="female">I'm sorry, we encountered an error. Please try again later.</Say>
+  <Say voice="female">I'm sorry, an error occurred on our end. Please try again later.</Say>
   <Hangup/>
 </Response>`;
     return new NextResponse(errorTwiml, {
@@ -157,30 +161,4 @@ export async function POST(req: NextRequest) {
       headers: { 'Content-Type': 'application/xml' },
     });
   }
-}
-
-// GET handler is now exclusively for the initial Passthru
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
-  const callSid = url.searchParams.get('CallSid');
-
-  if(callSid && !conversationStore[callSid]) {
-     const from = url.searchParams.get('From');
-     const language = 'English'; // Defaulting for the GET request
-     conversationStore[callSid] = { history: [], language, from };
-  }
-
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Say voice="female">Welcome to Vyavasaay! Please say something after the beep.</Say>
-  <Gather action="${req.nextUrl.href}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#">
-    <Say>I did not catch that. Can you please repeat?</Say>
-  </Gather>
-</Response>`;
-
-  return new NextResponse(xml, {
-    status: 200,
-    headers: { 'Content-Type': 'application/xml' },
-  });
 }
