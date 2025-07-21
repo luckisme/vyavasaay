@@ -20,11 +20,13 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(false);
+  const [isUserLoading, setIsUserLoading] = useState(true);
 
-  // For prototyping: This will clear the user on every reload, forcing the onboarding modal.
   useEffect(() => {
+    // For prototyping: This will clear the user on every reload, forcing the onboarding modal.
+    // In a real app, you would read from localStorage here.
     localStorage.removeItem('vyavasaay-user-temp');
+    setIsUserLoading(false);
   }, []);
 
   const setUserProfile = useCallback((profile: UserProfile | null) => {

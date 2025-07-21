@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
     const { answerAudio, answerText } = await answerPhoneCallQuestion({
       question,
       language: languageName,
-      voice: 'Achernar',
+      voice: 'Achernar', // Using a reliable default voice for phone calls
       conversationHistory: currentConversation.history,
       callSid: CallSid,
     });

@@ -132,5 +132,9 @@
     "voice": "Voice",
     "voicePlaceholder": "Select a voice",
     "button": "Save and Continue"
+  },
+  "voices": {
+    "female": "Female",
+    "male": "Male"
   }
 }
