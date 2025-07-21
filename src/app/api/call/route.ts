@@ -7,7 +7,12 @@ import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import wav from 'wav';
 
-type ConversationHistory = { role: 'user' | 'model'; content: string; }[];
+const ConversationHistorySchema = z.array(z.object({
+  role: z.enum(['user', 'model']),
+  content: z.string(),
+}));
+type ConversationHistory = z.infer<typeof ConversationHistorySchema>;
+
 
 interface ConversationStore {
   history: ConversationHistory;
@@ -34,10 +39,7 @@ const conversationalPrompt = ai.definePrompt({
     input: { schema: z.object({
       language: z.string(),
     })},
-    history: { schema: z.object({
-      role: z.enum(['user', 'model']),
-      content: z.string(),
-    })},
+    history: ConversationHistorySchema,
 });
 
 
@@ -146,7 +148,10 @@ export async function POST(req: NextRequest) {
     currentConversation.language = languageName;
     
     console.log(`[${CallSid}] Generating text response in ${languageName}.`);
-    const { text: answerText } = await conversationalPrompt({ language: languageName }, currentConversation.history);
+    const { text: answerText } = await conversationalPrompt(
+        { language: languageName },
+        currentConversation.history
+    );
 
     if (!answerText) {
       throw new Error("AI returned an empty text response.");
@@ -200,5 +205,3 @@ export async function POST(req: NextRequest) {
     return new NextResponse(errorTwiml, { status: 200, headers: { 'Content-Type': 'application/xml' } });
   }
 }
-
-    
