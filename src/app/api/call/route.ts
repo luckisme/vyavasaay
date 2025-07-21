@@ -21,7 +21,7 @@ async function sendSms(to: string, summary: string) {
   const fromNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
   if (!apiKey || !apiToken || !exotelSid || !fromNumber) {
-    console.error("Missing Exotel env vars.");
+    console.error("Missing Exotel env vars for SMS.");
     return;
   }
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     const params = new URLSearchParams(rawBody);
     const body = Object.fromEntries(params.entries());
 
-    console.log("Webhook from Exotel:", body);
+    console.log("Webhook from Exotel (POST):", body);
 
     const parsedBody = exotelWebhookSchema.safeParse(body);
     if (!parsedBody.success) {
@@ -81,9 +81,13 @@ export async function POST(req: NextRequest) {
     if (CallStatus && ['completed', 'failed', 'busy', 'no-answer'].includes(CallStatus)) {
       if (conversationStore[CallSid]) {
         const { history, language, from: callerNumber } = conversationStore[CallSid];
-        if (history.length > 1 && callerNumber) {
-          const summary = await getConversationSummaryFlow({ conversationHistory: history, language });
-          await sendSms(callerNumber, summary);
+        if (history.length > 0 && callerNumber) {
+            try {
+                const summary = await getConversationSummaryFlow({ conversationHistory: history, language });
+                await sendSms(callerNumber, summary);
+            } catch (e) {
+                console.error("Failed to generate or send SMS summary:", e);
+            }
         }
         delete conversationStore[CallSid];
       }
@@ -103,10 +107,13 @@ export async function POST(req: NextRequest) {
     })();
 
     if (!conversationStore[CallSid]) {
+      // This case handles the first POST request after the initial GET->Passthru
       conversationStore[CallSid] = { history: [], language: languageName, from: From || null };
     }
 
     const currentConversation = conversationStore[CallSid];
+    // If there's no SpeechResult, the user might have been silent.
+    // We treat it as "Hello" to kickstart the conversation gracefully.
     const question = SpeechResult || "Hello";
 
     currentConversation.history.push({ role: 'user', content: question });
@@ -124,11 +131,12 @@ export async function POST(req: NextRequest) {
     const base64Audio = answerAudio.split(',')[1];
     const gatherUrl = req.nextUrl.href;
 
+    // This response continues the conversation loop
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Play>data:audio/wav;base64,${base64Audio}</Play>
   <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="${bcp47Language}">
-    <Say>You can ask another question now.</Say>
+    <Say>I did not catch that. Please repeat your question.</Say>
   </Gather>
 </Response>`;
 
@@ -138,7 +146,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error in POST handler:', error);
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say voice="female">I'm sorry, we encountered an error. Please try again later.</Say>
@@ -151,7 +159,18 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// GET handler is now exclusively for the initial Passthru
 export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const callSid = url.searchParams.get('CallSid');
+
+  if(callSid && !conversationStore[callSid]) {
+     const from = url.searchParams.get('From');
+     const language = 'English'; // Defaulting for the GET request
+     conversationStore[callSid] = { history: [], language, from };
+  }
+
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say voice="female">Welcome to Vyavasaay! Please say something after the beep.</Say>
