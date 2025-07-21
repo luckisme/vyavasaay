@@ -1,4 +1,3 @@
-
 'use server';
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -15,20 +14,22 @@ interface ConversationStore {
   from: string | null;
 }
 
+// In-memory store for conversation history. In a production app, use a database like Redis or Firestore.
 const conversationStore: Record<string, ConversationStore> = {};
 
 const exotelWebhookSchema = z.object({
   CallSid: z.string(),
   SpeechResult: z.string().optional().default(''),
-  Language: z.string().optional().default('en-IN'),
+  Language: z.string().optional().default('en-IN'), // e.g., "en-IN", "hi-IN"
   CallStatus: z.string().optional(),
   From: z.string().optional(),
   Direction: z.string().optional(),
 });
 
+// A more direct and robust prompt for handling the phone conversation.
 const conversationalPrompt = ai.definePrompt({
     name: 'directPhoneCallConversationalPrompt',
-    system: `You are Vyavasaay, a friendly and helpful AI assistant for farmers, speaking on the phone. This is a voice conversation. Your answers must be concise, clear, and easy to understand. Your main goal is to answer questions about crops, market prices, government schemes, and weather. When mentioning currency, use the Indian Rupee symbol (₹).`,
+    system: `You are Vyavasaay, a friendly and helpful AI assistant for farmers, speaking on the phone. This is a real-time voice conversation. Your answers must be concise, clear, and easy to understand for a farmer. Your main goal is to answer questions about crops, market prices, government schemes, and weather. When mentioning currency, use the Indian Rupee symbol (₹). Keep your responses short and conversational.`,
     input: { schema: z.object({
       language: z.string(),
     })},
@@ -38,6 +39,7 @@ const conversationalPrompt = ai.definePrompt({
     })},
 });
 
+
 async function sendSms(to: string, summary: string) {
   const apiKey = process.env.EXOTEL_API_KEY;
   const apiToken = process.env.EXOTEL_API_TOKEN;
@@ -45,7 +47,7 @@ async function sendSms(to: string, summary: string) {
   const fromNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
   if (!apiKey || !apiToken || !exotelSid || !fromNumber) {
-    console.error(`[${to}] Missing Exotel env vars for SMS.`);
+    console.error(`[${to}] Missing Exotel env vars for SMS. Cannot send summary.`);
     return;
   }
   const url = `https://api.exotel.com/v1/Accounts/${exotelSid}/Sms/send.json`;
@@ -81,6 +83,7 @@ async function toWav(pcmData: Buffer, channels = 1, rate = 24000, sampleWidth = 
 export async function POST(req: NextRequest) {
   let callSid = 'unknown-sid';
   try {
+    // Exotel sends data as x-www-form-urlencoded, so we parse it from the text body.
     const rawBody = await req.text();
     const params = new URLSearchParams(rawBody);
     const body = Object.fromEntries(params.entries());
@@ -93,15 +96,16 @@ export async function POST(req: NextRequest) {
       return new NextResponse(errorResponse, { status: 400, headers: { 'Content-Type': 'application/xml' } });
     }
 
-    const { CallSid, SpeechResult, Language, CallStatus, From } = parsedBody.data;
-    callSid = CallSid; // Set callSid for logging
+    const { CallSid, SpeechResult, Language, CallStatus, From, Direction } = parsedBody.data;
+    callSid = CallSid; // Set callSid for all subsequent logs
 
     if (!conversationStore[CallSid]) {
-      console.log(`[${CallSid}] Initializing new conversation for caller ${From}.`);
+      console.log(`[${CallSid}] Initializing new conversation for caller ${From}. Direction: ${Direction}`);
       conversationStore[CallSid] = { history: [], language: 'English', from: From || null };
     }
     const currentConversation = conversationStore[CallSid];
 
+    // Handle the end of the call
     if (CallStatus && ['completed', 'failed', 'busy', 'no-answer'].includes(CallStatus)) {
       console.log(`[${CallSid}] Call ended with status: ${CallStatus}.`);
       if (currentConversation.history.length > 0 && currentConversation.from) {
@@ -119,7 +123,7 @@ export async function POST(req: NextRequest) {
 
     const question = SpeechResult;
     if (!question.trim()) {
-      console.log(`[${CallSid}] Empty speech result. Prompting user to speak.`);
+      console.log(`[${CallSid}] Empty speech result. Prompting user to speak again.`);
       const gatherUrl = req.nextUrl.href;
       const noInputResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -132,6 +136,7 @@ export async function POST(req: NextRequest) {
     console.log(`[${CallSid}] User said: "${question}"`);
     currentConversation.history.push({ role: 'user', content: question });
     
+    // Convert language code (e.g., "en-IN") to language name for the prompt
     const languageCode = Language.split('-')[0];
     const languageName = (() => {
         const langMap: Record<string, string> = { en: 'English', hi: 'Hindi', mr: 'Marathi', bn: 'Bengali', ta: 'Tamil', te: 'Telugu', kn: 'Kannada' };
@@ -141,22 +146,36 @@ export async function POST(req: NextRequest) {
     
     console.log(`[${CallSid}] Generating text response in ${languageName}.`);
     const { text: answerText } = await conversationalPrompt({ language: languageName }, currentConversation.history);
-    if (!answerText) throw new Error("AI returned empty text response.");
+
+    if (!answerText) {
+      throw new Error("AI returned an empty text response.");
+    }
 
     console.log(`[${CallSid}] AI responded with: "${answerText}"`);
     currentConversation.history.push({ role: 'model', content: answerText });
 
-    console.log(`[${CallSid}] Generating TTS audio.`);
+    console.log(`[${CallSid}] Generating TTS audio for the response.`);
     const { media } = await ai.generate({
       model: 'googleai/gemini-2.5-flash-preview-tts',
-      config: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Achernar' } } } },
+      config: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: 'Achernar' }, // Using a consistent female voice
+          },
+        },
+      },
       prompt: answerText,
     });
-    if (!media) throw new Error('TTS service returned no media.');
+
+    if (!media) {
+      throw new Error('TTS service returned no media.');
+    }
 
     const audioBuffer = Buffer.from(media.url.substring(media.url.indexOf(',') + 1), 'base64');
     const answerAudioBase64 = await toWav(audioBuffer);
 
+    // Continue the conversation by playing the audio and gathering the next input.
     const gatherUrl = req.nextUrl.href;
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -166,11 +185,12 @@ export async function POST(req: NextRequest) {
   </Gather>
 </Response>`;
     
-    console.log(`[${CallSid}] Sending XML response to Exotel.`);
+    console.log(`[${CallSid}] Sending XML response to Exotel to continue conversation.`);
     return new NextResponse(exotelResponse, { status: 200, headers: { 'Content-Type': 'application/xml' } });
 
   } catch (error) {
     console.error(`[${callSid}] CRITICAL ERROR in POST handler:`, error);
+    // Send a graceful failure message to the user instead of just hanging up.
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say voice="female">I am sorry, there was a technical issue. Please try calling again later.</Say>

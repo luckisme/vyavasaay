@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -11,6 +10,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+// This prompt is only for summarizing the conversation for an SMS at the end of the call.
 const summarizeConversationPrompt = ai.definePrompt({
     name: 'summarizeConversationPrompt',
     input: { schema: z.object({
