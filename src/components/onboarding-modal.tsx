@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@/hooks/use-user';
 import { useTranslation } from '@/hooks/use-translation';
-import { languages, voices } from '@/app/page';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { languages } from '@/app/page';
 
 interface OnboardingModalProps {
     isOpen: boolean;
@@ -22,7 +21,7 @@ export default function OnboardingModal({ isOpen }: OnboardingModalProps) {
     const [selectedLanguage, setSelectedLanguage] = useState('en');
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
-    const [voice, setVoice] = useState('Achernar');
+    const defaultVoice = 'Achernar'; // Default to female voice
 
     const handleLanguageSelect = (langCode: string) => {
         setSelectedLanguage(langCode);
@@ -33,7 +32,7 @@ export default function OnboardingModal({ isOpen }: OnboardingModalProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (name.trim() && location.trim()) {
-            setUserProfile({ name, location, language: selectedLanguage, voice });
+            setUserProfile({ name, location, language: selectedLanguage, voice: defaultVoice });
         }
     };
 
@@ -95,21 +94,6 @@ export default function OnboardingModal({ isOpen }: OnboardingModalProps) {
                                     placeholder={t('onboarding.locationPlaceholder', 'e.g. Nashik, Maharashtra')}
                                     required
                                 />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="voice" className="text-right">
-                                    {t('onboarding.voice', 'Voice')}
-                                </Label>
-                                <Select value={voice} onValueChange={setVoice}>
-                                    <SelectTrigger className="col-span-3">
-                                        <SelectValue placeholder={t('onboarding.voicePlaceholder', 'Select a voice')} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {voices.map((v) => (
-                                            <SelectItem key={v.value} value={v.value}>{v.label}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
                             </div>
                         </div>
                         <DialogFooter>
