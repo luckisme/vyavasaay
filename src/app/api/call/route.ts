@@ -36,9 +36,6 @@ const exotelWebhookSchema = z.object({
 const conversationalPrompt = ai.definePrompt({
     name: 'directPhoneCallConversationalPrompt',
     system: `You are Vyavasaay, a friendly and helpful AI assistant for farmers, speaking on the phone. This is a real-time voice conversation. Your answers must be concise, clear, and easy to understand for a farmer. Your main goal is to answer questions about crops, market prices, government schemes, and weather. When mentioning currency, use the Indian Rupee symbol (₹). Keep your responses short and conversational.`,
-    input: { schema: z.object({
-      language: z.string(),
-    })},
 });
 
 
@@ -148,7 +145,7 @@ export async function POST(req: NextRequest) {
     
     console.log(`[${CallSid}] Generating text response in ${languageName}.`);
     const { text: answerText } = await conversationalPrompt(
-        { language: languageName },
+        { prompt: `Respond in ${languageName}` },
         currentConversation.history
     );
 
