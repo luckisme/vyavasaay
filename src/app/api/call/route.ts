@@ -61,8 +61,9 @@ export async function OPTIONS() {
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
-    const body = Object.fromEntries(formData.entries());
+    const rawBody = await req.text();
+    const params = new URLSearchParams(rawBody);
+    const body = Object.fromEntries(params.entries());
 
     console.log("Webhook from Exotel:", body);
 
