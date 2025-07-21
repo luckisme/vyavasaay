@@ -20,23 +20,17 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(true);
+  const [isUserLoading, setIsUserLoading] = useState(false);
 
+  // For prototyping: This will clear the user on every reload, forcing the onboarding modal.
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('vyavasaay-user-temp');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-        console.error("Failed to parse user from localStorage", error);
-    } finally {
-        setIsUserLoading(false);
-    }
+    localStorage.removeItem('vyavasaay-user-temp');
   }, []);
 
   const setUserProfile = useCallback((profile: UserProfile | null) => {
     if (profile) {
+        // We still save to localStorage so that other components can potentially
+        // use it during the same session if needed.
         localStorage.setItem('vyavasaay-user-temp', JSON.stringify(profile));
         setUser(profile);
     } else {
