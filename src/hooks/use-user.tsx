@@ -7,7 +7,6 @@ export interface UserProfile {
   name: string;
   location: string;
   language: string;
-  voice: string;
 }
 
 interface UserContextType {
@@ -24,15 +23,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // For prototyping: This will clear the user on every reload, forcing the onboarding modal.
-    // In a real app, you would read from localStorage here.
     localStorage.removeItem('vyavasaay-user-temp');
     setIsUserLoading(false);
   }, []);
 
   const setUserProfile = useCallback((profile: UserProfile | null) => {
     if (profile) {
-        // We still save to localStorage so that other components can potentially
-        // use it during the same session if needed.
         localStorage.setItem('vyavasaay-user-temp', JSON.stringify(profile));
         setUser(profile);
     } else {

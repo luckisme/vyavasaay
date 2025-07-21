@@ -74,7 +74,7 @@ export async function askVyavasaayAction(
         question, 
         location: user.location, 
         language: languageName,
-        voice: user.voice,
+        voice: 'Achernar', // Use female voice by default
     });
     return { answer: result.answer, answerAudio: result.answerAudio };
   } catch (e) {
