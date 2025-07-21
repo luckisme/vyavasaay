@@ -1,14 +1,12 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, Phone, CloudSun } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 
 interface DiscoverProps {
   setActiveFeature: (feature: Feature) => void;
@@ -17,7 +15,6 @@ interface DiscoverProps {
 
 export default function Discover({ setActiveFeature, userName }: DiscoverProps) {
   const { t } = useTranslation();
-  const [isOnline, setIsOnline] = useState(true);
 
   const features = [
     {
@@ -86,14 +83,9 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
           <h1 className="text-3xl font-bold tracking-tight text-foreground font-headline">{t('dashboard.welcome', `Welcome, ${userName}`, { name: userName })}</h1>
           <p className="text-muted-foreground">{t('dashboard.welcome_message', 'Your AI-powered agricultural assistant is ready to help.')}</p>
         </div>
-        <div className="flex items-center space-x-2 pt-2">
-            <Label htmlFor="online-toggle" className={!isOnline ? 'text-primary font-semibold' : ''}>Offline</Label>
-            <Switch id="online-toggle" checked={isOnline} onCheckedChange={setIsOnline} />
-            <Label htmlFor="online-toggle" className={isOnline ? 'text-primary font-semibold' : ''}>Online</Label>
-        </div>
       </div>
 
-      {!isOnline && offlineCallNumber && (
+      {offlineCallNumber && (
         <a href={`tel:${offlineCallNumber}`}>
             <Card className="bg-primary text-primary-foreground border-accent shadow-lg transition-transform hover:scale-105">
                 <CardHeader className="flex-row items-center gap-4">
@@ -107,51 +99,49 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
         </a>
       )}
       
-      {isOnline && (
-        <>
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {resources.map((res) => (
-                    <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1">
-                        <div className="relative h-40 w-full">
-                            <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
-                        </div>
-                        <CardHeader>
-                            <CardTitle className="text-lg">{res.title}</CardTitle>
-                            <CardDescription className="flex items-center gap-2 pt-2">
-                                <res.icon className="w-4 h-4 text-muted-foreground" />
-                                <span>{res.source}</span>
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
-                ))}
-            </div>
+      <>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {resources.map((res) => (
+                  <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1">
+                      <div className="relative h-40 w-full">
+                          <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
+                      </div>
+                      <CardHeader>
+                          <CardTitle className="text-lg">{res.title}</CardTitle>
+                          <CardDescription className="flex items-center gap-2 pt-2">
+                              <res.icon className="w-4 h-4 text-muted-foreground" />
+                              <span>{res.source}</span>
+                          </CardDescription>
+                      </CardHeader>
+                  </Card>
+              ))}
           </div>
+        </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            {features.map((item) => (
-              <Card
-                key={item.name}
-                className="flex flex-col justify-between transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 hover:border-primary"
-                onClick={() => setActiveFeature(item.feature)}
-              >
-                <CardHeader className="flex-row items-center gap-4 space-y-0">
-                  <div className={`p-3 rounded-full ${item.color}`}>
-                    <item.icon className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <CardTitle className="font-headline break-words">{item.name}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{item.description}</CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </>
-      )}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+          {features.map((item) => (
+            <Card
+              key={item.name}
+              className="flex flex-col justify-between transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 hover:border-primary"
+              onClick={() => setActiveFeature(item.feature)}
+            >
+              <CardHeader className="flex-row items-center gap-4 space-y-0">
+                <div className={`p-3 rounded-full ${item.color}`}>
+                  <item.icon className="w-8 h-8" />
+                </div>
+                <div>
+                  <CardTitle className="font-headline break-words">{item.name}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>{item.description}</CardDescription>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </>
     </div>
   );
 }
