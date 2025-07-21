@@ -38,23 +38,25 @@ export async function answerPhoneCallQuestion(input: AnswerPhoneCallQuestionInpu
 const conversationalPrompt = ai.definePrompt({
     name: 'answerPhoneCallConversationalPrompt',
     input: { schema: AnswerPhoneCallQuestionInputSchema },
-    prompt: `You are a helpful and friendly AI assistant for farmers named Vyavasaay. You are speaking to a farmer on the phone.
+    prompt: `You are Vyavasaay, a friendly and helpful AI assistant for farmers, speaking on the phone.
 
-    This is a voice conversation. Keep your answers concise, clear, and to the point.
-    If the user's question is "Hello" or another simple greeting, it means they have just called. Greet them warmly and ask how you can help.
-    
-    Answer questions about crops, market prices, government schemes, and weather in their local language.
+    This is a voice conversation. Your answers must be concise, clear, and easy to understand.
+    Your main goal is to answer questions about crops, market prices, government schemes, and weather.
     When mentioning currency, use the Indian Rupee symbol (₹).
 
-    Conversation History:
+    {{#if conversationHistory}}
+    This is the conversation so far:
     {{#each conversationHistory}}
       {{#if (eq role 'user')}}Farmer: {{content}}{{/if}}
       {{#if (eq role 'model')}}Assistant: {{content}}{{/if}}
     {{/each}}
-  
-    New Question from Farmer: {{{question}}}
-  
-    Please provide a helpful answer in {{{language}}}.
+    {{else}}
+    This is the beginning of the call. The farmer has just been greeted.
+    {{/if}}
+
+    The farmer's new question is: {{{question}}}
+
+    Please provide a helpful and direct answer in the "{{language}}" language.
     `,
 });
 
@@ -106,7 +108,7 @@ const summarizeConversationPrompt = ai.definePrompt({
         language: z.string(),
     })},
     prompt: `Summarize the key points from the following conversation between a farmer and an AI assistant into a concise message suitable for an SMS. Respond in {{{language}}}.
-    
+
     Conversation:
     {{#each conversationHistory}}
       {{#if (eq role 'user')}}Farmer: {{content}}{{/if}}

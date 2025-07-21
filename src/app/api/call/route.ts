@@ -9,7 +9,7 @@ const conversationStore: Record<string, { history: any[], language: string, from
 
 const exotelWebhookSchema = z.object({
   CallSid: z.string(),
-  SpeechResult: z.string().optional().default(''), // Default to empty string
+  SpeechResult: z.string().optional().default(''),
   Language: z.string().optional(),
   CallStatus: z.string().optional(),
   From: z.string().optional(),
@@ -73,14 +73,12 @@ export async function POST(req: NextRequest) {
 
     const { CallSid, SpeechResult, Language, CallStatus, From } = parsedBody.data;
 
-    // Initialize conversation if it's new
     if (!conversationStore[CallSid]) {
       console.log(`[${CallSid}] Initializing new conversation for caller ${From}.`);
       conversationStore[CallSid] = { history: [], language: 'English', from: From || null };
     }
     const currentConversation = conversationStore[CallSid];
 
-    // Handle call hangup and cleanup
     if (CallStatus && ['completed', 'failed', 'busy', 'no-answer'].includes(CallStatus)) {
       console.log(`[${CallSid}] Call ended with status: ${CallStatus}. Cleaning up.`);
       if (currentConversation.history.length > 0 && currentConversation.from) {
@@ -95,24 +93,22 @@ export async function POST(req: NextRequest) {
       delete conversationStore[CallSid];
       return new NextResponse(`<Response><Hangup/></Response>`, { headers: { 'Content-Type': 'application/xml' } });
     }
-    
-    // If SpeechResult is empty, it means the user was silent. Prompt them again.
+
     if (!SpeechResult.trim()) {
         console.log(`[${CallSid}] Empty speech result. Prompting user to speak.`);
         const gatherUrl = req.nextUrl.href;
         const noInputResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say>I did not catch that. Please repeat your question.</Say>
-  <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="en-IN">
-  </Gather>
+  <Say>I'm sorry, I did not catch that. Could you please repeat your question?</Say>
+  <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="en-IN" />
 </Response>`;
         return new NextResponse(noInputResponse, { status: 200, headers: { 'Content-Type': 'application/xml' } });
     }
 
     const question = SpeechResult;
-    currentConversation.history.push({ role: 'user', content: question });
     console.log(`[${CallSid}] User said: "${question}"`);
-
+    
+    // Don't add to history yet, only after successful AI response
     const bcp47Language = Language || 'en-IN';
     const languageCode = bcp47Language.split('-')[0];
     const languageName = (() => {
@@ -120,9 +116,9 @@ export async function POST(req: NextRequest) {
         return langMap[languageCode] || 'English';
     })();
     currentConversation.language = languageName;
-    console.log(`[${CallSid}] Language detected as: ${languageName} (${bcp47Language})`);
     
-    console.log(`[${CallSid}] Calling AI flow...`);
+    console.log(`[${CallSid}] Calling AI flow with language: ${languageName}`);
+    
     const { answerAudio, answerText } = await answerPhoneCallQuestion({
       question,
       language: languageName,
@@ -130,8 +126,11 @@ export async function POST(req: NextRequest) {
       conversationHistory: currentConversation.history,
       callSid: CallSid,
     });
+    
     console.log(`[${CallSid}] AI responded with: "${answerText}"`);
 
+    // Add to history *after* successful response
+    currentConversation.history.push({ role: 'user', content: question });
     currentConversation.history.push({ role: 'model', content: answerText });
 
     const base64Audio = answerAudio.split(',')[1];
@@ -141,7 +140,7 @@ export async function POST(req: NextRequest) {
 <Response>
   <Play>data:audio/wav;base64,${base64Audio}</Play>
   <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="${bcp47Language}">
-    <Say>I did not catch that. Please repeat your question.</Say>
+    <Say>I'm sorry, I did not catch that. Please repeat your question.</Say>
   </Gather>
 </Response>`;
     
@@ -152,7 +151,7 @@ export async function POST(req: NextRequest) {
     console.error(`[${callSid}] CRITICAL ERROR in POST handler:`, error);
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="female">I'm sorry, an error occurred on our end. Please try again later.</Say>
+  <Say voice="female">I'm sorry, a technical issue occurred. Please try calling again later.</Say>
   <Hangup/>
 </Response>`;
     return new NextResponse(errorTwiml, { status: 200, headers: { 'Content-Type': 'application/xml' } });
