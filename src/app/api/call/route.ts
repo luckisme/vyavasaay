@@ -1,12 +1,8 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { answerPhoneCallQuestion, getConversationSummaryFlow } from '@/ai/flows/answer-phone-call-question';
 import { z } from 'zod';
 
-// This is a simple in-memory store for prototyping. 
-// In a production app, you would use a database like Firestore or Redis.
 const conversationStore: Record<string, { history: any[], language: string, from: string | null }> = {};
-
 
 const exotelWebhookSchema = z.object({
   CallSid: z.string(),
@@ -18,135 +14,138 @@ const exotelWebhookSchema = z.object({
   Direction: z.string().optional(),
 });
 
-// This function sends an SMS using Exotel's API.
 async function sendSms(to: string, summary: string) {
-    const apiKey = process.env.EXOTEL_API_KEY;
-    const apiToken = process.env.EXOTEL_API_TOKEN;
-    const exotelSid = process.env.EXOTEL_SID;
+  const apiKey = process.env.EXOTEL_API_KEY;
+  const apiToken = process.env.EXOTEL_API_TOKEN;
+  const exotelSid = process.env.EXOTEL_SID;
+  const fromNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
-    if (!apiKey || !apiToken || !exotelSid) {
-        console.error("Exotel credentials are not set in environment variables.");
-        return;
-    }
+  if (!apiKey || !apiToken || !exotelSid || !fromNumber) {
+    console.error("Missing Exotel env vars.");
+    return;
+  }
 
-    const fromNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
-    if (!fromNumber) {
-        console.error("NEXT_PUBLIC_OFFLINE_CALL_NUMBER is not set.");
-        return;
-    }
+  const url = `https://api.exotel.com/v1/Accounts/${exotelSid}/Sms/send.json`;
 
-    const url = `https://api.exotel.com/v1/Accounts/${exotelSid}/Sms/send.json`;
-    
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Basic ' + btoa(`${apiKey}:${apiToken}`),
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            From: fromNumber,
-            To: to,
-            Body: summary,
-        }),
-    });
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Basic ' + btoa(`${apiKey}:${apiToken}`),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      From: fromNumber,
+      To: to,
+      Body: summary,
+    }),
+  });
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Failed to send SMS:", errorText);
-    } else {
-        console.log("SMS sent successfully to", to);
-    }
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Failed to send SMS:", errorText);
+  } else {
+    console.log("SMS sent to", to);
+  }
 }
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+    },
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const body = Object.fromEntries(formData.entries());
-    
-    console.log("Received webhook from Exotel:", body);
+
+    console.log("Webhook from Exotel:", body);
 
     const parsedBody = exotelWebhookSchema.safeParse(body);
     if (!parsedBody.success) {
-      console.error("Invalid request body from Exotel:", parsedBody.error);
-      return new NextResponse('<Response><Say>Invalid request.</Say><Hangup/></Response>', { status: 400, headers: { 'Content-Type': 'application/xml' } });
+      console.error("Invalid webhook body:", parsedBody.error);
+      return new NextResponse(`<Response><Say>Invalid request.</Say><Hangup/></Response>`, {
+        status: 400,
+        headers: { 'Content-Type': 'application/xml' },
+      });
     }
 
     const { CallSid, SpeechResult, Language, CallStatus, From } = parsedBody.data;
 
-    // Handle the end of the call: generate and send SMS
     if (CallStatus && ['completed', 'failed', 'busy', 'no-answer'].includes(CallStatus)) {
-        if (conversationStore[CallSid]) {
-            const { history, language, from: callerNumber } = conversationStore[CallSid];
-            // Only send summary if there was a meaningful conversation
-            if (history.length > 1 && callerNumber) {
-                const summary = await getConversationSummaryFlow({ conversationHistory: history, language });
-                await sendSms(callerNumber, summary);
-            }
-            delete conversationStore[CallSid]; // Clean up memory
+      if (conversationStore[CallSid]) {
+        const { history, language, from: callerNumber } = conversationStore[CallSid];
+        if (history.length > 1 && callerNumber) {
+          const summary = await getConversationSummaryFlow({ conversationHistory: history, language });
+          await sendSms(callerNumber, summary);
         }
-        return new NextResponse('<Response><Hangup/></Response>', { headers: { 'Content-Type': 'application/xml' } });
+        delete conversationStore[CallSid];
+      }
+      return new NextResponse(`<Response><Hangup/></Response>`, {
+        headers: { 'Content-Type': 'application/xml' },
+      });
     }
 
-    // Default to a common Indian language BCP-47 code if not provided
-    const bcp47Language = Language || 'en-IN'; 
+    const bcp47Language = Language || 'en-IN';
     const languageCode = bcp47Language.split('-')[0];
-    const languageName = new Intl.DisplayNames([languageCode], { type: 'language' }).of(languageCode)!;
-    
-    // Initialize conversation history if it's a new call
+    const languageName = (() => {
+      try {
+        return new Intl.DisplayNames([languageCode], { type: 'language' }).of(languageCode) || 'English';
+      } catch {
+        return 'English';
+      }
+    })();
+
     if (!conversationStore[CallSid]) {
       conversationStore[CallSid] = { history: [], language: languageName, from: From || null };
     }
-    
+
     const currentConversation = conversationStore[CallSid];
-    
-    // The farmer's question is in SpeechResult. If it's empty, it's the first turn.
-    const question = SpeechResult || "Hello"; // Use "Hello" to trigger the initial greeting from the AI.
-    
+    const question = SpeechResult || "Hello";
+
     currentConversation.history.push({ role: 'user', content: question });
 
     const { answerAudio, answerText } = await answerPhoneCallQuestion({
-      question: question,
+      question,
       language: languageName,
-      voice: 'Achernar', // You can customize this
+      voice: 'Achernar',
       conversationHistory: currentConversation.history,
       callSid: CallSid,
     });
-    
+
     currentConversation.history.push({ role: 'model', content: answerText });
-    
+
     const base64Audio = answerAudio.split(',')[1];
-    
-    // This is the Exotel-compatible XML response
-    // It plays the audio and then immediately uses a new <Gather> to listen for the next input.
-    // The action URL points back to this same endpoint to create the conversation loop.
     const gatherUrl = req.nextUrl.href;
+
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Play>data:audio/wav;base64,${base64Audio}</Play>
-    <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="${bcp47Language}">
-        <Say>You can ask another question now.</Say>
-    </Gather>
+  <Play>data:audio/wav;base64,${base64Audio}</Play>
+  <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="${bcp47Language}">
+    <Say>You can ask another question now.</Say>
+  </Gather>
 </Response>`;
 
     return new NextResponse(exotelResponse, {
       status: 200,
-      headers: { 'Content-Type': 'text/xml' },
+      headers: { 'Content-Type': 'application/xml' },
     });
 
   } catch (error) {
-    console.error('Error processing call:', error);
-    const errorMessage = "I'm sorry, I encountered an error. Please try again later.";
-    // Using <Say> is a safe fallback for errors.
+    console.error('Error:', error);
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="female">${errorMessage}</Say>
+  <Say voice="female">I'm sorry, we encountered an error. Please try again later.</Say>
   <Hangup/>
 </Response>`;
-
     return new NextResponse(errorTwiml, {
-      status: 200, // Return 200 OK so Exotel plays the error message
-      headers: { 'Content-Type': 'text/xml' },
+      status: 200,
+      headers: { 'Content-Type': 'application/xml' },
     });
   }
 }
@@ -162,6 +161,6 @@ export async function GET(req: NextRequest) {
 
   return new NextResponse(xml, {
     status: 200,
-    headers: { 'Content-Type': 'text/xml' },
+    headers: { 'Content-Type': 'application/xml' },
   });
 }
