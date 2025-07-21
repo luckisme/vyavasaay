@@ -6,9 +6,9 @@ import { getConversationSummary } from '@/ai/flows/answer-phone-call-question';
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import { storage } from '@/lib/firebase-admin';
-import { Readable } from 'stream';
 import wav from 'wav';
+import fs from 'fs/promises';
+import path from 'path';
 
 const ConversationHistorySchema = z.array(z.object({
   role: z.enum(['user', 'model']),
@@ -69,7 +69,7 @@ async function sendSms(to: string, summary: string) {
   }
 }
 
-async function textToSpeechAndUpload(callSid: string, text: string): Promise<string> {
+async function textToSpeechAndGetUrl(req: NextRequest, callSid: string, text: string): Promise<string> {
     console.log(`[${callSid}] Generating TTS audio for the response.`);
     const { media } = await ai.generate({
       model: googleAI.model('gemini-2.5-flash-preview-tts'),
@@ -89,18 +89,16 @@ async function textToSpeechAndUpload(callSid: string, text: string): Promise<str
     const pcmData = Buffer.from(media.url.substring(media.url.indexOf(',') + 1), 'base64');
     const wavData = await toWav(pcmData);
 
-    const bucket = storage.bucket();
-    const fileName = `call_audio/${callSid}_${Date.now()}.wav`;
-    const file = bucket.file(fileName);
+    const audioDir = path.join(process.cwd(), 'public', 'call_audio');
+    await fs.mkdir(audioDir, { recursive: true });
 
-    console.log(`[${callSid}] Uploading WAV file to Firebase Storage: ${fileName}`);
-    await file.save(wavData, {
-      metadata: { contentType: 'audio/wav' },
-    });
+    const fileName = `${callSid}_${Date.now()}.wav`;
+    const filePath = path.join(audioDir, fileName);
 
-    // Make the file public and get the URL
-    await file.makePublic();
-    const publicUrl = file.publicUrl();
+    console.log(`[${callSid}] Writing WAV file to public directory: ${filePath}`);
+    await fs.writeFile(filePath, wavData);
+
+    const publicUrl = `${req.nextUrl.origin}/call_audio/${fileName}`;
     console.log(`[${callSid}] Audio available at public URL: ${publicUrl}`);
     return publicUrl;
 }
@@ -191,7 +189,7 @@ export async function POST(req: NextRequest) {
     console.log(`[${CallSid}] AI responded with: "${answerText}"`);
     currentConversation.history.push({ role: 'model', content: answerText });
 
-    const answerAudioUrl = await textToSpeechAndUpload(callSid, answerText);
+    const answerAudioUrl = await textToSpeechAndGetUrl(req, callSid, answerText);
 
     const gatherUrl = req.nextUrl.href;
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
@@ -205,7 +203,8 @@ export async function POST(req: NextRequest) {
     console.log(`[${CallSid}] Sending XML response to Exotel to continue conversation.`);
     return new NextResponse(exotelResponse, { status: 200, headers: { 'Content-Type': 'application/xml' } });
 
-  } catch (error) {
+  } catch (error)
+ {
     console.error(`[${callSid}] CRITICAL ERROR in POST handler:`, error);
     const errorTwiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
