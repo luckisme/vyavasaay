@@ -12,7 +12,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import wav from 'wav';
+import { googleAI } from '@genkit-ai/googleai';
 
 const AnswerFarmerQuestionInputSchema = z.object({
   question: z.string().describe('The farmer’s question about market prices, government schemes, or weather.'),
@@ -24,7 +24,7 @@ export type AnswerFarmerQuestionInput = z.infer<typeof AnswerFarmerQuestionInput
 
 const AnswerFarmerQuestionOutputSchema = z.object({
   answer: z.string().describe('A simple, localized answer to the farmer’s question.'),
-  answerAudio: z.string().describe('The audio data of the answer in WAV format as a data URI.'),
+  answerAudio: z.string().describe('The audio data of the answer in MP3 format as a data URI.'),
 });
 export type AnswerFarmerQuestionOutput = z.infer<typeof AnswerFarmerQuestionOutputSchema>;
 
@@ -54,7 +54,7 @@ const answerFarmerQuestionFlow = ai.defineFlow(
     const {text} = await prompt(input);
 
     const {media} = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-preview-tts',
+      model: googleAI.model('gemini-2.5-flash-preview-tts'),
       config: {
         responseModalities: ['AUDIO'],
         speechConfig: {
@@ -70,41 +70,6 @@ const answerFarmerQuestionFlow = ai.defineFlow(
       throw new Error('no media returned');
     }
 
-    const audioBuffer = Buffer.from(
-      media.url.substring(media.url.indexOf(',') + 1),
-      'base64'
-    );
-
-    const answerAudio = 'data:audio/wav;base64,' + (await toWav(audioBuffer));
-
-    return { answer: text!, answerAudio };
+    return { answer: text!, answerAudio: media.url };
   }
 );
-
-
-async function toWav(
-  pcmData: Buffer,
-  channels = 1,
-  rate = 24000,
-  sampleWidth = 2
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const writer = new wav.Writer({
-      channels,
-      sampleRate: rate,
-      bitDepth: sampleWidth * 8,
-    });
-
-    let bufs = [] as any[];
-    writer.on('error', reject);
-    writer.on('data', function (d) {
-      bufs.push(d);
-    });
-    writer.on('end', function () {
-      resolve(Buffer.concat(bufs).toString('base64'));
-    });
-
-    writer.write(pcmData);
-    writer.end();
-  });
-}

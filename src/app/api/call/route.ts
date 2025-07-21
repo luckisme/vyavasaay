@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getConversationSummary } from '@/ai/flows/answer-phone-call-question';
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
-import wav from 'wav';
+import { googleAI } from '@genkit-ai/googleai';
 
 const ConversationHistorySchema = z.array(z.object({
   role: z.enum(['user', 'model']),
@@ -67,17 +67,6 @@ async function sendSms(to: string, summary: string) {
   }
 }
 
-async function toWav(pcmData: Buffer, channels = 1, rate = 24000, sampleWidth = 2): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const writer = new wav.Writer({ channels, sampleRate: rate, bitDepth: sampleWidth * 8 });
-    let bufs: any[] = [];
-    writer.on('error', reject);
-    writer.on('data', d => bufs.push(d));
-    writer.on('end', () => resolve(Buffer.concat(bufs).toString('base64')));
-    writer.write(pcmData);
-    writer.end();
-  });
-}
 
 export async function POST(req: NextRequest) {
   let callSid = 'unknown-sid';
@@ -158,30 +147,30 @@ export async function POST(req: NextRequest) {
 
     console.log(`[${CallSid}] Generating TTS audio for the response.`);
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-preview-tts',
+      model: googleAI.model('gemini-2.5-flash-preview-tts'),
       config: {
         responseModalities: ['AUDIO'],
         speechConfig: {
           voiceConfig: {
             prebuiltVoiceConfig: { voiceName: 'Achernar' }, // Using a consistent female voice
           },
+          audioProfile: 'telephony-class-application', // Optimized for phone calls
         },
       },
       prompt: answerText,
     });
-
-    if (!media) {
+    
+    if (!media || !media.url) {
       throw new Error('TTS service returned no media.');
     }
 
-    const audioBuffer = Buffer.from(media.url.substring(media.url.indexOf(',') + 1), 'base64');
-    const answerAudioBase64 = await toWav(audioBuffer);
+    const answerAudioUrl = media.url; // This will be a data URI with base64 encoded MP3 audio
 
     // Continue the conversation by playing the audio and gathering the next input.
     const gatherUrl = req.nextUrl.href;
     const exotelResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Play>data:audio/wav;base64,${answerAudioBase64}</Play>
+  <Play>${answerAudioUrl}</Play>
   <Gather action="${gatherUrl}" method="POST" input="speech" speechTimeout="auto" finishOnKey="#" language="${Language}">
     <Say>I'm sorry, I did not catch that. Please repeat your question.</Say>
   </Gather>
@@ -201,3 +190,4 @@ export async function POST(req: NextRequest) {
     return new NextResponse(errorTwiml, { status: 200, headers: { 'Content-Type': 'application/xml' } });
   }
 }
+
