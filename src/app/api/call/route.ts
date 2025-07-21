@@ -1,3 +1,6 @@
+
+'use server';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { answerPhoneCallQuestion, getConversationSummaryFlow } from '@/ai/flows/answer-phone-call-question';
 import { z } from 'zod';
@@ -8,7 +11,6 @@ const exotelWebhookSchema = z.object({
   CallSid: z.string(),
   SpeechResult: z.string().optional(),
   Digits: z.string().optional(),
-  // Use .catch() to handle cases where 'Language' might not be sent
   Language: z.string().optional().catch(() => 'en-IN'),
   CallStatus: z.string().optional(),
   From: z.string().optional(),
@@ -106,9 +108,13 @@ export async function POST(req: NextRequest) {
     const languageCode = bcp47Language.split('-')[0];
     const languageName = (() => {
       try {
-        // Handle simple codes directly to avoid errors with new Intl.DisplayNames
         if (languageCode === 'en') return 'English';
         if (languageCode === 'hi') return 'Hindi';
+        if (languageCode === 'mr') return 'Marathi';
+        if (languageCode === 'bn') return 'Bengali';
+        if (languageCode === 'ta') return 'Tamil';
+        if (languageCode === 'te') return 'Telugu';
+        if (languageCode === 'kn') return 'Kannada';
         return new Intl.DisplayNames([languageCode], { type: 'language' }).of(languageCode) || 'English';
       } catch {
         return 'English';
@@ -162,3 +168,5 @@ export async function POST(req: NextRequest) {
     });
   }
 }
+
+    
