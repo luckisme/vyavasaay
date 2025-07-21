@@ -39,7 +39,6 @@ const conversationalPrompt = ai.definePrompt({
     input: { schema: z.object({
       language: z.string(),
     })},
-    history: ConversationHistorySchema,
 });
 
 
