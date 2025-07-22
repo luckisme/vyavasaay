@@ -23,7 +23,7 @@ const MarketAnalysisOutputSchema = z.object({
   marketSummary: z.string().describe("A general summary of the current agricultural market conditions in the specified location."),
   detailedAnalysis: z.array(z.object({
     cropName: z.string().describe("The name of the crop."),
-    price: z.string().describe("The current average market price for the crop."),
+    price: z.string().describe("The current average market price for the crop, specified in units like per kg or per gm."),
     trend: z.enum(['up', 'down', 'stable']).describe("The recent price trend for the crop."),
     outlook: z.string().describe("A brief outlook or forecast for the crop's market."),
   })).describe("A detailed analysis for key crops, including prices, trends, and outlooks."),
@@ -49,7 +49,7 @@ const prompt = ai.definePrompt({
   2.  Detailed analysis for 3-5 key crops relevant to the location, including current prices and recent trends (up, down, or stable).
   3.  Actionable recommendations for the farmer.
 
-  Structure your response according to the output schema. Ensure all prices are in Indian Rupees (₹) and the entire response is in {{{language}}}.
+  Structure your response according to the output schema. Ensure all prices are in Indian Rupees (₹). When specifying prices, use units like per kilogram (kg) or per gram (gm) instead of larger units like quintals. The entire response must be in {{{language}}}.
   `,
 });
 
