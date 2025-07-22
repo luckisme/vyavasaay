@@ -44,7 +44,8 @@ Consider the location of the crop, if provided: {{{location}}}. This can help in
 
 Crop Image: {{media url=photoDataUri}}
 
-Ensure the diagnosis is clear and actionable for farmers. Provide the entire response in {{{language}}}.`,config: {
+Ensure the diagnosis is clear and actionable for farmers. Provide the entire response in {{{language}}}.`,
+  config: {
     safetySettings: [
       {
         category: 'HARM_CATEGORY_HATE_SPEECH',
