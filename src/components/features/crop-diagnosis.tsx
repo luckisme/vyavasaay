@@ -79,26 +79,62 @@ export default function CropDiagnosis() {
             content: <DiagnosisResult result={state.data} />
         }]);
     } else if (state.error) {
-        // Optionally handle error display, e.g., in a toast
+        toast({
+          variant: 'destructive',
+          title: t('cropDiagnosis.error', 'Error'),
+          description: state.error,
+        });
     }
-  }, [state]);
+  }, [state, t, toast]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const resizeImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = document.createElement('img');
+            img.src = event.target?.result as string;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800;
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+                
+                const ctx = canvas.getContext('2d');
+                ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        const resizedFile = new File([blob], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now(),
+                        });
+                        resolve(resizedFile);
+                    }
+                }, 'image/jpeg', 0.8); // 80% quality
+            };
+        };
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
+        const resizedFile = await resizeImage(selectedFile);
+        setFile(resizedFile);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreview(reader.result as string);
+        };
+        reader.readAsDataURL(resizedFile);
     }
   };
 
   const startCamera = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
@@ -143,14 +179,15 @@ export default function CropDiagnosis() {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => {
+        canvas.toBlob(async (blob) => {
             if (blob) {
                 const capturedFile = new File([blob], "capture.jpg", { type: "image/jpeg" });
-                setFile(capturedFile);
+                const resizedFile = await resizeImage(capturedFile);
+                setFile(resizedFile);
+                setPreview(canvas.toDataURL('image/jpeg'));
+                stopCamera();
             }
         }, 'image/jpeg');
-        setPreview(canvas.toDataURL('image/jpeg'));
-        stopCamera();
     }
   };
 
@@ -164,9 +201,15 @@ export default function CropDiagnosis() {
   }
 
   const extendedFormAction = (formData: FormData) => {
-    if (file) {
-      formData.set('photo', file);
+    if (!file) {
+        toast({
+            variant: "destructive",
+            title: "No image selected",
+            description: "Please upload or capture an image first.",
+        });
+        return;
     }
+    formData.set('photo', file);
     formAction(formData);
   }
 
@@ -224,13 +267,6 @@ export default function CropDiagnosis() {
                      
                       <input type="hidden" name="location" value={user?.location || ''} />
                       <input type="hidden" name="language" value={language} />
-                      {state.error && (
-                          <Alert variant="destructive">
-                              <AlertCircle className="h-4 w-4" />
-                              <AlertTitle>{t('cropDiagnosis.error')}</AlertTitle>
-                              <AlertDescription>{state.error}</AlertDescription>
-                          </Alert>
-                      )}
                   </div>
               </CardContent>
               <CardFooter>
@@ -252,5 +288,3 @@ export default function CropDiagnosis() {
     </div>
   );
 }
-
-    
