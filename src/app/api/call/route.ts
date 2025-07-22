@@ -76,7 +76,7 @@ async function textToSpeechAndGetUrl(req: NextRequest, callSid: string, text: st
       config: {
         responseModalities: ['AUDIO'],
         speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Achernar' } },
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Achernar' } },
         },
       },
       prompt: text,
