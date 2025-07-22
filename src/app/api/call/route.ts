@@ -181,7 +181,10 @@ export async function POST(req: NextRequest) {
     currentConversation.language = languageName;
     
     console.log(`[${CallSid}] Generating text response in ${languageName}.`);
-    const { text: answerText } = await conversationalPrompt({ prompt: `Respond in ${languageName}` }, currentConversation.history);
+    const { text: answerText } = await conversationalPrompt({ 
+      messages: currentConversation.history,
+      system: `Respond in ${languageName}.`,
+    });
 
     if (!answerText) {
       throw new Error("AI returned an empty text response.");
