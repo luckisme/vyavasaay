@@ -30,9 +30,9 @@
   },
   "cropDiagnosis": {
     "title": "Crop Diagnosis",
-    "uploadTitle": "Upload Crop Image",
-    "uploadDescription": "Select a clear image of the affected plant for an AI-powered diagnosis.",
-    "uploadArea": "Drag & drop or click to upload",
+    "uploadTitle": "Diagnose Your Crop",
+    "uploadDescription": "Upload a file or use your camera to get an AI-powered diagnosis.",
+    "uploadArea": "Drag & drop file",
     "button": "Diagnose Crop",
     "button_pending": "Diagnosing...",
     "resultTitle": "Diagnosis Result",
@@ -43,7 +43,9 @@
     "error": "Error",
     "imagePreviewAlt": "Crop preview",
     "chatPlaceholder": "Ask about this diagnosis...",
-    "chatInitialMessage": "Your diagnosis will appear above. Ask follow-up questions here."
+    "chatInitialMessage": "Your diagnosis will appear above. Ask follow-up questions here.",
+    "uploadTab": "Upload File",
+    "cameraTab": "Use Camera"
   },
   "askVyavasaay": {
     "title": "Ask Vyavasaay",
@@ -138,3 +140,5 @@
     "male": "Male"
   }
 }
+
+    
