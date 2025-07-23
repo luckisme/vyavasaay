@@ -35,7 +35,6 @@ interface DiscoverProps {
     error: string | null;
     loading: boolean;
   };
-  onSearchSubmit: (question: string) => void;
   languages: { value: string; label: string; short: string; }[];
   onLanguageChange: (langCode: string) => void;
 }
@@ -91,10 +90,9 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
 };
 
 
-export default function Discover({ setActiveFeature, userName, weatherState, weatherAlertState, onSearchSubmit, languages, onLanguageChange }: DiscoverProps) {
+export default function Discover({ setActiveFeature, userName, weatherState, weatherAlertState, languages, onLanguageChange }: DiscoverProps) {
   const { t } = useTranslation();
   const { user } = useUser();
-  const [searchQuery, setSearchQuery] = React.useState('');
   
   const quickLinks = [
     {
@@ -127,13 +125,6 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
 
   const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
-  const handleSearchFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      onSearchSubmit(searchQuery);
-    }
-  };
-
   return (
     <div className="flex flex-col gap-6">
         {/* Header */}
@@ -164,15 +155,13 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
         </header>
 
         {/* Search and Call */}
-        <form onSubmit={handleSearchFormSubmit} className="flex items-center gap-2">
-            <div className="relative flex-grow">
+        <div className="flex items-center gap-2">
+             <div 
+                className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer"
+                onClick={() => setActiveFeature('ask')}
+            >
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input 
-                    placeholder={t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')} 
-                    className="pl-10 h-12 rounded-full bg-white"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                <span className="pl-10 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
             </div>
             {offlineCallNumber && (
                 <a href={`tel:${offlineCallNumber}`}>
@@ -181,7 +170,7 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
                     </Button>
                 </a>
             )}
-        </form>
+        </div>
 
         {/* Weather Section */}
         <div className="space-y-4">

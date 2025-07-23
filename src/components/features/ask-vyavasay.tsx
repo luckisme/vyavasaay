@@ -153,6 +153,7 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
     handleMicClick,
     playAudio,
     handleSubmit,
+    setMessages
   };
 };
 
@@ -273,9 +274,9 @@ export const ChatInterface = ({
     )
 }
 
-// This default export is now unused, but kept to avoid breaking imports if any.
 export default function AskVyavasaay() {
   const { t } = useTranslation();
+
   return (
     <ChatInterface 
         title={t('askVyavasaay.title')}
