@@ -160,17 +160,19 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
                 </div>
             </header>
 
-            <div className="relative bg-[#f0eada] rounded-xl p-4 text-center">
-                <div className="flex flex-col items-center">
-                    <div className="relative">
+            <div className="relative bg-[#f0eada] rounded-xl p-4">
+                <div className="flex items-center gap-4">
+                    <div className="relative shrink-0">
                         <Image src="/images/image.png" data-ai-hint="man in glasses" alt={user.name} width={80} height={80} className="rounded-full border-4 border-white" />
                          <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
                             <Camera className="h-4 w-4" />
                         </Button>
                     </div>
-                    <h2 className="text-xl font-bold mt-2 text-green-800">{user.name}</h2>
-                    <p className="text-sm text-muted-foreground">Farmer &bull; {user.location}</p>
-                    <Badge className="mt-2 bg-yellow-400 text-yellow-900 hover:bg-yellow-400/90">Premium Member</Badge>
+                    <div className="flex-grow">
+                        <h2 className="text-xl font-bold text-green-800">{user.name}</h2>
+                        <p className="text-sm text-muted-foreground">Farmer &bull; {user.location}</p>
+                        <Badge className="mt-2 bg-yellow-400 text-yellow-900 hover:bg-yellow-400/90">Premium Member</Badge>
+                    </div>
                 </div>
             </div>
 
