@@ -4,7 +4,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, Loader2, Landmark, Tractor, FileText, BarChart, ExternalLink, Leaf } from 'lucide-react';
+import { AlertCircle, Loader2, Landmark, FileText, Building2, Phone, RefreshCw, ExternalLink, Leaf } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
@@ -53,16 +53,43 @@ const getBadgeClass = (status: string) => {
     }
 }
 
+const QuickLinkCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+    <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <CardContent className="p-4 flex items-center gap-4">
+            <div className="p-3 bg-muted rounded-lg">
+                <Icon className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+                <p className="font-semibold">{title}</p>
+                <p className="text-sm text-muted-foreground">{description}</p>
+            </div>
+        </CardContent>
+    </Card>
+);
+
 export default function GovtSchemes({ state }: GovtSchemesProps) {
   const { t } = useTranslation();
   
+  const quickLinks = [
+    { icon: FileText, title: 'Document Checklist', description: 'Required documents' },
+    { icon: Phone, title: 'Helpline Numbers', description: 'Get assistance' },
+    { icon: Building2, title: 'Nearest Office', description: 'Find locations' },
+    { icon: RefreshCw, title: 'Track Application', description: 'Real-time status' },
+  ];
+
   return (
     <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div>
             <h1 className="text-2xl font-bold font-headline">{t('govtSchemes.title', 'Available Schemes')}</h1>
-            <Button variant="link" className="text-primary pr-0">{t('discover.seeAll', 'View All')}</Button>
         </div>
         <SchemeResults state={state} />
+
+        <div className="space-y-4 pt-4">
+            <h2 className="text-xl font-bold font-headline flex items-center gap-2">Quick Links</h2>
+            <div className="grid grid-cols-2 gap-4">
+                {quickLinks.map(link => <QuickLinkCard key={link.title} {...link} />)}
+            </div>
+        </div>
     </div>
   );
 }
@@ -115,14 +142,16 @@ function SchemeResults({ state }: GovtSchemesProps) {
                                         <Badge variant="outline" className={cn("border", getBadgeClass(scheme.status))}>{scheme.status}</Badge>
                                     </div>
                                     <p className="text-muted-foreground text-sm">{scheme.description}</p>
-                                    <ul className="text-sm text-muted-foreground list-disc pl-5 grid grid-cols-2 gap-x-4">
+                                    <ul className="text-sm text-muted-foreground list-disc pl-5 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                                         {scheme.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}
                                     </ul>
                                     <div className="pt-2">
-                                       <Button variant="outline">
-                                           <ExternalLink className="mr-2 h-4 w-4"/>
-                                           {scheme.ctaButton}
-                                       </Button>
+                                       <a href="#" target="_blank" rel="noopener noreferrer">
+                                            <Button variant="outline">
+                                                <ExternalLink className="mr-2 h-4 w-4"/>
+                                                {scheme.ctaButton}
+                                            </Button>
+                                       </a>
                                     </div>
                                 </div>
                             </div>
