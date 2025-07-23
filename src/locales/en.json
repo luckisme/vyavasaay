@@ -79,6 +79,7 @@
       "down": "Down",
       "stable": "Stable"
     },
+    "chatTitle": "Chat About Markets",
     "chatPlaceholder": "Ask about prices or trends...",
     "chatInitialMessage": "Use this chat to ask for more details on the market analysis.",
     "showMore": "Show more",
@@ -95,10 +96,11 @@
     "button_pending": "Finding Schemes...",
     "resultTitle": "Relevant Schemes For You",
     "resultDescription": "Here are government schemes we found based on your profile.",
-    "resultPlaceholder": "Personalized schemes will be loaded here based on your profile.",
+    "resultPlaceholder": "No relevant schemes found based on your profile.",
     "summaryBenefits": "Summary & Benefits",
     "eligibility": "Eligibility",
     "applicationProcess": "Application Process",
+    "chatTitle": "Chat About Schemes",
     "chatPlaceholder": "Ask about eligibility or how to apply...",
     "chatInitialMessage": "Ask for more details about the schemes listed or find other schemes."
   },
@@ -143,5 +145,3 @@
     "male": "Male"
   }
 }
-
-    

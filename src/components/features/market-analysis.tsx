@@ -14,7 +14,7 @@ import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import { Badge } from '@/components/ui/badge';
 import { languages } from '@/app/page';
 import { ChatInterface } from './ask-vyavasay';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -35,19 +35,23 @@ const TrendIcon = ({ trend }: { trend: 'up' | 'down' | 'stable' }) => {
 const CollapsibleOutlook = ({ text, className }: { text: string, className?: string }) => {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
-    const preview = text.split(' ').slice(0, 10).join(' ') + (text.split(' ').length > 10 ? '...' : '');
+    const words = text.split(' ');
+    const isCollapsible = words.length > 10;
+    const preview = isCollapsible ? words.slice(0, 10).join(' ') + '...' : text;
+
+    if (!isCollapsible) {
+        return <p className={cn("text-muted-foreground", className)}>{text}</p>
+    }
 
     return (
         <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn("space-y-2", className)}>
             <p className="text-muted-foreground">{isOpen ? text : preview}</p>
-            {text.split(' ').length > 10 && (
-                 <CollapsibleTrigger asChild>
-                    <Button variant="link" className="p-0 h-auto text-sm">
-                        {isOpen ? t('marketAnalysis.showLess', 'Show less') : t('marketAnalysis.showMore', 'Show more')}
-                        <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform", isOpen && "rotate-180")} />
-                    </Button>
-                </CollapsibleTrigger>
-            )}
+            <CollapsibleTrigger asChild>
+                <Button variant="link" className="p-0 h-auto text-sm">
+                    {isOpen ? t('marketAnalysis.showLess', 'Show less') : t('marketAnalysis.showMore', 'Show more')}
+                    <ChevronDown className={cn("h-4 w-4 ml-1 transition-transform", isOpen && "rotate-180")} />
+                </Button>
+            </CollapsibleTrigger>
         </Collapsible>
     );
 };
@@ -87,7 +91,7 @@ export default function MarketAnalysis() {
   const MainContent = () => {
     if (state.loading) {
         return (
-            <div className="space-y-6">
+            <div className="space-y-8">
                 <Card>
                     <CardHeader>
                         <Skeleton className="h-8 w-1/3" />
@@ -240,6 +244,7 @@ export default function MarketAnalysis() {
         </div>
         <div className="md:sticky md:top-24">
              <ChatInterface
+                title={t('marketAnalysis.chatTitle', 'Chat About Markets')}
                 placeholder={t('marketAnalysis.chatPlaceholder', 'Ask about prices or trends...')}
                 initialMessage={t('marketAnalysis.chatInitialMessage', 'Use this chat to ask for more details on the market analysis.')}
             />

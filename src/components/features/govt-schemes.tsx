@@ -62,6 +62,7 @@ export default function GovtSchemes() {
         </Card>
         <div className="md:sticky md:top-24">
             <ChatInterface
+                title={t('govtSchemes.chatTitle', 'Chat About Schemes')}
                 placeholder={t('govtSchemes.chatPlaceholder', 'Ask about eligibility or how to apply...')}
                 initialMessage={t('govtSchemes.chatInitialMessage', 'Ask for more details about the schemes listed or find other schemes.')}
             />
@@ -78,7 +79,7 @@ function SchemeResults({ state }: { state: { data: GovernmentSchemeOutput | null
             <div className="space-y-4">
                 <div className="flex items-center space-x-4">
                     <Loader2 className="h-6 w-6 animate-spin text-primary"/>
-                    <p className="text-muted-foreground">{t('govtSchemes.button_pending')}</p>
+                    <p className="text-muted-foreground">{t('govtSchemes.button_pending', 'Finding Schemes...')}</p>
                 </div>
                  <div className="space-y-2 pt-4">
                     <Skeleton className="h-10 w-full" />
@@ -93,14 +94,14 @@ function SchemeResults({ state }: { state: { data: GovernmentSchemeOutput | null
         return (
              <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>{t('cropDiagnosis.error')}</AlertTitle>
+                <AlertTitle>{t('cropDiagnosis.error', 'Error')}</AlertTitle>
                 <AlertDescription>{state.error}</AlertDescription>
             </Alert>
         )
     }
 
-    if (!state.data) {
-        return <p className="text-muted-foreground">{t('govtSchemes.resultPlaceholder')}</p>;
+    if (!state.data || state.data.relevantSchemes.length === 0) {
+        return <p className="text-muted-foreground">{t('govtSchemes.resultPlaceholder', 'No relevant schemes found based on your profile.')}</p>;
     }
 
     return (
@@ -110,15 +111,15 @@ function SchemeResults({ state }: { state: { data: GovernmentSchemeOutput | null
                     <AccordionTrigger className="font-semibold text-primary">{scheme.schemeName}</AccordionTrigger>
                     <AccordionContent className="space-y-4 text-muted-foreground">
                         <div>
-                            <h4 className="font-semibold text-foreground">{t('govtSchemes.summaryBenefits')}</h4>
+                            <h4 className="font-semibold text-foreground">{t('govtSchemes.summaryBenefits', 'Summary & Benefits')}</h4>
                             <p className="whitespace-pre-wrap">{scheme.summary}</p>
                         </div>
                         <div>
-                            <h4 className="font-semibold text-foreground">{t('govtSchemes.eligibility')}</h4>
+                            <h4 className="font-semibold text-foreground">{t('govtSchemes.eligibility', 'Eligibility')}</h4>
                             <p className="whitespace-pre-wrap">{scheme.eligibility}</p>
                         </div>
                         <div>
-                            <h4 className="font-semibold text-foreground">{t('govtSchemes.applicationProcess')}</h4>
+                            <h4 className="font-semibold text-foreground">{t('govtSchemes.applicationProcess', 'Application Process')}</h4>
                             <p className="whitespace-pre-wrap">{scheme.applicationProcess}</p>
                         </div>
                     </AccordionContent>

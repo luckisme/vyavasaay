@@ -39,7 +39,7 @@ const WeatherCardSkeleton = () => (
                     <Skeleton className="h-5 w-24" />
                     <Skeleton className="h-6 w-16" />
                 </div>
-                <div className="space-y-2">
+                 <div className="space-y-2">
                     <Skeleton className="h-5 w-24" />
                     <Skeleton className="h-6 w-16" />
                 </div>
