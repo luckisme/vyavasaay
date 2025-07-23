@@ -193,9 +193,11 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
                              <Button size="icon" className="h-7 w-7 rounded-full" onClick={() => fileInputRef.current?.click()}>
                                 <Camera className="h-4 w-4" />
                             </Button>
-                            <Button size="icon" variant="destructive" className="h-7 w-7 rounded-full" onClick={handleResetPicture}>
-                                <RotateCcw className="h-4 w-4" />
-                            </Button>
+                            {user.profilePicture !== '/images/image.png' && (
+                                <Button size="icon" variant="destructive" className="h-7 w-7 rounded-full" onClick={handleResetPicture}>
+                                    <RotateCcw className="h-4 w-4" />
+                                </Button>
+                            )}
                          </div>
                         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleProfilePictureChange} />
                     </div>
