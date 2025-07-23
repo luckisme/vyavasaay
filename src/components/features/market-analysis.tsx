@@ -22,30 +22,6 @@ type MarketAnalysisProps = {
     }
 }
 
-const cropImageMap: Record<string, string> = {
-    'wheat': '/images/wheat.jpg',
-    'rice': '/images/rice.jpg',
-    'cotton': '/images/cotton.jpg',
-};
-
-const getCropImage = (cropName: string) => {
-    const lowerCropName = cropName.toLowerCase();
-    for (const key in cropImageMap) {
-        if (lowerCropName.includes(key)) {
-            return cropImageMap[key];
-        }
-    }
-    return 'https://placehold.co/100x100.png';
-}
-
-const getDataHint = (cropName: string) => {
-    const lowerCropName = cropName.toLowerCase();
-     if (lowerCropName.includes('wheat')) return 'wheat field';
-     if (lowerCropName.includes('rice')) return 'rice grains';
-     if (lowerCropName.includes('cotton')) return 'cotton plant';
-     return 'crop';
-}
-
 export default function MarketAnalysis({ state }: MarketAnalysisProps) {
     const { t } = useTranslation();
     const { user } = useUser();
@@ -55,11 +31,6 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             <div className="space-y-6">
                 <Skeleton className="h-10 w-48" />
                 <Skeleton className="h-8 w-64" />
-                <div className="flex gap-2">
-                    <Skeleton className="h-8 w-20 rounded-full" />
-                    <Skeleton className="h-8 w-24 rounded-full" />
-                    <Skeleton className="h-8 w-20 rounded-full" />
-                </div>
                 <Skeleton className="h-32 w-full rounded-2xl" />
                 <div className="space-y-4">
                     <Skeleton className="h-20 w-full rounded-xl" />
@@ -81,7 +52,6 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
     }
 
     const { marketAlert, todaysPrices } = state.data;
-    const locationState = user?.location?.split(',')[1]?.trim() || user?.location || '';
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -95,30 +65,9 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" className="h-10 w-10">
-                    <ArrowLeft />
-                </Button>
-                <div>
-                    <h1 className="text-2xl font-bold font-headline text-primary">Market Analysis</h1>
-                    <p className="text-muted-foreground">Real-time market prices and trends for your crops</p>
-                </div>
-            </div>
-
-            {/* Filters */}
-            <div className="flex gap-2 items-center">
-                <Button variant="outline" className="rounded-full bg-background">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Today
-                </Button>
-                {locationState && (
-                    <Button variant="outline" className="rounded-full bg-background">
-                        {locationState}
-                    </Button>
-                )}
-                 <Button variant="outline" className="rounded-full bg-background">
-                    Cereals
-                </Button>
+            <div>
+                <h1 className="text-2xl font-bold font-headline text-primary">Market Analysis</h1>
+                <p className="text-muted-foreground">Real-time market prices and trends for your crops</p>
             </div>
 
             {/* Market Alert */}
@@ -133,16 +82,6 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
                             <BarChart className="h-6 w-6" />
                         </div>
                     </div>
-                    <div className="mt-4 flex gap-3">
-                        <Button variant="secondary" className="bg-white/90 hover:bg-white text-orange-600 flex-1">
-                            <BarChart className="h-4 w-4 mr-2" />
-                            View Chart
-                        </Button>
-                        <Button variant="secondary" className="bg-white/30 hover:bg-white/40 text-white flex-1">
-                            <AlertTriangle className="h-4 w-4 mr-2" />
-                            Set Alert
-                        </Button>
-                    </div>
                 </CardContent>
             </Card>
 
@@ -150,7 +89,6 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold flex items-center gap-2">
-                        <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-2.png" alt="Price icon" width={24} height={24}/>
                         Today's Prices
                     </h2>
                     <Button variant="link" className="text-primary">View All Markets</Button>
@@ -159,14 +97,6 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
                     {todaysPrices.map((item, index) => (
                         <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow">
                             <CardContent className="p-4 flex items-center gap-4">
-                                <Image
-                                    src={getCropImage(item.cropName)}
-                                    alt={item.cropName}
-                                    width={56}
-                                    height={56}
-                                    className="rounded-full object-cover h-14 w-14 border-2 border-muted"
-                                    data-ai-hint={getDataHint(item.cropName)}
-                                />
                                 <div className="flex-1">
                                     <p className="font-bold">{item.cropName}</p>
                                     <p className="text-sm text-muted-foreground">{item.marketName}</p>
