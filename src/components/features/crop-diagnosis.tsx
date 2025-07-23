@@ -31,10 +31,6 @@ interface RecentDiagnosis {
   date: string;
 }
 
-const MicroscopeIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.2 2.5c.2-.2.5-.3.8-.3s.6.1.8.3l3.5 3.5c.2.2.3.5.3.8s-.1.6-.3.8l-1.9 1.9c-1.1 1.1-2.9 1.1-4 0l-1.9-1.9C6.6 7 6 4.9 7.1 3.9l1.2-1.2V11c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1V5.5c0-.6.4-1 1-1h.5"/><path d="m14.8 12.5 1.9-1.9c.2-.2.5-.3.8-.3s.6.1.8.3l3.5 3.5c.2.2.3.5.3.8s-.1.6-.3.8l-1.9 1.9c-1.1 1.1-2.9 1.1-4 0l-1.9-1.9c-.2-.2-.3-.5-.3-.8s.1-.6.3-.8Z"/><path d="M12 11h2.5c.6 0 1 .4 1 1v1.5c0 .6-.4 1-1 1h-4c-2.2 0-4 1.8-4 4v0c0 2.2 1.8 4 4 4h8"/><path d="M12 22v-2"/></svg>
-)
-
 const AphidIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg {...props} width="48" height="48" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" stroke="currentColor">
         <path d="M16 8.9c-.8.8-1.7 1.1-2.5 1.1-1.5 0-2.5-1.7-2.5-3.2 0-1.2.7-2.3 1.5-3 .9-.8 2-1.3 3.5-1.3 2.5 0 4.5 2.8 4.5 5.5 0 1.2-.3 2.3-.8 3.3" stroke="hsl(120, 70%, 50%)"></path>
@@ -270,7 +266,6 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
                         </Button>
                     </div>
                 </div>
-                <MicroscopeIcon className="h-20 w-20 opacity-20"/>
             </CardContent>
         </Card>
         <input id="photo-input" name="photo" type="file" accept="image/*" onChange={handleFileChange} ref={fileInputRef} className="sr-only" />
