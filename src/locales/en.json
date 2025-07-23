@@ -47,6 +47,9 @@
     "uploadTab": "Upload File",
     "cameraTab": "Use Camera"
   },
+  "cropCalculator": {
+    "placeholder": "e.g., I want to grow tomatoes in 1 acre. Seed cost is ₹1500, fertilizer ₹2000..."
+  },
   "askVyavasaay": {
     "title": "Ask Vyavasaay",
     "description": "Your AI assistant for agricultural questions. Ask about market prices, weather, and more.",

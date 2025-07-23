@@ -7,6 +7,7 @@ import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, Phone
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
+import CropCalculator from './crop-calculator';
 
 interface DiscoverProps {
   setActiveFeature: (feature: Feature) => void;
@@ -100,6 +101,8 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
       )}
       
       <>
+        <CropCalculator />
+
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

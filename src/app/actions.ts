@@ -6,9 +6,11 @@ import { diagnoseCropFromImage } from '@/ai/flows/diagnose-crop-from-image';
 import { answerFarmerQuestion } from '@/ai/flows/answer-farmer-question';
 import { summarizeGovernmentScheme } from '@/ai/flows/summarize-government-scheme';
 import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
+import { calculateCropCosts } from '@/ai/flows/calculate-crop-costs';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
+import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs';
 import type { UserProfile } from '@/hooks/use-user';
 
 // Define languages directly in the server action file to avoid import issues from client components.
@@ -167,5 +169,29 @@ export async function getWeatherAction(location: string): Promise<WeatherData | 
     } catch (e) {
         console.error(e);
         return { error: 'An unexpected error occurred while fetching weather data.' };
+    }
+}
+
+// Action for Crop Cost Calculator
+export interface CalculateCostsState {
+    data: CropCostCalculationOutput | null;
+    error: string | null;
+    loading: boolean;
+}
+export async function calculateCropCostsAction(
+    userInput: string,
+    language: string
+): Promise<Omit<CalculateCostsState, 'loading'>> {
+    if (!userInput.trim()) {
+        return { data: null, error: 'Please provide details for calculation.' };
+    }
+    const languageName = languages.find(l => l.value === language)?.label || 'English';
+
+    try {
+        const result = await calculateCropCosts({ userInput, language: languageName });
+        return { data: result, error: null };
+    } catch (e) {
+        console.error(e);
+        return { data: null, error: 'Sorry, I could not calculate the costs. Please try rephrasing your input.' };
     }
 }
