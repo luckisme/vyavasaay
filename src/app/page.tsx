@@ -10,10 +10,10 @@ import GovtSchemes from '@/components/features/govt-schemes';
 import Weather from '@/components/features/weather';
 import OnboardingModal from '@/components/onboarding-modal';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Globe, Bell } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Globe, Bell, Search } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
 import { UserProvider, useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -47,6 +47,71 @@ interface DataStates {
     market: { data: MarketAnalysisOutput | null; error: string | null; loading: boolean; };
     schemes: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; };
     weatherAlert: { data: WeatherAlert | null; error: string | null; loading: boolean; };
+}
+
+const PhoneIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+)
+
+const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void }) => {
+    const { user, setUserProfile } = useUser();
+    const { setLanguage, t } = useTranslation();
+    
+    const handleLanguageChange = (langCode: string) => {
+        if (user) {
+            setUserProfile({ ...user, language: langCode });
+        }
+    };
+    
+    const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
+
+    return (
+        <header className="p-4 sm:p-6 bg-[#F5F5DC] space-y-4">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={56} height={56} />
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <Globe className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {languages.map((lang) => (
+                          <DropdownMenuItem key={lang.value} onClick={() => handleLanguageChange(lang.value)}>
+                            {lang.label}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Avatar className="cursor-pointer" onClick={() => setActiveFeature('profile')}>
+                        <Image src={user?.profilePicture || "/images/image.png"} alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
+                    </Avatar>
+                </div>
+            </div>
+             <div className="flex items-center gap-2">
+                 <div 
+                    className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
+                    onClick={() => setActiveFeature('ask')}
+                >
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <span className="pl-12 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
+                </div>
+                {offlineCallNumber && (
+                    <a href={`tel:${offlineCallNumber}`}>
+                        <Button type="button" size="icon" className="rounded-full h-12 w-12 bg-primary hover:bg-primary/90">
+                            <PhoneIcon className="h-6 w-6 text-primary-foreground" />
+                        </Button>
+                    </a>
+                )}
+            </div>
+        </header>
+    );
 }
 
 function AppCore() {
@@ -104,12 +169,6 @@ function AppCore() {
     }
   }, [user, language, t]);
 
-  const handleLanguageChange = (langCode: string) => {
-    if (user) {
-      setUserProfile({ ...user, language: langCode });
-    }
-  };
-
   const renderFeature = () => {
     if (!user) return null;
     switch (activeFeature) {
@@ -135,17 +194,12 @@ function AppCore() {
       default:
         return <Discover 
             setActiveFeature={setActiveFeature} 
-            userName={user.name} 
             weatherState={dataStates.weather}
             weatherAlertState={dataStates.weatherAlert}
-            languages={languages}
-            onLanguageChange={handleLanguageChange}
         />;
     }
   };
   
-  const currentLanguage = languages.find(l => l.value === language) || languages[0];
-
   return (
     <>
       <OnboardingModal isOpen={!user} />
@@ -154,8 +208,9 @@ function AppCore() {
             <AppSidebar activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
             <div className="flex flex-col w-full min-h-screen">
                 <SidebarInset>
-                    <main className="flex-1 overflow-auto bg-[#F5F5DC]">
-                        <div className="p-4 sm:p-6 pb-24 md:pb-6">
+                    <main className="flex-1 flex flex-col overflow-auto bg-[#F5F5DC]">
+                       {activeFeature === 'discover' && <AppHeader setActiveFeature={setActiveFeature} />}
+                        <div className="p-4 sm:p-6 pb-24 md:pb-6 flex-1">
                             {renderFeature()}
                         </div>
                     </main>

@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Tractor, Camera } from 'lucide-react';
+import { ArrowLeft, Edit, Tractor, Camera, RotateCcw } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -165,6 +165,14 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
             reader.readAsDataURL(file);
         }
     };
+    
+    const handleResetPicture = () => {
+        const newProfile: UserProfile = {
+            ...user,
+            profilePicture: '/images/image.png',
+        };
+        setUserProfile(newProfile);
+    }
 
     return (
         <div className="space-y-6">
@@ -181,9 +189,14 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
                 <div className="flex items-center gap-4">
                     <div className="relative shrink-0">
                         <Image src={user.profilePicture || "/images/image.png"} data-ai-hint="man in glasses" alt={user.name} width={80} height={80} className="rounded-full border-4 border-white object-cover" />
-                         <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full" onClick={() => fileInputRef.current?.click()}>
-                            <Camera className="h-4 w-4" />
-                        </Button>
+                         <div className="absolute bottom-0 right-0 flex gap-1">
+                             <Button size="icon" className="h-7 w-7 rounded-full" onClick={() => fileInputRef.current?.click()}>
+                                <Camera className="h-4 w-4" />
+                            </Button>
+                            <Button size="icon" variant="destructive" className="h-7 w-7 rounded-full" onClick={handleResetPicture}>
+                                <RotateCcw className="h-4 w-4" />
+                            </Button>
+                         </div>
                         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleProfilePictureChange} />
                     </div>
                     <div className="flex-grow">
