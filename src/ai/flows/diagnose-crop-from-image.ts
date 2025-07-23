@@ -22,11 +22,11 @@ const DiagnoseCropFromImageInputSchema = z.object({
 export type DiagnoseCropFromImageInput = z.infer<typeof DiagnoseCropFromImageInputSchema>;
 
 const DiagnoseCropFromImageOutputSchema = z.object({
-  diagnosis: z.object({
-    disease: z.string().describe('The identified disease or issue affecting the crop.'),
-    confidence: z.number().describe('The confidence level of the diagnosis (0-1).'),
-    recommendedActions: z.string().describe('Recommended actions to address the identified issue.'),
-  }).describe('The diagnosis result based on the image analysis.'),
+  disease: z.string().describe('The identified disease or issue affecting the crop (e.g., "Tomato Blight", "Wheat Rust").'),
+  riskLevel: z.enum(["Low", "Medium", "High"]).describe("The assessed risk level to the crop."),
+  detectionDetails: z.string().describe("A very brief summary of the detection (e.g., 'Early stage detection', 'Preventive measures needed')."),
+  recommendedActions: z.string().describe('Recommended actions to address the identified issue.'),
+  confidence: z.number().describe('The confidence level of the diagnosis (0-1).'),
 });
 export type DiagnoseCropFromImageOutput = z.infer<typeof DiagnoseCropFromImageOutputSchema>;
 
@@ -38,13 +38,20 @@ const prompt = ai.definePrompt({
   name: 'diagnoseCropFromImagePrompt',
   input: {schema: DiagnoseCropFromImageInputSchema},
   output: {schema: DiagnoseCropFromImageOutputSchema},
-  prompt: `You are an expert in plant pathology. Analyze the image of the crop provided and provide a diagnosis, including the likely disease or issue, a confidence level, and recommended actions.
+  prompt: `You are an expert in plant pathology. Analyze the image of the crop provided.
+
+Based on your analysis, provide:
+1.  **disease**: The common name of the disease or issue.
+2.  **riskLevel**: Assess the risk as 'Low', 'Medium', or 'High' based on the severity and potential for damage.
+3.  **detectionDetails**: A very short phrase describing the finding, like 'Early stage detection' or 'Preventive measures needed'.
+4.  **recommendedActions**: A clear, actionable plan for the farmer.
+5.  **confidence**: Your confidence in this diagnosis from 0.0 to 1.0.
 
 Consider the location of the crop, if provided: {{{location}}}. This can help in identifying region-specific pests and diseases.
 
 Crop Image: {{media url=photoDataUri}}
 
-Ensure the diagnosis is clear and actionable for farmers. Provide the entire response in {{{language}}}.`,
+Ensure the response is clear and actionable for farmers. Provide the entire response in {{{language}}}.`,
   config: {
     safetySettings: [
       {

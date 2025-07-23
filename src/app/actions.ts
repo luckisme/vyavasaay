@@ -17,10 +17,21 @@ import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
 
+const allLanguages = [
+    { value: 'en', label: 'English', short: 'En' },
+    { value: 'hi', label: 'हिन्दी', short: 'हि' },
+    { value: 'mr', label: 'मराठी', short: 'म' },
+    { value: 'ta', label: 'தமிழ்', short: 'த' },
+    { value: 'te', label: 'తెలుగు', short: 'తె' },
+    { value: 'bn', label: 'বাংলা', short: 'বা' },
+    { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ' },
+];
+
 // State for Crop Diagnosis Action
 export interface DiagnoseState {
   data: DiagnoseCropFromImageOutput | null;
   error: string | null;
+  loading: boolean;
 }
 export async function diagnoseCropAction(
   prevState: DiagnoseState,
@@ -32,12 +43,12 @@ export async function diagnoseCropAction(
   const language = allLanguages.find(l => l.value === languageCode)?.label || 'English';
 
   if (!file || file.size === 0) {
-    return { data: null, error: 'Please select an image file.' };
+    return { data: null, error: 'Please select an image file.', loading: false };
   }
 
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
   if (!allowedTypes.includes(file.type)) {
-    return { data: null, error: 'Invalid file type. Please upload a JPG, PNG, or WEBP image.' };
+    return { data: null, error: 'Invalid file type. Please upload a JPG, PNG, or WEBP image.', loading: false };
   }
 
   try {
@@ -46,10 +57,10 @@ export async function diagnoseCropAction(
     const photoDataUri = `data:${file.type};base64,${base64}`;
 
     const result = await diagnoseCropFromImage({ photoDataUri, location, language });
-    return { data: result, error: null };
+    return { data: result, error: null, loading: false };
   } catch (e) {
     console.error(e);
-    return { data: null, error: 'An unexpected error occurred during diagnosis. Please try again.' };
+    return { data: null, error: 'An unexpected error occurred during diagnosis. Please try again.', loading: false };
   }
 }
 
@@ -183,17 +194,6 @@ export interface CalculateCostsState {
     error: string | null;
     loading: boolean;
 }
-
-const allLanguages = [
-    { value: 'en', label: 'English', short: 'En' },
-    { value: 'hi', label: 'हिन्दी', short: 'हि' },
-    { value: 'mr', label: 'मराठी', short: 'म' },
-    { value: 'ta', label: 'தமிழ்', short: 'த' },
-    { value: 'te', label: 'తెలుగు', short: 'తె' },
-    { value: 'bn', label: 'বাংলা', short: 'বা' },
-    { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ' },
-];
-
 
 export async function calculateCropCostsAction(
     userInput: string,

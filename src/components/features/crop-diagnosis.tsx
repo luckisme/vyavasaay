@@ -1,129 +1,80 @@
 
 'use client';
 
-import React, { useState, useRef, useEffect, useActionState, useCallback } from 'react';
-import { useFormStatus } from 'react-dom';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Upload, X, AlertCircle, Camera, ArrowLeft, Loader2, Sparkles, Bug, Wind, Sun } from 'lucide-react';
+import { Camera, Upload, AlertTriangle, ArrowLeft, Loader2, Sparkles } from 'lucide-react';
 import { diagnoseCropAction, type DiagnoseState } from '@/app/actions';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
-import { ChatInterface } from './ask-vyavasay';
-import type { ChatMessage } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '../ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import type { Feature } from '@/app/page';
 
 const initialState: DiagnoseState = {
   data: null,
   error: null,
+  loading: false
 };
 
 interface RecentDiagnosis {
   imageUrl: string;
   diagnosis: string;
+  details: string;
+  riskLevel: 'Low' | 'Medium' | 'High';
   date: string;
 }
 
-function SubmitButton({ disabled }: { disabled?: boolean }) {
-  const { pending } = useFormStatus();
-  const { t } = useTranslation();
-  return (
-    <Button type="submit" disabled={pending || disabled} className="w-full">
-      {pending ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {t('cropDiagnosis.button_pending', 'Diagnosing...')}
-          </>
-      ) : (
-        <>
-            <Sparkles className="mr-2 h-4 w-4" />
-            {t('cropDiagnosis.button', 'Diagnose Crop')}
-        </>
-      )}
-    </Button>
-  );
-}
+const MicroscopeIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.2 2.5c.2-.2.5-.3.8-.3s.6.1.8.3l3.5 3.5c.2.2.3.5.3.8s-.1.6-.3.8l-1.9 1.9c-1.1 1.1-2.9 1.1-4 0l-1.9-1.9C6.6 7 6 4.9 7.1 3.9l1.2-1.2V11c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1V5.5c0-.6.4-1 1-1h.5"/><path d="m14.8 12.5 1.9-1.9c.2-.2.5-.3.8-.3s.6.1.8.3l3.5 3.5c.2.2.3.5.3.8s-.1.6-.3.8l-1.9 1.9c-1.1 1.1-2.9 1.1-4 0l-1.9-1.9c-.2-.2-.3-.5-.3-.8s.1-.6.3-.8Z"/><path d="M12 11h2.5c.6 0 1 .4 1 1v1.5c0 .6-.4 1-1 1h-4c-2.2 0-4 1.8-4 4v0c0 2.2 1.8 4 4 4h8"/><path d="M12 22v-2"/></svg>
+)
 
-const DiagnosisResult = ({ result }: { result: DiagnoseState['data'] }) => {
-    const { t } = useTranslation();
-    if (!result) return null;
+const AphidIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" stroke="currentColor">
+        <path d="M16 8.9c-.8.8-1.7 1.1-2.5 1.1-1.5 0-2.5-1.7-2.5-3.2 0-1.2.7-2.3 1.5-3 .9-.8 2-1.3 3.5-1.3 2.5 0 4.5 2.8 4.5 5.5 0 1.2-.3 2.3-.8 3.3" stroke="hsl(120, 70%, 50%)"></path>
+        <path d="M13.5 10s-1 .5-2.5-1c-1.5-1.5-1.5-2.5-1.5-2.5" stroke="hsl(120, 70%, 50%)"></path><path d="M11 14.5c0 1-.5 1.5-1.5 1.5-1 0-1.5-.5-1.5-1.5" stroke="hsl(120, 70%, 50%)"></path>
+        <path d="M7 16.5c-1 0-1.5-.5-1.5-1.5 0-1 .5-1.5 1.5-1.5" stroke="hsl(120, 70%, 50%)"></path><path d="M4.5 18c-1 0-1.5-.5-1.5-1.5 0-1 .5-1.5 1.5-1.5" stroke="hsl(120, 70%, 50%)"></path>
+        <path d="M10.5 20c-1 0-1.5-.5-1.5-1.5s.5-1.5 1.5-1.5" stroke="hsl(120, 70%, 50%)"></path><path d="M14.5 20.5c-1 0-1.5-.5-1.5-1.5s.5-1.5 1.5-1.5" stroke="hsl(120, 70%, 50%)"></path>
+        <path d="M12 12c-2 0-4.5 1.5-4.5 4v.5c0 2.5 2 4.5 4.5 4.5h5c2.5 0 4.5-2 4.5-4.5v-1c0-2-1.5-3.5-3.5-3.5-1.5 0-2.5 1-2.5 1" stroke="hsl(120, 70%, 50%)"></path>
+    </svg>
+);
 
-    const { diagnosis } = result;
-    const confidencePercent = Math.round(diagnosis.confidence * 100);
-    
-    let riskLevel = t('cropDiagnosis.risk.low', 'Low Risk');
-    let riskColor = 'text-yellow-600';
-    if (confidencePercent > 75) {
-        riskLevel = t('cropDiagnosis.risk.high', 'High Risk');
-        riskColor = 'text-red-600';
-    } else if (confidencePercent > 50) {
-        riskLevel = t('cropDiagnosis.risk.medium', 'Medium Risk');
-        riskColor = 'text-orange-600';
-    }
+const FungalIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C9.23858 2 7 4.23858 7 7V10H17V7C17 4.23858 14.7614 2 12 2Z" fill="#ff6b6b"/>
+        <path d="M6 12H18C19.1046 12 20 12.8954 20 14V15C20 16.1046 19.1046 17 18 17H6C4.89543 17 4 16.1046 4 15V14C4 12.8954 4.89543 12 6 12Z" fill="#ff6b6b"/>
+        <circle cx="9" cy="8" r="1.5" fill="white"/>
+        <circle cx="15" cy="8" r="1.5" fill="white"/>
+        <path d="M10 19H14V22H10V19Z" fill="#ff6b6b"/>
+    </svg>
+);
 
-    return (
-        <Card className="mt-4">
-            <CardHeader>
-                <CardTitle>{t('cropDiagnosis.resultTitle', 'Diagnosis Result')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold text-primary">{diagnosis.disease}</h3>
-                    <span className={cn("font-bold", riskColor)}>{riskLevel}</span>
-                </div>
-                
-                <div>
-                    <div className="flex items-center gap-2 mt-1">
-                        <Progress value={confidencePercent} className="w-full h-2" />
-                        <span className="text-sm font-medium">{confidencePercent}% {t('cropDiagnosis.confidence')}</span>
-                    </div>
-                </div>
-                
-                <Alert className="bg-green-50 border-green-200 mt-4">
-                    <Sparkles className="h-4 w-4 text-green-700" />
-                    <AlertTitle className="text-green-800 font-semibold">{t('cropDiagnosis.recommendedActions')}</AlertTitle>
-                    <AlertDescription className="text-green-700 whitespace-pre-wrap">
-                        {diagnosis.recommendedActions}
-                    </AlertDescription>
-                </Alert>
-            </CardContent>
-        </Card>
-    );
-};
-
-
-export default function CropDiagnosis() {
+export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void; }) {
   const { t, language } = useTranslation();
   const { user } = useUser();
   const { toast } = useToast();
-  const [state, formAction] = useActionState(diagnoseCropAction, initialState);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  const [state, setState] = useState<DiagnoseState>(initialState);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<'upload' | 'camera'>('upload');
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
-  const [showResultChat, setShowResultChat] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [recentDiagnoses, setRecentDiagnoses] = useState<RecentDiagnosis[]>([]);
-
-  const { pending } = useFormStatus();
 
   useEffect(() => {
     if (state.data) {
-        setShowResultChat(true);
-        if (preview && state.data.diagnosis.disease) {
+        if (preview && state.data.disease) {
             const newDiagnosis: RecentDiagnosis = {
                 imageUrl: preview,
-                diagnosis: state.data.diagnosis.disease,
-                date: new Date().toLocaleDateString(),
+                diagnosis: state.data.disease,
+                details: state.data.detectionDetails,
+                riskLevel: state.data.riskLevel,
+                date: "Just now",
             };
             setRecentDiagnoses(prev => [newDiagnosis, ...prev].slice(0, 3));
         }
@@ -174,12 +125,12 @@ export default function CropDiagnosis() {
         const resizedFile = await resizeImage(selectedFile);
         setFile(resizedFile);
         setPreview(URL.createObjectURL(resizedFile));
-        setShowResultChat(false);
-        setActiveTab('preview');
+        await handleDiagnose(resizedFile);
     }
   };
 
-   const startCamera = useCallback(async () => {
+  const startCamera = useCallback(async () => {
+    setIsCameraActive(true);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
@@ -187,11 +138,9 @@ export default function CropDiagnosis() {
           videoRef.current.srcObject = stream;
         }
         setHasCameraPermission(true);
-        setIsCameraActive(true);
       } catch (error) {
         console.error('Error accessing camera:', error);
         setHasCameraPermission(false);
-        setIsCameraActive(false);
         toast({
           variant: 'destructive',
           title: 'Camera Access Denied',
@@ -211,15 +160,9 @@ export default function CropDiagnosis() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'camera' && !isCameraActive) {
-      startCamera();
-    } else if (activeTab !== 'camera' && isCameraActive) {
-      stopCamera();
-    }
-  }, [activeTab, isCameraActive, startCamera, stopCamera]);
-  
-  // Cleanup camera on component unmount
-  useEffect(() => stopCamera, [stopCamera]);
+    return () => stopCamera();
+  }, [stopCamera]);
+
 
   const handleTakePicture = async () => {
     const video = videoRef.current;
@@ -237,212 +180,160 @@ export default function CropDiagnosis() {
         const capturedFile = new File([blob], "capture.jpg", { type: "image/jpeg" });
         const resizedFile = await resizeImage(capturedFile);
         setFile(resizedFile);
-        setShowResultChat(false);
         stopCamera();
-        setActiveTab('preview');
+        await handleDiagnose(resizedFile);
     }
   };
 
+  const handleDiagnose = async (fileToDiagnose: File) => {
+      if (!fileToDiagnose) {
+          toast({ variant: "destructive", title: "No image selected" });
+          return;
+      }
+      setState({ ...initialState, loading: true });
+      const formData = new FormData();
+      formData.append('photo', fileToDiagnose);
+      formData.append('location', user?.location || '');
+      formData.append('language', language);
 
-  const handleRemoveImage = () => {
-    setPreview(null);
-    setFile(null);
-    setShowResultChat(false);
-    if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-    }
-    setActiveTab('upload');
+      const result = await diagnoseCropAction(initialState, formData);
+      setState(result);
   }
 
-  const extendedFormAction = (formData: FormData) => {
-    if (!file) {
-        toast({
-            variant: "destructive",
-            title: "No image selected",
-            description: "Please upload or capture an image first.",
-        });
-        return;
-    }
-    formData.set('photo', file);
-    formAction(formData);
-  }
-
-  const getInitialChatMessages = (): ChatMessage[] => {
-    if (state.data) {
-      return [{
-        id: 'diagnosis-result-' + Date.now(),
-        role: 'assistant',
-        content: t('cropDiagnosis.chatInitialMessage', 'This is the diagnosis based on the image provided. Ask me any follow up questions you might have.'),
-      }];
-    }
-    return [];
+  const RiskBadge = ({ level }: { level: 'Low' | 'Medium' | 'High' }) => {
+    const styles = {
+      Low: 'text-yellow-600',
+      Medium: 'text-orange-600',
+      High: 'text-red-600',
+    };
+    return <span className={cn("font-semibold", styles[level])}>{level} Risk</span>;
   };
-
-  const commonIssues = [
-    {
-      name: 'Powdery Mildew',
-      description: 'A fungal disease that appears as white powdery spots on leaves and stems.',
-      icon: Wind
-    },
-    {
-      name: 'Aphids',
-      description: 'Small sap-sucking insects that can cause leaf curling and transmit viruses.',
-      icon: Bug
-    },
-    {
-      name: 'Late Blight',
-      description: 'A serious fungal disease affecting tomatoes and potatoes, thriving in cool, moist conditions.',
-      icon: Sun
-    }
-  ];
+  
+  if (isCameraActive) {
+    return (
+        <div className="bg-black fixed inset-0 z-50 flex flex-col items-center justify-center">
+             <Button variant="ghost" size="icon" className="absolute top-4 left-4 z-10 text-white" onClick={stopCamera}>
+                 <ArrowLeft />
+             </Button>
+            <video ref={videoRef} className="h-full w-full object-cover" autoPlay playsInline muted />
+            <div className="absolute bottom-10">
+                <Button size="lg" className="rounded-full w-20 h-20 border-4 border-white" onClick={handleTakePicture}>
+                    <Camera className="w-8 h-8" />
+                </Button>
+            </div>
+        </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-        <div>
-            <h1 className="text-2xl font-bold font-headline">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
-            <p className="text-muted-foreground">{t('cropDiagnosis.descriptionPage', 'AI-powered crop disease and pest detection')}</p>
-        </div>
+        <header className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
+                <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+                <h1 className="text-2xl font-bold font-headline">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
+                <p className="text-muted-foreground">{t('cropDiagnosis.descriptionPage', 'AI-powered crop disease and pest detection')}</p>
+            </div>
+        </header>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('cropDiagnosis.uploadTitle', 'Diagnose Your Crop')}</CardTitle>
-            <CardDescription>{t('cropDiagnosis.uploadDescription', 'Upload a file or use your camera to get an AI-powered diagnosis.')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'upload' | 'camera')} className="w-full">
-                <TabsList className={cn("grid w-full grid-cols-2", (preview || pending) && "hidden")}>
-                    <TabsTrigger value="upload">{t('cropDiagnosis.uploadTab', 'Upload File')}</TabsTrigger>
-                    <TabsTrigger value="camera">{t('cropDiagnosis.cameraTab', 'Use Camera')}</TabsTrigger>
-                </TabsList>
-                <TabsContent value="upload" className="mt-4">
-                  <div 
-                    className="w-full h-48 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="h-8 w-8 text-muted-foreground" />
-                    <p className="mt-2 text-muted-foreground">{t('cropDiagnosis.uploadArea', 'Drag & drop file or click to upload')}</p>
-                  </div>
-                </TabsContent>
-                <TabsContent value="camera" className="mt-4">
-                  <div className="w-full aspect-video border-2 border-dashed rounded-lg flex items-center justify-center relative bg-black">
-                      {hasCameraPermission === false ? (
-                            <Alert variant="destructive" className="w-5/6">
-                              <AlertCircle className="h-4 w-4" />
-                              <AlertTitle>Camera Access Denied</AlertTitle>
-                              <AlertDescription>Please enable camera permissions in your browser settings.</AlertDescription>
-                          </Alert>
-                      ) : (
-                        <>
-                          <video ref={videoRef} className={cn("w-full h-full object-cover", {"hidden": !isCameraActive})} autoPlay playsInline muted />
-                          {!isCameraActive && hasCameraPermission && <Loader2 className="h-8 w-8 animate-spin text-white"/>}
-                        </>
-                      )}
-                  </div>
-                  <Button type="button" onClick={handleTakePicture} disabled={!hasCameraPermission || !isCameraActive} className="w-full mt-4">
-                      <Camera className="mr-2 h-4 w-4" /> {t('cropDiagnosis.takePictureButton', 'Take Picture')}
-                  </Button>
-                </TabsContent>
-              </Tabs>
-
-              <form action={extendedFormAction}>
-                  <input id="photo-input" name="photo" type="file" accept="image/*" onChange={handleFileChange} ref={fileInputRef} className="sr-only" />
-                  <input type="hidden" name="location" value={user?.location || ''} />
-                  <input type="hidden" name="language" value={language} />
-
-                  {pending && (
-                      <div className="text-center p-8 space-y-4">
-                          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                          <p className="text-muted-foreground">{t('cropDiagnosis.loadingMessage', 'Analyzing your crop... This may take a moment.')}</p>
-                          <Skeleton className="h-64 w-full" />
-                      </div>
-                  )}
-
-                  {!pending && preview && (
-                    <div className="mt-4">
-                      <div className="w-full h-64 border rounded-lg flex items-center justify-center relative">
-                          <Image src={preview} alt={t('cropDiagnosis.imagePreviewAlt', 'Image Preview')} layout="fill" objectFit="contain" className="rounded-md" />
-                          <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 h-8 w-8" onClick={handleRemoveImage}>
-                              <X className="h-4 w-4" />
-                          </Button>
-                      </div>
-                      <SubmitButton disabled={pending} />
+        <Card className="bg-green-600 text-white overflow-hidden shadow-lg">
+            <CardContent className="p-5 flex items-center justify-between">
+                <div className="space-y-3">
+                    <h2 className="text-xl font-bold">Quick Diagnosis</h2>
+                    <p className="text-sm opacity-90 max-w-[200px]">Upload a photo of your crop for instant analysis</p>
+                    <div className="flex gap-2 pt-2">
+                        <Button variant="secondary" className="bg-white/30 text-white" onClick={startCamera}>
+                            <Camera className="mr-2 h-4 w-4"/>
+                            Take Photo
+                        </Button>
+                         <Button variant="secondary" className="bg-white/30 text-white" onClick={() => fileInputRef.current?.click()}>
+                            <Upload className="mr-2 h-4 w-4"/>
+                            Upload Image
+                        </Button>
                     </div>
-                  )}
-              </form>
-          </CardContent>
+                </div>
+                <MicroscopeIcon className="h-20 w-20 opacity-20"/>
+            </CardContent>
         </Card>
+        <input id="photo-input" name="photo" type="file" accept="image/*" onChange={handleFileChange} ref={fileInputRef} className="sr-only" />
 
-        {!pending && state.data && (
-            <DiagnosisResult result={state.data} />
-        )}
-      
-        {!pending && showResultChat && (
-          <div className="mt-6">
-            <ChatInterface
-                title={t('cropDiagnosis.chatTitle', 'Discuss with AI Assistant')}
-                placeholder={t('cropDiagnosis.chatPlaceholder')}
-                initialMessage={t('cropDiagnosis.chatInitialMessage')}
-                initialMessages={getInitialChatMessages()}
-                key={state.data?.diagnosis.disease} 
-            />
-          </div>
+        {state.loading && (
+             <div className="text-center p-8 space-y-4">
+                 <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+                 <p className="text-muted-foreground">{t('cropDiagnosis.loadingMessage', 'Analyzing your crop... This may take a moment.')}</p>
+                 {preview && <Image src={preview} alt="Diagnosing" width={200} height={200} className="rounded-lg mx-auto" />}
+             </div>
         )}
 
-        {/* Recent Diagnoses Section */}
+        {state.data && (
+            <div className="space-y-4">
+                 <h2 className="text-xl font-bold font-headline">Diagnosis Result</h2>
+                <Card>
+                    <CardContent className="p-4 space-y-4">
+                        <div className="flex items-center gap-4">
+                           {preview && <Image src={preview} alt={state.data.disease} width={80} height={80} className="rounded-lg object-cover" />}
+                           <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-bold text-lg">{state.data.disease}</h3>
+                                    <RiskBadge level={state.data.riskLevel} />
+                                </div>
+                                <p className="text-sm text-muted-foreground">{state.data.detectionDetails}</p>
+                           </div>
+                        </div>
+                        <Alert className="bg-green-50 border-green-200 mt-4">
+                            <Sparkles className="h-4 w-4 text-green-700" />
+                            <AlertTitle className="text-green-800 font-semibold">{t('cropDiagnosis.recommendedActions')}</AlertTitle>
+                            <AlertDescription className="text-green-700 whitespace-pre-wrap">
+                                {state.data.recommendedActions}
+                            </AlertDescription>
+                        </Alert>
+                    </CardContent>
+                </Card>
+            </div>
+        )}
+
         {recentDiagnoses.length > 0 && (
           <div className="space-y-4">
               <h2 className="text-xl font-bold font-headline">Recent Diagnoses</h2>
-              <Carousel
-                  opts={{
-                      align: "start",
-                  }}
-                  className="w-full"
-              >
-                  <CarouselContent>
-                      {recentDiagnoses.map((item, index) => (
-                          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                              <div className="p-1">
-                                  <Card>
-                                      <CardContent className="flex flex-col items-center justify-center p-0">
-                                        <div className="w-full h-32 relative">
-                                          <Image src={item.imageUrl} alt={item.diagnosis} layout="fill" objectFit="cover" className="rounded-t-lg" />
-                                        </div>
-                                        <div className="p-4 w-full">
-                                          <h3 className="font-semibold">{item.diagnosis}</h3>
-                                          <p className="text-sm text-muted-foreground">{item.date}</p>
-                                        </div>
-                                      </CardContent>
-                                  </Card>
-                              </div>
-                          </CarouselItem>
-                      ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="hidden sm:flex" />
-                  <CarouselNext className="hidden sm:flex" />
-              </Carousel>
+              <div className="space-y-3">
+                {recentDiagnoses.map((item, index) => (
+                    <Card key={index}>
+                        <CardContent className="p-3 flex items-center gap-3">
+                            <Image src={item.imageUrl} alt={item.diagnosis} width={64} height={64} className="rounded-lg object-cover h-16 w-16" />
+                            <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-semibold">{item.diagnosis}</h3>
+                                    <RiskBadge level={item.riskLevel} />
+                                </div>
+                                <p className="text-sm text-muted-foreground">{item.details}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{item.date}</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+              </div>
           </div>
         )}
 
-        {/* Common Issues Section */}
         <div className="space-y-4">
-            <h2 className="text-xl font-bold font-headline">Common Issues this Season</h2>
-            <Card>
-                <CardContent className="p-4 space-y-4">
-                    {commonIssues.map((issue, index) => (
-                        <div key={index} className="flex items-start gap-4">
-                            <div className="bg-muted p-2 rounded-full">
-                                <issue.icon className="h-5 w-5 text-muted-foreground" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold">{issue.name}</h3>
-                                <p className="text-sm text-muted-foreground">{issue.description}</p>
-                            </div>
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
+            <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+                <AlertTriangle className="text-orange-500 h-5 w-5" />
+                Common Issues This Season
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+                <Card className="text-center flex flex-col items-center p-4">
+                    <AphidIcon className="h-10 w-10 mb-2"/>
+                    <p className="font-semibold">Aphids</p>
+                    <p className="text-xs text-muted-foreground">Common pest</p>
+                </Card>
+                 <Card className="text-center flex flex-col items-center p-4">
+                    <FungalIcon className="h-10 w-10 mb-2"/>
+                    <p className="font-semibold">Fungal Disease</p>
+                    <p className="text-xs text-muted-foreground">Monsoon related</p>
+                </Card>
+            </div>
         </div>
     </div>
   );
 }
-
