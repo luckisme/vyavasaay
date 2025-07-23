@@ -183,7 +183,7 @@ export async function generateWeatherAlertAction(weatherData: WeatherData, langu
     try {
         // const result = await generateWeatherAlert({ weather: weatherData, language });
         // return result;
-        return { alert: "Severe hailstorm warning for the next hour. Protect vulnerable crops and take shelter.", severity: "warning" };
+        return { alert: "Severe dust storm warning for the next hour. Visibility will be low and strong winds may damage crops. Take necessary precautions.", severity: "warning" };
     } catch (e) {
         console.error('Failed to generate weather alert:', e);
         // Return a default, safe alert in case of an AI error
@@ -287,3 +287,4 @@ export async function updateUserProfileAction(formData: FormData): Promise<{ suc
       return { success: false, error: "Failed to update profile." };
     }
   }
+
