@@ -16,7 +16,6 @@ import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs'
 import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
-import { languages as allLanguages } from '@/app/page';
 
 // State for Crop Diagnosis Action
 export interface DiagnoseState {
@@ -184,6 +183,18 @@ export interface CalculateCostsState {
     error: string | null;
     loading: boolean;
 }
+
+const allLanguages = [
+    { value: 'en', label: 'English', short: 'En' },
+    { value: 'hi', label: 'हिन्दी', short: 'हि' },
+    { value: 'mr', label: 'मराठी', short: 'म' },
+    { value: 'ta', label: 'தமிழ்', short: 'த' },
+    { value: 'te', label: 'తెలుగు', short: 'తె' },
+    { value: 'bn', label: 'বাংলা', short: 'বা' },
+    { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ' },
+];
+
+
 export async function calculateCropCostsAction(
     userInput: string,
     language: string

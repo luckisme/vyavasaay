@@ -33,7 +33,7 @@ type GovtSchemesProps = {
 
 const getSchemeIcon = (schemeName: string) => {
     const lowerCaseName = schemeName.toLowerCase();
-    if (lowerCaseName.includes('credit')) return Tractor;
+    if (lowerCaseName.includes('credit')) return TractorIcon;
     if (lowerCaseName.includes('bima') || lowerCaseName.includes('insurance')) return FileText;
     if (lowerCaseName.includes('soil')) return Leaf;
     return Landmark;
@@ -146,7 +146,7 @@ function SchemeResults({ state }: GovtSchemesProps) {
                                         {scheme.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}
                                     </ul>
                                     <div className="pt-2">
-                                       <a href="#" target="_blank" rel="noopener noreferrer">
+                                       <a href={scheme.link} target="_blank" rel="noopener noreferrer">
                                             <Button variant="outline">
                                                 <ExternalLink className="mr-2 h-4 w-4"/>
                                                 {scheme.ctaButton}
