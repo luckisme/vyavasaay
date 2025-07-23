@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, CloudSun, Calculator, Lightbulb, Sprout, Search, AlertTriangle, Wind, Droplets, Thermometer, ArrowRight, Bell, Globe } from 'lucide-react';
 import type { Feature } from '@/app/page';
@@ -72,14 +72,14 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
     const { alert, severity } = state.data;
 
     const alertStyles = {
-        warning: 'bg-red-500 text-white',
-        info: 'bg-yellow-400 text-black',
+        warning: 'bg-red-100 border-red-500 text-red-800',
+        info: 'bg-yellow-100 border-yellow-500 text-yellow-800',
     };
 
     return (
-        <Card className={cn("border-none shadow-lg", alertStyles[severity])}>
+        <Card className={cn("border-2 shadow-lg", alertStyles[severity])}>
             <CardContent className="p-4 flex items-center gap-4">
-                <AlertTriangle className="h-6 w-6"/>
+                <AlertTriangle className={cn("h-6 w-6", severity === 'warning' ? 'text-red-600' : 'text-yellow-600')}/>
                 <div>
                     <p className="font-bold">{t('discover.weatherAlertTitle', 'Weather Alert')}</p>
                     <p className="text-sm">{alert}</p>
@@ -93,6 +93,7 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
 export default function Discover({ setActiveFeature, userName, weatherState, weatherAlertState, languages, onLanguageChange }: DiscoverProps) {
   const { t } = useTranslation();
   const { user } = useUser();
+  const [showAllResources, setShowAllResources] = useState(false);
   
   const quickLinks = [
     {
@@ -113,15 +114,31 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
     }
   ]
 
-  const resources = [
+  const allResources = [
     {
       title: 'How to make your own fertilizer?',
-      description: 'Complete guide for organic fertilizer preparation using kitchen waste and cow dung',
+      description: 'Complete guide for organic fertilizer preparation using kitchen waste and cow dung.',
       tags: ['AI Query', 'Organic', 'DIY'],
       imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg",
-      dataAiHint: 'farm fertiliser',
+      dataAiHint: 'farm fertilizer',
     },
+    {
+      title: 'Mastering Drip Irrigation',
+      description: 'Learn how to set up and maintain a drip irrigation system for water conservation.',
+      tags: ['Water Management', 'Modern Farming'],
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM.jpeg",
+      dataAiHint: 'drip irrigation',
+    },
+    {
+      title: 'Natural Pest Control Methods',
+      description: 'A guide to using natural predators and neem oil to protect your crops from pests.',
+      tags: ['Organic', 'Pest Control'],
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (1).jpeg",
+      dataAiHint: 'crop pest',
+    }
   ]
+
+  const resourcesToShow = showAllResources ? allResources : allResources.slice(0, 1);
 
   const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
@@ -155,13 +172,13 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
         </header>
 
         {/* Search and Call */}
-        <div className="flex items-center gap-2">
+         <div className="flex items-center gap-2">
              <div 
-                className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer"
+                className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
                 onClick={() => setActiveFeature('ask')}
             >
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <span className="pl-10 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <span className="pl-12 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
             </div>
             {offlineCallNumber && (
                 <a href={`tel:${offlineCallNumber}`}>
@@ -234,10 +251,12 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
                     <Sprout className="h-5 w-5 text-primary"/>
                     {t('discover.resourcesTitle', 'Farming Resources for You')}
                 </h2>
-                <Button variant="link" className="text-primary pr-0">{t('discover.seeAll', 'See All')} <ArrowRight className="h-4 w-4 ml-1"/></Button>
+                <Button variant="link" className="text-primary pr-0" onClick={() => setShowAllResources(!showAllResources)}>
+                  {showAllResources ? 'See Less' : t('discover.seeAll', 'See All')}
+                </Button>
             </div>
             <div className="space-y-4">
-              {resources.map((res) => (
+              {resourcesToShow.map((res) => (
                   <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white">
                       <div className="relative h-40 w-full">
                           <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
