@@ -54,6 +54,7 @@ const knowledgeLibraryItems = [
       tags: ['Organic', 'Pest Control'],
       imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (1).jpeg",
       dataAiHint: 'crop pest',
+      link: 'https://extension.sdstate.edu/organic-pest-control-methods'
     }
 ]
 
