@@ -42,25 +42,6 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
     const { t } = useTranslation();
     const { user } = useUser();
 
-    const priceAlerts = [
-        {
-            title: "Target Price Reached",
-            description: "Tomato crossed ₹25/kg in Pune market",
-            time: "2 hours ago",
-            icon: CheckCircle,
-            color: "border-green-500",
-            iconColor: "text-green-500"
-        },
-        {
-            title: "Price Drop Alert",
-            description: "Onion prices down 8% in Nashik APMC",
-            time: "5 hours ago",
-            icon: AlertTriangle,
-            color: "border-orange-500",
-            iconColor: "text-orange-500"
-        }
-    ];
-
     const marketCategories = [
         { name: "Cereals", commodities: 12, status: "Stable", icon: Wheat, statusColor: "bg-green-100 text-green-800" },
         { name: "Vegetables", commodities: 25, status: "Rising", icon: VegetablesIcon, statusColor: "bg-orange-100 text-orange-800" },
@@ -94,7 +75,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
         )
     }
 
-    const { marketAlert, todaysPrices } = state.data;
+    const { marketAlert, todaysPrices, priceAlerts } = state.data;
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -104,6 +85,17 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             maximumFractionDigits: 0,
         }).format(amount).replace('₹', '₹ ');
     };
+
+    const getAlertIcon = (title: string) => {
+        if (title.toLowerCase().includes('target')) {
+            return { Icon: CheckCircle, color: "border-green-500", iconColor: "text-green-500" };
+        }
+        if (title.toLowerCase().includes('drop')) {
+            return { Icon: AlertTriangle, color: "border-orange-500", iconColor: "text-orange-500" };
+        }
+        return { Icon: Bell, color: "border-gray-500", iconColor: "text-gray-500" };
+    };
+
 
     return (
         <div className="space-y-6">
@@ -165,18 +157,21 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
                  <h2 className="text-xl font-bold flex items-center gap-2">
                     <Bell className="h-5 w-5 text-primary" /> Price Alerts
                 </h2>
-                {priceAlerts.map((alert, index) => (
-                    <Card key={index} className={cn("border-l-4", alert.color)}>
-                        <CardContent className="p-4 flex items-center gap-4">
-                            <alert.icon className={cn("h-6 w-6", alert.iconColor)} />
-                            <div className="flex-1">
-                                <p className="font-semibold">{alert.title}</p>
-                                <p className="text-sm text-muted-foreground">{alert.description}</p>
-                                <p className="text-xs text-muted-foreground mt-1">{alert.time}</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                {priceAlerts.map((alert, index) => {
+                    const { Icon, color, iconColor } = getAlertIcon(alert.title);
+                    return (
+                        <Card key={index} className={cn("border-l-4", color)}>
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <Icon className={cn("h-6 w-6", iconColor)} />
+                                <div className="flex-1">
+                                    <p className="font-semibold">{alert.title}</p>
+                                    <p className="text-sm text-muted-foreground">{alert.description}</p>
+                                    <p className="text-xs text-muted-foreground mt-1">{alert.time}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    );
+                })}
             </div>
 
             {/* Market Categories */}

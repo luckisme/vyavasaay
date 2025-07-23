@@ -25,8 +25,13 @@ export const MarketAnalysisOutputSchema = z.object({
     cropName: z.string().describe("The name of the crop (e.g., 'Wheat', 'Rice (Basmati)', 'Cotton')."),
     marketName: z.string().describe("The name of the market or APMC (e.g., 'Pune APMC')."),
     price: z.number().describe("The current price in Rupees (₹)."),
-    unit: z.string().describe("The unit for the price (e.g., 'per quintal')."),
+    unit: z.string().describe("The unit for the price (e.g., 'per kg')."),
     trendPercentage: z.number().describe("The percentage change in price, positive for an increase, negative for a decrease."),
   })).describe("A list of current prices for key crops in the area."),
+  priceAlerts: z.array(z.object({
+    title: z.string().describe("The title of the alert, such as 'Target Price Reached' or 'Price Drop Alert'."),
+    description: z.string().describe("A short description of the alert (e.g., 'Tomato crossed ₹25/kg in Pune market')."),
+    time: z.string().describe("A human-readable time reference, like '2 hours ago' or 'Yesterday'.")
+  })).describe("A list of 2-3 specific, location-based price alerts for the farmer.")
 });
 export type MarketAnalysisOutput = z.infer<typeof MarketAnalysisOutputSchema>;
