@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useForm, Controller } from "react-hook-form";
 import { useUser, type UserProfile } from '@/hooks/use-user';
@@ -140,6 +140,8 @@ function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isO
 export default function Profile({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void; }) {
     const { user, setUserProfile } = useUser();
     const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
 
     if (!user) {
         return null;
@@ -147,6 +149,21 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
 
     const handleProfileUpdate = (updatedProfile: UserProfile) => {
         setUserProfile(updatedProfile);
+    };
+
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const newProfile: UserProfile = {
+                    ...user,
+                    profilePicture: reader.result as string,
+                };
+                setUserProfile(newProfile);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     return (
@@ -163,10 +180,11 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
             <div className="relative bg-[#f0eada] rounded-xl p-4">
                 <div className="flex items-center gap-4">
                     <div className="relative shrink-0">
-                        <Image src="/images/image.png" data-ai-hint="man in glasses" alt={user.name} width={80} height={80} className="rounded-full border-4 border-white" />
-                         <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+                        <Image src={user.profilePicture || "/images/image.png"} data-ai-hint="man in glasses" alt={user.name} width={80} height={80} className="rounded-full border-4 border-white object-cover" />
+                         <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full" onClick={() => fileInputRef.current?.click()}>
                             <Camera className="h-4 w-4" />
                         </Button>
+                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleProfilePictureChange} />
                     </div>
                     <div className="flex-grow">
                         <h2 className="text-xl font-bold text-green-800">{user.name}</h2>
