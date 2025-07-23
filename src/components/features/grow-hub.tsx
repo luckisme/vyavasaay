@@ -1,139 +1,166 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { Tag, Star, Sprout, Briefcase, Tractor, Leaf } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, MessageSquare, Store, BookOpen, ArrowRight } from 'lucide-react';
 import type { Feature } from '@/app/page';
 
-const DollarSignIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="1" x2="12" y2="23" />
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-    </svg>
-)
-
-const popularTopics = [
+const recentDiscussions = [
     {
-        icon: Sprout,
-        title: 'Crop Management',
-        discussions: 120,
-        feature: 'selector' as Feature,
-    },
-    {
-        icon: DollarSignIcon,
-        title: 'Market Prices',
-        discussions: 85,
-        feature: 'market' as Feature,
-    },
-    {
-        icon: Tractor,
-        title: 'Equipment',
-        discussions: 64,
-        feature: null,
-    },
-    {
-        icon: Leaf,
-        title: 'Organic Methods',
-        discussions: 92,
-        feature: null,
-    }
-];
-
-const expertContributors = [
-    {
-        avatar: '/images/expert-1.jpeg',
-        dataAiHint: 'man smiling',
-        name: 'Dr. Sharma',
-        specialty: 'Soil Expert',
-        badge: 'Gold',
-        badgeClass: 'bg-yellow-400 text-yellow-900',
+        avatar: '/images/expert-3.jpeg',
+        dataAiHint: 'man in glasses',
+        name: 'Rajesh Kumar',
+        badge: 'Verified Farmer',
+        badgeClass: 'bg-blue-100 text-blue-800',
+        question: 'Which fertilizer works best for wheat in Punjab during winter season?',
+        replies: 12,
+        time: '2 hours ago',
     },
     {
         avatar: '/images/expert-2.jpeg',
         dataAiHint: 'woman with mask',
-        name: 'Anita Gupta',
-        specialty: 'Organic Farming',
-        badge: 'Silver',
-        badgeClass: 'bg-slate-300 text-slate-800',
-    },
-    {
-        avatar: '/images/expert-3.jpeg',
-        dataAiHint: 'man in glasses',
-        name: 'Raj Kumar',
-        specialty: 'Crop Diagnostics',
-        badge: 'Bronze',
-        badgeClass: 'bg-orange-400 text-orange-900',
-    },
-    {
-        avatar: '/images/expert-1.jpeg',
-        dataAiHint: 'man smiling',
-        name: 'Vikram Singh',
-        specialty: 'Horticulture',
-        badge: 'Gold',
-        badgeClass: 'bg-yellow-400 text-yellow-900',
+        name: 'Priya Mehta',
+        badge: 'Expert',
+        badgeClass: 'bg-green-100 text-green-800',
+        question: 'Sharing my organic pest control recipe that increased my tomato yield by 30%',
+        replies: 28,
+        time: '5 hours ago',
     }
 ];
 
+const knowledgeLibraryItems = [
+    {
+      title: 'How to make your own fertilizer?',
+      description: 'Complete guide for organic fertilizer preparation using kitchen waste and cow dung.',
+      tags: ['AI Query', 'Organic', 'DIY'],
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg",
+      dataAiHint: 'farm fertilizer',
+    },
+    {
+      title: 'Mastering Drip Irrigation',
+      description: 'Learn how to set up and maintain a drip irrigation system for water conservation.',
+      tags: ['Water Management', 'Modern Farming'],
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM.jpeg",
+      dataAiHint: 'drip irrigation',
+    },
+    {
+      title: 'Natural Pest Control Methods',
+      description: 'A guide to using natural predators and neem oil to protect your crops from pests.',
+      tags: ['Organic', 'Pest Control'],
+      imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (1).jpeg",
+      dataAiHint: 'crop pest',
+    }
+]
+
 export default function GrowHub({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void; }) {
+    const [showAllResources, setShowAllResources] = useState(false);
+    const resourcesToShow = showAllResources ? knowledgeLibraryItems : knowledgeLibraryItems.slice(0, 1);
+
     return (
-        <div className="space-y-8">
-            {/* Popular Topics Section */}
-            <div>
-                <h2 className="text-xl font-bold font-headline flex items-center gap-2 mb-4">
-                    <Tag className="h-5 w-5 text-primary" /> Popular Topics
-                </h2>
-                <div className="grid grid-cols-2 gap-4">
-                    {popularTopics.map((topic, index) => (
-                        <Card key={index} className="shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => topic.feature && setActiveFeature(topic.feature)}>
-                            <CardContent className="p-4 flex flex-col items-center text-center">
-                                <div className="p-3 bg-muted rounded-full mb-3">
-                                    <topic.icon className="h-7 w-7 text-primary" />
+        <div className="space-y-6">
+            {/* Header */}
+            <header className="flex items-center gap-4">
+                <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
+                    <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <div>
+                    <h1 className="text-2xl font-bold font-headline">Grow Hub</h1>
+                    <p className="text-muted-foreground">Connect, learn, and grow together with fellow farmers</p>
+                </div>
+            </header>
+
+            {/* Join the Conversation Card */}
+            <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white shadow-lg">
+                <CardContent className="p-5">
+                    <div className="flex justify-between items-center">
+                         <div>
+                            <h2 className="text-xl font-bold">Join the Conversation</h2>
+                            <p className="text-sm opacity-90 mt-1">Connect with 50K+ farmers across India</p>
+                         </div>
+                         <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={32} height={32} />
+                         </div>
+                    </div>
+                    <div className="mt-4 flex gap-4">
+                        <Button variant="secondary" className="w-full bg-white/30 text-white hover:bg-white/40" onClick={() => setActiveFeature('ask')}>
+                            <MessageSquare className="mr-2 h-4 w-4" /> Ask Question
+                        </Button>
+                         <Button variant="secondary" className="w-full bg-white/30 text-white hover:bg-white/40" onClick={() => setActiveFeature('market')}>
+                            <Store className="mr-2 h-4 w-4" /> Marketplace
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Recent Discussions Section */}
+            <div className="space-y-4">
+                 <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+                        <MessageSquare className="h-5 w-5 text-primary" /> Recent Discussions
+                    </h2>
+                    <Button variant="link" className="text-primary pr-0">
+                        View All
+                    </Button>
+                </div>
+                <div className="space-y-3">
+                    {recentDiscussions.map((discussion, index) => (
+                        <Card key={index} className="shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                            <CardContent className="p-4 flex gap-4">
+                                <Image src={discussion.avatar} alt={discussion.name} width={40} height={40} className="rounded-full h-10 w-10" data-ai-hint={discussion.dataAiHint} />
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                        <p className="font-semibold">{discussion.name}</p>
+                                        <Badge className={discussion.badgeClass}>{discussion.badge}</Badge>
+                                    </div>
+                                    <p className="mt-1 text-foreground">{discussion.question}</p>
+                                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                                        <span>{discussion.replies} replies</span>
+                                        <span>{discussion.time}</span>
+                                    </div>
                                 </div>
-                                <p className="font-semibold">{topic.title}</p>
-                                <p className="text-sm text-muted-foreground">{topic.discussions} discussions</p>
                             </CardContent>
                         </Card>
                     ))}
                 </div>
             </div>
 
-            {/* Expert Contributors Section */}
+            {/* Knowledge Library Section */}
             <div>
-                <h2 className="text-xl font-bold font-headline flex items-center gap-2 mb-4">
-                    <Star className="h-5 w-5 text-primary" /> Expert Contributors
-                </h2>
-                <Carousel
-                    opts={{ align: "start", loop: true }}
-                    className="w-full"
-                >
-                    <CarouselContent>
-                        {expertContributors.map((expert, index) => (
-                            <CarouselItem key={index} className="basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                <div className="p-1">
-                                    <Card className="shadow-sm">
-                                        <CardContent className="p-4 flex flex-col items-center text-center">
-                                            <div className="relative h-20 w-20 mb-3">
-                                                <Image src={expert.avatar} alt={expert.name} layout="fill" objectFit="cover" className="rounded-full" data-ai-hint={expert.dataAiHint} />
-                                            </div>
-                                            <p className="font-bold">{expert.name}</p>
-                                            <p className="text-sm text-muted-foreground mb-2">{expert.specialty}</p>
-                                            <Badge className={expert.badgeClass}>{expert.badge}</Badge>
-                                        </CardContent>
-                                    </Card>
+                <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-xl font-bold tracking-tight text-foreground font-headline flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-primary"/>
+                        Knowledge Library
+                    </h2>
+                    <Button variant="link" className="text-primary pr-0" onClick={() => setShowAllResources(!showAllResources)}>
+                      {showAllResources ? 'See Less' : 'See All'}
+                    </Button>
+                </div>
+                <div className="space-y-4">
+                {resourcesToShow.map((res) => (
+                    <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white">
+                        <div className="relative h-40 w-full">
+                            <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
+                        </div>
+                        <CardContent className="p-4">
+                            <h3 className="font-bold">{res.title}</h3>
+                            <p className="text-sm text-muted-foreground mt-1">{res.description}</p>
+                            <div className="flex items-center justify-between mt-4">
+                                <div className="flex gap-2">
+                                    {res.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
                                 </div>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="hidden sm:flex" />
-                    <CarouselNext className="hidden sm:flex" />
-                </Carousel>
+                                <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+                </div>
             </div>
         </div>
     );
 }
-
-    
