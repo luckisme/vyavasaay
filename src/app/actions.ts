@@ -16,17 +16,7 @@ import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs'
 import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
-
-export const languages = [
-    { value: 'en', label: 'English' },
-    { value: 'hi', label: 'हिन्दी' },
-    { value: 'mr', label: 'मराठी' },
-    { value: 'ta', label: 'தமிழ்' },
-    { value: 'te', label: 'తెలుగు' },
-    { value: 'bn', label: 'বাংলা' },
-    { value: 'kn', label: 'ಕನ್ನಡ' },
-];
-
+import { languages as allLanguages } from '@/app/page';
 
 // State for Crop Diagnosis Action
 export interface DiagnoseState {
@@ -40,7 +30,7 @@ export async function diagnoseCropAction(
   const file = formData.get('photo') as File;
   const location = formData.get('location') as string;
   const languageCode = formData.get('language') as string;
-  const language = languages.find(l => l.value === languageCode)?.label || 'English';
+  const language = allLanguages.find(l => l.value === languageCode)?.label || 'English';
 
   if (!file || file.size === 0) {
     return { data: null, error: 'Please select an image file.' };
@@ -74,7 +64,7 @@ export async function askVyavasaayAction(
     return { error: 'Question cannot be empty.' };
   }
   try {
-    const languageName = languages.find(l => l.value === languageCode)?.label || 'English';
+    const languageName = allLanguages.find(l => l.value === languageCode)?.label || 'English';
     const result = await answerFarmerQuestion({ 
         question, 
         location: user.location, 
@@ -201,7 +191,7 @@ export async function calculateCropCostsAction(
     if (!userInput.trim()) {
         return { data: null, error: 'Please provide details for calculation.' };
     }
-    const languageName = languages.find(l => l.value === language)?.label || 'English';
+    const languageName = allLanguages.find(l => l.value === language)?.label || 'English';
 
     try {
         const result = await calculateCropCosts({ userInput, language: languageName });
@@ -225,7 +215,7 @@ export async function suggestCropsAction(
     if (!userInput.trim()) {
         return { data: null, error: 'Please provide details for crop suggestion.' };
     }
-    const languageName = languages.find(l => l.value === language)?.label || 'English';
+    const languageName = allLanguages.find(l => l.value === language)?.label || 'English';
 
     try {
         const result = await suggestCrops({ userInput, language: languageName });

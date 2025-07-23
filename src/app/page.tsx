@@ -51,8 +51,7 @@ function AppCore() {
   const { user, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('discover');
-  const [initialQuestion, setInitialQuestion] = useState<string | undefined>(undefined);
-
+  
   const [dataStates, setDataStates] = useState<DataStates>({
     weather: { data: null, error: null, loading: true },
     market: { data: null, error: null, loading: true },
@@ -109,11 +108,6 @@ function AppCore() {
     }
   };
 
-  const handleSearchSubmit = (query: string) => {
-    setInitialQuestion(query);
-    setActiveFeature('ask');
-  }
-
   const renderFeature = () => {
     if (!user) return null;
     switch (activeFeature) {
@@ -130,7 +124,7 @@ function AppCore() {
       case 'selector':
         return <CropSelector />;
       case 'ask':
-        return <AskVyavasaay initialQuestion={initialQuestion} />;
+        return <AskVyavasaay />;
       case 'discover':
       default:
         return <Discover 
@@ -140,7 +134,6 @@ function AppCore() {
             weatherAlertState={dataStates.weatherAlert}
             languages={languages}
             onLanguageChange={handleLanguageChange}
-            onSearchSubmit={handleSearchSubmit}
         />;
     }
   };

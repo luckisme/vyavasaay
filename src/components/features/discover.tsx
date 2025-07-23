@@ -175,7 +175,7 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
          <div className="flex items-center gap-2">
              <div 
                 className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
-                onClick={() => setActiveFeature('diagnose')}
+                onClick={() => setActiveFeature('ask')}
             >
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <span className="pl-12 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
