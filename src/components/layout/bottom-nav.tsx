@@ -39,7 +39,7 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
     {
       feature: 'grow-hub' as Feature,
       icon: Users,
-      label: 'Community',
+      label: 'Grow Hub',
     },
   ];
 
@@ -64,5 +64,3 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
     </div>
   );
 }
-
-    

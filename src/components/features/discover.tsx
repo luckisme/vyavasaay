@@ -268,9 +268,6 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
                             <div className="flex gap-2">
                                 {res.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
                             </div>
-                            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                            </div>
                           </div>
                       </CardContent>
                   </Card>
