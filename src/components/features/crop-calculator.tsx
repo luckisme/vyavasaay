@@ -105,10 +105,10 @@ export default function CropCalculator() {
         <Card>
             <CardHeader>
                 <CardTitle className="font-headline flex items-center gap-2">
-                    <Calculator className="text-primary"/> Crop Calculator
+                    <Calculator className="text-primary"/> {t('cropCalculator.title', 'Cost Calculator')}
                 </CardTitle>
                 <CardDescription>
-                    Estimate the cost and profit for your next crop. Provide details like crop, area, costs, and expected price.
+                    {t('cropCalculator.descriptionPage', 'Estimate the cost and potential profit of growing a crop. Provide details like crop type, land size, input costs (seed, fertilizer, labour), and expected market price.')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-6">

@@ -48,7 +48,15 @@
     "cameraTab": "Use Camera"
   },
   "cropCalculator": {
+    "title": "Cost Calculator",
+    "description": "Calculate farming costs and profits",
+    "descriptionPage": "Estimate the cost and potential profit of growing a crop. Provide details like crop type, land size, input costs (seed, fertilizer, labour), and expected market price.",
     "placeholder": "e.g., I want to grow tomatoes in 1 acre. Seed cost is ₹1500, fertilizer ₹2000..."
+  },
+  "cropSelector": {
+    "title": "Crop Selector",
+    "description": "Get AI-powered crop recommendations",
+    "descriptionPage": "Get suggestions for the best crops to grow. Provide details like land size, location, soil, and season."
   },
   "askVyavasaay": {
     "title": "Ask Vyavasaay",

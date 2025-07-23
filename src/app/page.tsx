@@ -23,8 +23,10 @@ import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction } fro
 import type { WeatherData } from '@/app/actions';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
+import CropCalculator from '@/components/features/crop-calculator';
+import CropSelector from '@/components/features/crop-selector';
 
-export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather';
+export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector';
 
 export const languages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -106,6 +108,10 @@ function AppCore() {
         return <GovtSchemes state={dataStates.schemes} />;
       case 'weather':
         return <Weather state={dataStates.weather} />;
+      case 'calculator':
+        return <CropCalculator />;
+      case 'selector':
+        return <CropSelector />;
       case 'discover':
       default:
         return <Discover setActiveFeature={setActiveFeature} userName={user.name} />;

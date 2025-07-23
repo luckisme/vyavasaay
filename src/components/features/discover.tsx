@@ -3,13 +3,10 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, Phone, CloudSun } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, Phone, CloudSun, Calculator, Lightbulb, Sprout } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
-import CropCalculator from './crop-calculator';
-import CropSelector from './crop-selector';
-import { Separator } from '../ui/separator';
 
 interface DiscoverProps {
   setActiveFeature: (feature: Feature) => void;
@@ -50,6 +47,23 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
     }
   ];
   
+  const quickLinks = [
+    {
+        name: t('cropSelector.title', 'Crop Selector'),
+        description: t('cropSelector.description', 'Get AI-powered crop recommendations'),
+        icon: Sprout,
+        feature: 'selector' as Feature,
+        color: 'bg-green-100 text-green-800',
+    },
+    {
+        name: t('cropCalculator.title', 'Cost Calculator'),
+        description: t('cropCalculator.description', 'Calculate farming costs and profits'),
+        icon: Calculator,
+        feature: 'calculator' as Feature,
+        color: 'bg-purple-100 text-purple-800',
+    }
+  ]
+
   const resources = [
     {
       title: 'How to do soil testing',
@@ -103,29 +117,26 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
       )}
       
       <div className="space-y-8">
-        <CropCalculator />
-        <CropSelector />
 
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {resources.map((res) => (
-                  <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1">
-                      <div className="relative h-40 w-full">
-                          <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
-                      </div>
-                      <CardHeader>
-                          <CardTitle className="text-lg">{res.title}</CardTitle>
-                          <CardDescription className="flex items-center gap-2 pt-2">
-                              <res.icon className="w-4 h-4 text-muted-foreground" />
-                              <span>{res.source}</span>
-                          </CardDescription>
-                      </CardHeader>
-                  </Card>
-              ))}
-          </div>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">Quick Links</h2>
+            <div className="grid gap-6 md:grid-cols-2">
+                {quickLinks.map((item) => (
+                    <Card
+                        key={item.name}
+                        className="flex flex-col justify-center text-center items-center p-6 transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 hover:border-primary"
+                        onClick={() => setActiveFeature(item.feature)}
+                    >
+                        <div className={`p-4 rounded-full mb-4 ${item.color}`}>
+                            <item.icon className="w-8 h-8" />
+                        </div>
+                        <CardTitle className="font-headline text-xl break-words">{item.name}</CardTitle>
+                        <CardDescription className="mt-1">{item.description}</CardDescription>
+                    </Card>
+                ))}
+            </div>
         </div>
-
+        
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
           {features.map((item) => (
             <Card
@@ -146,6 +157,26 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {resources.map((res) => (
+                  <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1">
+                      <div className="relative h-40 w-full">
+                          <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
+                      </div>
+                      <CardHeader>
+                          <CardTitle className="text-lg">{res.title}</CardTitle>
+                          <CardDescription className="flex items-center gap-2 pt-2">
+                              <res.icon className="w-4 h-4 text-muted-foreground" />
+                              <span>{res.source}</span>
+                          </CardDescription>
+                      </CardHeader>
+                  </Card>
+              ))}
+          </div>
         </div>
       </div>
     </div>

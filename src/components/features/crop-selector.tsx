@@ -71,10 +71,10 @@ export default function CropSelector() {
         <Card>
             <CardHeader>
                 <CardTitle className="font-headline flex items-center gap-2">
-                    <Lightbulb className="text-primary"/> Crop Selector
+                    <Sprout className="text-primary"/> {t('cropSelector.title', 'Crop Selector')}
                 </CardTitle>
                 <CardDescription>
-                    Get suggestions for the best crops to grow. Provide details like land size, location, soil, and season.
+                    {t('cropSelector.descriptionPage', 'Get suggestions for the best crops to grow. Provide details like land size, location, soil, and season.')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-6">
