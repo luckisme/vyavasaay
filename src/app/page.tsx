@@ -26,7 +26,7 @@ import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-sch
 import CropCalculator from '@/components/features/crop-calculator';
 import CropSelector from '@/components/features/crop-selector';
 
-export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector';
+export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'grow-hub';
 
 export const languages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -114,7 +114,7 @@ function AppCore() {
         return <CropSelector />;
       case 'discover':
       default:
-        return <Discover setActiveFeature={setActiveFeature} userName={user.name} />;
+        return <Discover setActiveFeature={setActiveFeature} userName={user.name} weatherState={dataStates.weather} />;
     }
   };
   
@@ -127,42 +127,11 @@ function AppCore() {
          <SidebarProvider>
             <AppSidebar activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
             <div className="flex flex-col w-full min-h-screen">
-                <header className="sticky top-0 z-10 flex h-20 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
-                    <div className="flex items-center gap-2 md:hidden">
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button onClick={() => setActiveFeature('discover')} className="flex items-center gap-2">
-                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={180} height={180} />
-                        </button>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <Select value={language} onValueChange={handleLanguageChange}>
-                        <SelectTrigger className="w-auto sm:w-[120px] border-none focus:ring-0 bg-transparent flex items-center gap-2">
-                            <Globe className="h-5 w-5 text-muted-foreground hidden sm:block" />
-                            <SelectValue>
-                                <span className="sm:hidden">{currentLanguage.short}</span>
-                                <span className="hidden sm:inline">{currentLanguage.label}</span>
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {languages.map((lang) => (
-                            <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
-                            ))}
-                        </SelectContent>
-                        </Select>
-                        <Button variant="ghost" size="icon">
-                            <Bell className="h-5 w-5" />
-                            <span className="sr-only">Notifications</span>
-                        </Button>
-                        <Avatar>
-                            <Image src="/images/image.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
-                            <AvatarFallback>{user.name?.substring(0,2).toUpperCase() || 'FA'}</AvatarFallback>
-                        </Avatar>
-                    </div>
-                </header>
                 <SidebarInset>
-                    <main className="flex-1 p-4 sm:p-6 pb-24 md:pb-6 overflow-auto">
-                    {renderFeature()}
+                    <main className="flex-1 overflow-auto bg-[#F5F5DC]">
+                        <div className="p-4 sm:p-6 pb-24 md:pb-6">
+                            {renderFeature()}
+                        </div>
                     </main>
                 </SidebarInset>
             </div>

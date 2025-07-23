@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { Compass, Leaf, Landmark, TrendingUp, CloudSun, Calculator, Sprout } from 'lucide-react';
+import { Compass, Leaf, Landmark, TrendingUp, Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
@@ -22,16 +22,6 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
       label: t('sidebar.discover', 'Discover'),
     },
     {
-      feature: 'selector' as Feature,
-      icon: Sprout,
-      label: t('cropSelector.title', 'Selector'),
-    },
-     {
-      feature: 'calculator' as Feature,
-      icon: Calculator,
-      label: t('cropCalculator.title', 'Calculator'),
-    },
-    {
       feature: 'diagnose' as Feature,
       icon: Leaf,
       label: t('sidebar.diagnose', 'Diagnosis'),
@@ -41,16 +31,16 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
       icon: TrendingUp,
       label: t('sidebar.marketAnalysis', 'Market'),
     },
-    // {
-    //   feature: 'schemes' as Feature,
-    //   icon: Landmark,
-    //   label: t('sidebar.schemes', 'Schemes'),
-    // },
-    //  {
-    //   feature: 'weather' as Feature,
-    //   icon: CloudSun,
-    //   label: t('sidebar.weather', 'Weather'),
-    // },
+    {
+      feature: 'schemes' as Feature,
+      icon: Landmark,
+      label: t('sidebar.schemes', 'Schemes'),
+    },
+    {
+      feature: 'grow-hub' as Feature,
+      icon: Sprout,
+      label: 'Grow Hub',
+    },
   ];
 
   return (

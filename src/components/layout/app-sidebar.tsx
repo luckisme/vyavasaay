@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import { Leaf, TrendingUp, Landmark, Compass, CloudSun, Calculator, Lightbulb, Sprout } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Compass, CloudSun, Box, Sprout } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -32,26 +32,6 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
             >
               <Compass />
               <span>{t('sidebar.discover', 'Discover')}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => setActiveFeature('selector')}
-              isActive={activeFeature === 'selector'}
-              tooltip={{ children: t('cropSelector.title', 'Crop Selector'), side: 'right' }}
-            >
-              <Sprout />
-              <span>{t('cropSelector.title', 'Crop Selector')}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => setActiveFeature('calculator')}
-              isActive={activeFeature === 'calculator'}
-              tooltip={{ children: t('cropCalculator.title', 'Cost Calculator'), side: 'right' }}
-            >
-              <Calculator />
-              <span>{t('cropCalculator.title', 'Cost Calculator')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -86,12 +66,12 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={() => setActiveFeature('weather')}
-              isActive={activeFeature === 'weather'}
-              tooltip={{ children: t('sidebar.weather', 'Weather'), side: 'right' }}
+              onClick={() => setActiveFeature('grow-hub')}
+              isActive={activeFeature === 'grow-hub'}
+              tooltip={{ children: 'Grow Hub', side: 'right' }}
             >
-              <CloudSun />
-              <span>{t('sidebar.weather', 'Weather')}</span>
+              <Sprout />
+              <span>{'Grow Hub'}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

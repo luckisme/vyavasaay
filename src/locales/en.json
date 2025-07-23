@@ -26,6 +26,15 @@
     }
   },
   "discover": {
+    "welcomePersonalized": "Hello, {{name}}!",
+    "searchPlaceholder": "Ask Vyavasaay anything...",
+    "weatherAlertTitle": "Weather Alert",
+    "weatherAlertBody": "Heavy rain expected tomorrow. Secure crops and machinery.",
+    "smartAlertTitle": "Perfect for banana plantation!",
+    "smartAlertBody": "Ideal humidity and temperature conditions detected.",
+    "quickLinks": "Quick Links",
+    "resourcesTitle": "Farming Resources for You",
+    "seeAll": "See All",
     "resourcesTitle": "Farming Resources"
   },
   "cropDiagnosis": {
