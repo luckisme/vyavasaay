@@ -138,17 +138,27 @@ function AppCore() {
         const languageName = languages.find(l => l.value === language)?.label || 'English';
         const farmerDetails = t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
         
-        setDataStates(s => ({ ...s, weather: { data: null, error: null, loading: true }}));
-        getWeatherAction(user.location).then(result => {
-            if ('error' in result) {
-                setDataStates(s => ({ ...s, weather: { data: null, error: result.error, loading: false }}));
+        setDataStates(s => ({ ...s, weather: { data: null, error: null, loading: true }, weatherAlert: { data: null, error: null, loading: true }}));
+        getWeatherAction(user.location).then(weatherResult => {
+            if ('error' in weatherResult) {
+                setDataStates(s => ({ 
+                    ...s, 
+                    weather: { data: null, error: weatherResult.error, loading: false },
+                    weatherAlert: { data: null, error: weatherResult.error, loading: false }
+                }));
             } else {
-                setDataStates(s => ({ ...s, weather: { data: result, error: null, loading: false }}));
-                // After fetching weather, generate the alert.
-                generateWeatherAlertAction(result, languageName).then(alertResult => {
-                    setDataStates(s => ({ ...s, weatherAlert: { data: alertResult, error: null, loading: false }}));
+                generateWeatherAlertAction(weatherResult, languageName).then(alertResult => {
+                    setDataStates(s => ({ 
+                        ...s, 
+                        weather: { data: weatherResult, error: null, loading: false },
+                        weatherAlert: { data: alertResult, error: null, loading: false }
+                    }));
                 }).catch(e => {
-                    setDataStates(s => ({ ...s, weatherAlert: { data: null, error: e.message, loading: false }}));
+                     setDataStates(s => ({ 
+                        ...s, 
+                        weather: { data: weatherResult, error: null, loading: false },
+                        weatherAlert: { data: null, error: e.message, loading: false }
+                    }));
                 });
             }
         });
