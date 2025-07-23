@@ -166,7 +166,7 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Avatar>
+                <Avatar className="cursor-pointer" onClick={() => setActiveFeature('profile')}>
                     <Image src="/images/image.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
                 </Avatar>
             </div>

@@ -7,6 +7,10 @@ export interface UserProfile {
   name: string;
   location: string;
   language: string;
+  landArea?: number;
+  soilType?: string;
+  primaryCrops?: string;
+  profilePicture?: string;
 }
 
 interface UserContextType {
@@ -17,13 +21,35 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+const defaultUser: UserProfile = {
+    name: 'Rohan',
+    location: 'Nashik, Maharashtra',
+    language: 'en',
+    landArea: 5.2,
+    soilType: 'Black Cotton Soil',
+    primaryCrops: 'Wheat, Cotton, Sugarcane',
+    profilePicture: '/images/image.png'
+}
+
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
 
   useEffect(() => {
-    // For prototyping: This will clear the user on every reload, forcing the onboarding modal.
-    localStorage.removeItem('vyavasaay-user-temp');
+    try {
+        const storedUser = localStorage.getItem('vyavasaay-user-temp');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        } else {
+            // Set default user if no user is in local storage (for first-time onboarding)
+            // In a real app, this might be null until they log in or complete onboarding.
+            // For the prototype, we can start with a default to show the profile page.
+            //setUser(defaultUser); 
+        }
+    } catch (e) {
+        console.error("Could not parse user from localStorage", e);
+        // setUser(defaultUser);
+    }
     setIsUserLoading(false);
   }, []);
 

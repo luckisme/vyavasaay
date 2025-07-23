@@ -1,0 +1,216 @@
+
+'use client';
+
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { useForm, Controller } from "react-hook-form";
+import { useUser, type UserProfile } from '@/hooks/use-user';
+import { useTranslation } from '@/hooks/use-translation';
+import { languages } from '@/app/page';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Edit, Tractor, Camera } from 'lucide-react';
+import type { Feature } from '@/app/page';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { updateUserProfileAction } from '@/app/actions';
+import { useToast } from '@/hooks/use-toast';
+
+const StatCard = ({ value, label }: { value: string | number; label: string }) => (
+    <div className="flex flex-col items-center">
+        <p className="text-2xl font-bold">{value}</p>
+        <p className="text-sm text-white/80">{label}</p>
+    </div>
+);
+
+type FormValues = Omit<UserProfile, 'profilePicture'> & { profilePicture: FileList | null };
+
+
+function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isOpen: boolean; onOpenChange: (open: boolean) => void; user: UserProfile, onProfileUpdate: (data: UserProfile) => void; }) {
+    const { t } = useTranslation();
+    const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<FormValues>({
+      defaultValues: {
+        name: user.name,
+        location: user.location,
+        language: user.language,
+        landArea: user.landArea,
+        soilType: user.soilType,
+        primaryCrops: user.primaryCrops,
+      }
+    });
+    const { toast } = useToast();
+  
+    const onSubmit = async (data: FormValues) => {
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            if (key === 'profilePicture' && value instanceof FileList && value.length > 0) {
+                // handle file upload if necessary
+            } else if (value) {
+                formData.append(key, String(value));
+            }
+        });
+
+        const result = await updateUserProfileAction(formData);
+
+        if (result.success) {
+            onProfileUpdate({
+                ...user,
+                ...data,
+                // if you had a new picture URL from server, you'd set it here
+            });
+            toast({ title: "Profile Updated", description: "Your information has been saved successfully." });
+            onOpenChange(false);
+        } else {
+            toast({ variant: "destructive", title: "Update Failed", description: result.error });
+        }
+    };
+  
+    return (
+      <Sheet open={isOpen} onOpenChange={onOpenChange}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Edit Profile</SheetTitle>
+            <SheetDescription>
+              Make changes to your profile here. Click save when you're done.
+            </SheetDescription>
+          </SheetHeader>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" {...register("name", { required: "Name is required" })} />
+              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
+              <Input id="location" {...register("location", { required: "Location is required" })} />
+              {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
+            </div>
+             <div className="space-y-2">
+              <Label>Language</Label>
+              <Controller
+                name="language"
+                control={control}
+                render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {languages.map(lang => (
+                            <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                )}
+              />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="landArea">Land Area (in acres)</Label>
+                <Input id="landArea" type="number" step="0.1" {...register("landArea")} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="soilType">Soil Type</Label>
+                <Input id="soilType" {...register("soilType")} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="primaryCrops">Primary Crops (comma-separated)</Label>
+                <Input id="primaryCrops" {...register("primaryCrops")} />
+            </div>
+            <SheetFooter>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </SheetFooter>
+          </form>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+export default function Profile({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void; }) {
+    const { user, setUserProfile } = useUser();
+    const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+
+    if (!user) {
+        return null;
+    }
+
+    const handleProfileUpdate = (updatedProfile: UserProfile) => {
+        setUserProfile(updatedProfile);
+    };
+
+    return (
+        <div className="space-y-6">
+             <header className="flex items-center gap-4">
+                <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
+                    <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <div>
+                    <h1 className="text-2xl font-bold font-headline">Profile</h1>
+                </div>
+            </header>
+
+            <div className="relative bg-[#f0eada] rounded-xl p-4 text-center">
+                <div className="flex flex-col items-center">
+                    <div className="relative">
+                        <Image src="/images/rajesh-kumar.jpeg" data-ai-hint="man in glasses" alt={user.name} width={80} height={80} className="rounded-full border-4 border-white" />
+                         <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+                            <Camera className="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <h2 className="text-xl font-bold mt-2 text-green-800">{user.name}</h2>
+                    <p className="text-sm text-muted-foreground">Farmer &bull; {user.location}</p>
+                    <Badge className="mt-2 bg-yellow-400 text-yellow-900 hover:bg-yellow-400/90">Premium Member</Badge>
+                </div>
+            </div>
+
+            <Card className="bg-green-600 text-white shadow-lg rounded-xl">
+                <CardContent className="p-4 flex justify-around">
+                    <StatCard value={15} label="AI Queries" />
+                    <StatCard value={user.landArea || 0} label="Acres Tracked" />
+                    <StatCard value={user.primaryCrops?.split(',').length || 0} label="Crops Grown" />
+                </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+                        <Tractor className="h-5 w-5 text-primary" /> My Farm
+                    </h2>
+                    <Button variant="ghost" onClick={() => setIsEditSheetOpen(true)}>
+                        <Edit className="mr-2 h-4 w-4" /> Edit
+                    </Button>
+                </div>
+                <Card className="overflow-hidden">
+                    <div className="relative h-40 w-full">
+                         <Image src="/images/wheat-farm.jpeg" alt="Wheat farm" layout="fill" objectFit="cover" data-ai-hint="wheat grain" />
+                        <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4">
+                            <h3 className="text-white font-bold text-lg">{user.name}'s Family Farm</h3>
+                            <p className="text-white/90 text-sm">Est. 1985 &bull; {user.landArea} acres</p>
+                        </div>
+                    </div>
+                    <CardContent className="p-4 grid grid-cols-2 gap-4">
+                        <div>
+                            <p className="text-sm text-muted-foreground">Primary Crops</p>
+                            <p className="font-semibold">{user.primaryCrops}</p>
+                        </div>
+                         <div>
+                            <p className="text-sm text-muted-foreground">Soil Type</p>
+                            <p className="font-semibold">{user.soilType}</p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+            <EditProfileSheet 
+                isOpen={isEditSheetOpen}
+                onOpenChange={setIsEditSheetOpen}
+                user={user}
+                onProfileUpdate={handleProfileUpdate}
+            />
+        </div>
+    );
+}
+

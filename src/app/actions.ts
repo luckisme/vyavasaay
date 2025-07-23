@@ -257,3 +257,32 @@ export async function getCommonCropIssuesAction(
         return { issues: [] };
     }
 }
+
+// Action for updating user profile
+export async function updateUserProfileAction(formData: FormData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const name = formData.get('name') as string;
+      const location = formData.get('location') as string;
+      const language = formData.get('language') as string;
+      const landArea = formData.get('landArea') as string;
+      const soilType = formData.get('soilType') as string;
+      const primaryCrops = formData.get('primaryCrops') as string;
+  
+      // Here you would typically save this to a database.
+      // For this prototype, we'll just log it to the console.
+      console.log("Updating user profile:", {
+        name,
+        location,
+        language,
+        landArea,
+        soilType,
+        primaryCrops
+      });
+  
+      // Simulate a successful update.
+      return { success: true };
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return { success: false, error: "Failed to update profile." };
+    }
+  }

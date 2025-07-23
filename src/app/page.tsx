@@ -28,8 +28,9 @@ import CropCalculator from '@/components/features/crop-calculator';
 import CropSelector from '@/components/features/crop-selector';
 import AskVyavasaay from '@/components/features/ask-vyavasay';
 import GrowHub from '@/components/features/grow-hub';
+import Profile from '@/components/features/profile';
 
-export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'ask' | 'grow-hub';
+export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'ask' | 'grow-hub' | 'profile';
 
 export const languages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -113,7 +114,7 @@ function AppCore() {
     if (!user) return null;
     switch (activeFeature) {
       case 'diagnose':
-        return <CropDiagnosis />;
+        return <CropDiagnosis setActiveFeature={setActiveFeature} />;
       case 'market':
         return <MarketAnalysis state={dataStates.market} />;
       case 'schemes':
@@ -128,6 +129,8 @@ function AppCore() {
         return <AskVyavasaay />;
       case 'grow-hub':
         return <GrowHub setActiveFeature={setActiveFeature} />;
+      case 'profile':
+        return <Profile setActiveFeature={setActiveFeature} />;
       case 'discover':
       default:
         return <Discover 
@@ -191,5 +194,3 @@ export default function Home() {
     </UserProvider>
   )
 }
-
-    
