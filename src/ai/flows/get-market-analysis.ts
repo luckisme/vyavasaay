@@ -25,7 +25,7 @@ const prompt = ai.definePrompt({
 
   Please provide the following information structured according to the output schema:
   1.  **Market Alert**: Identify the single most impactful market news for the location (e.g., a significant price surge or drop for a major crop) and create a "Market Alert" with a title and a short description.
-  2.  **Today's Prices**: Provide a list of 3-5 key crops relevant to the location. For each crop, provide its name, the primary market (APMC) name, its current price in Rupees, the unit (e.g., "per kg"), and the percentage price change from the previous day.
+  2.  **Today's Prices**: Provide a list of 3-5 key crops relevant to the location. For each crop, provide its name, the primary market (APMC) name, its current price in Rupees, the unit as "per kg", and the percentage price change from the previous day.
 
   Ensure all monetary values are in Indian Rupees (₹). The entire response must be in {{{language}}}.
   `,

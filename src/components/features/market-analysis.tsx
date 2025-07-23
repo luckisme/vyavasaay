@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, ArrowUp, ArrowDown, Filter, BarChart, AlertTriangle } from 'lucide-react';
+import { ArrowUp, ArrowDown, BarChart, AlertTriangle, Bell, CheckCircle, Apple, Wheat } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import type { MarketAnalysisOutput } from '@/lib/types';
@@ -22,9 +22,52 @@ type MarketAnalysisProps = {
     }
 }
 
+const SpicesIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+        <path d="M8.5 8.5c0-1.66 1.34-3 3-3s3 1.34 3 3c0 1.66-1.34 3-3 3s-3-1.34-3-3z"></path>
+        <path d="M15.5 15.5c0-1.66-1.34-3-3-3s-3 1.34-3 3c0 1.66 1.34 3 3 3s3-1.34 3-3z"></path>
+    </svg>
+);
+
+const VegetablesIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2c-2.33 0-4.47.93-6 2.5A6.02 6.02 0 0 0 2.5 10c0 .9.2 1.75.53 2.52C3 12.83 3 13.17 3 13.5v.5c0 2.2 1.8 4 4 4h1c2.2 0 4-1.8 4-4v-3c0-1.1.9-2 2-2h1.5c.83 0 1.5.67 1.5 1.5V13c0 1.1.9 2 2 2h.5c2.2 0 4-1.8 4-4s-1.8-4-4-4h-2c-1.1 0-2-.9-2-2V4.5A2.5 2.5 0 0 0 14 2zM3.12 10.12C4.19 8.2 6.32 7.02 8.5 7.02c1.37 0 2.65.45 3.65 1.22"></path>
+        <path d="M18.88 10.12C19.81 8.2 21.68 7.02 23.5 7.02c.28 0 .55.02.82.06"></path>
+    </svg>
+);
+
+
 export default function MarketAnalysis({ state }: MarketAnalysisProps) {
     const { t } = useTranslation();
     const { user } = useUser();
+
+    const priceAlerts = [
+        {
+            title: "Target Price Reached",
+            description: "Tomato crossed ₹25/kg in Pune market",
+            time: "2 hours ago",
+            icon: CheckCircle,
+            color: "border-green-500",
+            iconColor: "text-green-500"
+        },
+        {
+            title: "Price Drop Alert",
+            description: "Onion prices down 8% in Nashik APMC",
+            time: "5 hours ago",
+            icon: AlertTriangle,
+            color: "border-orange-500",
+            iconColor: "text-orange-500"
+        }
+    ];
+
+    const marketCategories = [
+        { name: "Cereals", commodities: 12, status: "Stable", icon: Wheat, statusColor: "bg-green-100 text-green-800" },
+        { name: "Vegetables", commodities: 25, status: "Rising", icon: VegetablesIcon, statusColor: "bg-orange-100 text-orange-800" },
+        { name: "Fruits", commodities: 18, status: "Seasonal", icon: Apple, statusColor: "bg-blue-100 text-blue-800" },
+        { name: "Spices", commodities: 8, status: "Volatile", icon: SpicesIcon, statusColor: "bg-red-100 text-red-800" },
+    ];
+
 
     if (state.loading) {
         return (
@@ -67,7 +110,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             {/* Header */}
             <div>
                 <h1 className="text-2xl font-bold font-headline text-primary">Market Analysis</h1>
-                <p className="text-muted-foreground">Real-time market prices and trends for your crops</p>
+                <p className="text-muted-foreground">Real-time market prices for {user?.location || 'your area'}</p>
             </div>
 
             {/* Market Alert */}
@@ -91,7 +134,6 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         Today's Prices
                     </h2>
-                    <Button variant="link" className="text-primary">View All Markets</Button>
                 </div>
                 <div className="space-y-3">
                     {todaysPrices.map((item, index) => (
@@ -112,6 +154,46 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
                                         <span className="text-muted-foreground text-xs ml-1">{item.unit}</span>
                                     </div>
                                 </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+
+            {/* Price Alerts */}
+            <div className="space-y-4">
+                 <h2 className="text-xl font-bold flex items-center gap-2">
+                    <Bell className="h-5 w-5 text-primary" /> Price Alerts
+                </h2>
+                {priceAlerts.map((alert, index) => (
+                    <Card key={index} className={cn("border-l-4", alert.color)}>
+                        <CardContent className="p-4 flex items-center gap-4">
+                            <alert.icon className={cn("h-6 w-6", alert.iconColor)} />
+                            <div className="flex-1">
+                                <p className="font-semibold">{alert.title}</p>
+                                <p className="text-sm text-muted-foreground">{alert.description}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{alert.time}</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
+            {/* Market Categories */}
+            <div className="space-y-4">
+                 <h2 className="text-xl font-bold flex items-center gap-2">
+                    Market Categories
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                    {marketCategories.map((cat, index) => (
+                        <Card key={index}>
+                            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                                <div className="p-3 rounded-full bg-muted mb-2">
+                                    <cat.icon className="w-6 h-6 text-primary" />
+                                </div>
+                                <p className="font-semibold">{cat.name}</p>
+                                <p className="text-xs text-muted-foreground">{cat.commodities} commodities</p>
+                                <Badge className={cn("mt-2 text-xs", cat.statusColor)}>{cat.status}</Badge>
                             </CardContent>
                         </Card>
                     ))}
