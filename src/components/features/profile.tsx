@@ -18,6 +18,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFo
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { updateUserProfileAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { ScrollArea } from '../ui/scroll-area';
 
 const StatCard = ({ value, label }: { value: string | number; label: string }) => (
     <div className="flex flex-col items-center">
@@ -77,54 +78,60 @@ function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isO
               Make changes to your profile here. Click save when you're done.
             </SheetDescription>
           </SheetHeader>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" {...register("name", { required: "Name is required" })} />
-              {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" {...register("location", { required: "Location is required" })} />
-              {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
-            </div>
-             <div className="space-y-2">
-              <Label>Language</Label>
-              <Controller
-                name="language"
-                control={control}
-                render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {languages.map(lang => (
-                            <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                )}
-              />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="landArea">Land Area (in acres)</Label>
-                <Input id="landArea" type="number" step="0.1" {...register("landArea")} />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="soilType">Soil Type</Label>
-                <Input id="soilType" {...register("soilType")} />
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="primaryCrops">Primary Crops (comma-separated)</Label>
-                <Input id="primaryCrops" {...register("primaryCrops")} />
-            </div>
-            <SheetFooter>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save Changes'}
-              </Button>
+          <ScrollArea className="h-[calc(100%-120px)] pr-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
+                <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" {...register("name", { required: "Name is required" })} />
+                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+                </div>
+                <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Input id="location" {...register("location", { required: "Location is required" })} />
+                {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
+                </div>
+                <div className="space-y-2">
+                <Label>Language</Label>
+                <Controller
+                    name="language"
+                    control={control}
+                    render={({ field }) => (
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select language" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {languages.map(lang => (
+                                <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="landArea">Land Area (in acres)</Label>
+                    <Input id="landArea" type="number" step="0.1" {...register("landArea")} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="soilType">Soil Type</Label>
+                    <Input id="soilType" {...register("soilType")} />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="primaryCrops">Primary Crops (comma-separated)</Label>
+                    <Input id="primaryCrops" {...register("primaryCrops")} />
+                </div>
+                <div className="hidden">
+                    {/* Keep the button here to connect it to the form but hide it */}
+                     <Button type="submit" />
+                </div>
+            </form>
+          </ScrollArea>
+           <SheetFooter>
+                <Button type="button" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                </Button>
             </SheetFooter>
-          </form>
         </SheetContent>
       </Sheet>
     );
@@ -156,7 +163,7 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
             <div className="relative bg-[#f0eada] rounded-xl p-4 text-center">
                 <div className="flex flex-col items-center">
                     <div className="relative">
-                        <Image src="/images/rajesh-kumar.jpeg" data-ai-hint="man in glasses" alt={user.name} width={80} height={80} className="rounded-full border-4 border-white" />
+                        <Image src="/images/image.png" data-ai-hint="man in glasses" alt={user.name} width={80} height={80} className="rounded-full border-4 border-white" />
                          <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
                             <Camera className="h-4 w-4" />
                         </Button>
@@ -186,7 +193,7 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
                 </div>
                 <Card className="overflow-hidden">
                     <div className="relative h-40 w-full">
-                         <Image src="/images/wheat-farm.jpeg" alt="Wheat farm" layout="fill" objectFit="cover" data-ai-hint="wheat grain" />
+                         <Image src="/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg" alt="Wheat farm" layout="fill" objectFit="cover" data-ai-hint="compost fertilizer" />
                         <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4">
                             <h3 className="text-white font-bold text-lg">{user.name}'s Family Farm</h3>
                             <p className="text-white/90 text-sm">Est. 1985 &bull; {user.landArea} acres</p>
@@ -213,4 +220,3 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
         </div>
     );
 }
-
