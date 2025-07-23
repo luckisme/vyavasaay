@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { Compass, Leaf, Landmark, TrendingUp, Sprout } from 'lucide-react';
+import { Compass, Leaf, Landmark, TrendingUp, Sprout, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
@@ -38,8 +38,8 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
     },
     {
       feature: 'grow-hub' as Feature,
-      icon: Sprout,
-      label: 'Grow Hub',
+      icon: Users,
+      label: 'Community',
     },
   ];
 
@@ -64,3 +64,5 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
     </div>
   );
 }
+
+    

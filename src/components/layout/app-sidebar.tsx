@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import { Leaf, TrendingUp, Landmark, Compass, CloudSun, Box, Sprout } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Compass, CloudSun, Box, Sprout, Users } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 
@@ -70,7 +70,7 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
               isActive={activeFeature === 'grow-hub'}
               tooltip={{ children: 'Grow Hub', side: 'right' }}
             >
-              <Sprout />
+              <Users />
               <span>{'Grow Hub'}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -79,3 +79,5 @@ export default function AppSidebar({ activeFeature, setActiveFeature }: AppSideb
     </Sidebar>
   );
 }
+
+    
