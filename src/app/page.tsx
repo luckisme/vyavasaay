@@ -20,14 +20,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
 import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction } from '@/app/actions';
-import type { WeatherData, WeatherAlert } from '@/ai/flows/generate-weather-alert';
-import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
+import type { WeatherData } from '@/app/actions';
+import type { WeatherAlert } from '@/ai/flows/generate-weather-alert';
+import type { MarketAnalysisOutput } from '@/lib/types';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import CropCalculator from '@/components/features/crop-calculator';
 import CropSelector from '@/components/features/crop-selector';
 import AskVyavasaay from '@/components/features/ask-vyavasay';
 
-export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'grow-hub';
+export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'ask';
 
 export const languages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -50,6 +51,7 @@ function AppCore() {
   const { user, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('discover');
+  const [initialQuestion, setInitialQuestion] = useState<string | undefined>(undefined);
 
   const [dataStates, setDataStates] = useState<DataStates>({
     weather: { data: null, error: null, loading: true },
@@ -69,32 +71,35 @@ function AppCore() {
     if (user?.location) {
         const languageName = languages.find(l => l.value === language)?.label || 'English';
         const farmerDetails = t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
-        const actions = [
-            getWeatherAction(user.location).then(result => {
-                if ('error' in result) {
-                    setDataStates(s => ({ ...s, weather: { data: null, error: result.error, loading: false }}));
-                } else {
-                    setDataStates(s => ({ ...s, weather: { data: result, error: null, loading: false }}));
-                    // After fetching weather, generate the alert.
-                    generateWeatherAlertAction(result, languageName).then(alertResult => {
-                        setDataStates(s => ({ ...s, weatherAlert: { data: alertResult, error: null, loading: false }}));
-                    }).catch(e => {
-                        setDataStates(s => ({ ...s, weatherAlert: { data: null, error: e.message, loading: false }}));
-                    });
-                }
-            }),
-            getMarketAnalysisAction(user.location, languageName).then(data => {
-                setDataStates(s => ({ ...s, market: { data, error: null, loading: false }}));
-            }).catch(e => {
-                setDataStates(s => ({ ...s, market: { data: null, error: e.message, loading: false }}));
-            }),
-            summarizeSchemesAction(farmerDetails, languageName).then(data => {
-                setDataStates(s => ({ ...s, schemes: { data, error: null, loading: false }}));
-            }).catch(e => {
-                setDataStates(s => ({ ...s, schemes: { data: null, error: e.message, loading: false }}));
-            })
-        ];
-        Promise.all(actions);
+        
+        setDataStates(s => ({ ...s, weather: { data: null, error: null, loading: true }}));
+        getWeatherAction(user.location).then(result => {
+            if ('error' in result) {
+                setDataStates(s => ({ ...s, weather: { data: null, error: result.error, loading: false }}));
+            } else {
+                setDataStates(s => ({ ...s, weather: { data: result, error: null, loading: false }}));
+                // After fetching weather, generate the alert.
+                generateWeatherAlertAction(result, languageName).then(alertResult => {
+                    setDataStates(s => ({ ...s, weatherAlert: { data: alertResult, error: null, loading: false }}));
+                }).catch(e => {
+                    setDataStates(s => ({ ...s, weatherAlert: { data: null, error: e.message, loading: false }}));
+                });
+            }
+        });
+        
+        setDataStates(s => ({ ...s, market: { data: null, error: null, loading: true }}));
+        getMarketAnalysisAction(user.location, languageName).then(data => {
+            setDataStates(s => ({ ...s, market: { data, error: null, loading: false }}));
+        }).catch(e => {
+            setDataStates(s => ({ ...s, market: { data: null, error: e.message, loading: false }}));
+        });
+
+        setDataStates(s => ({ ...s, schemes: { data: null, error: null, loading: true }}));
+        summarizeSchemesAction(farmerDetails, languageName).then(data => {
+            setDataStates(s => ({ ...s, schemes: { data, error: null, loading: false }}));
+        }).catch(e => {
+            setDataStates(s => ({ ...s, schemes: { data: null, error: e.message, loading: false }}));
+        });
     }
   }, [user, language, t]);
 
@@ -103,6 +108,11 @@ function AppCore() {
       setUserProfile({ ...user, language: langCode });
     }
   };
+
+  const handleSearchSubmit = (query: string) => {
+    setInitialQuestion(query);
+    setActiveFeature('ask');
+  }
 
   const renderFeature = () => {
     if (!user) return null;
@@ -119,6 +129,8 @@ function AppCore() {
         return <CropCalculator />;
       case 'selector':
         return <CropSelector />;
+      case 'ask':
+        return <AskVyavasaay initialQuestion={initialQuestion} />;
       case 'discover':
       default:
         return <Discover 
@@ -128,6 +140,7 @@ function AppCore() {
             weatherAlertState={dataStates.weatherAlert}
             languages={languages}
             onLanguageChange={handleLanguageChange}
+            onSearchSubmit={handleSearchSubmit}
         />;
     }
   };

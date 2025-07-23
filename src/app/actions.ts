@@ -11,13 +11,13 @@ import { suggestCrops } from '@/ai/flows/suggest-crops';
 import { generateWeatherAlert } from '@/ai/flows/generate-weather-alert';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
-import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
+import type { MarketAnalysisOutput } from '@/lib/types';
 import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs';
 import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
 
-const languages = [
+export const languages = [
     { value: 'en', label: 'English' },
     { value: 'hi', label: 'हिन्दी' },
     { value: 'mr', label: 'मराठी' },

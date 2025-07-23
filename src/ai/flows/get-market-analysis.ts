@@ -1,35 +1,14 @@
+
 'use server';
 
 /**
  * @fileOverview A flow that provides agricultural market analysis for a given location.
  *
  * - getMarketAnalysis - A function that fetches and summarizes market data.
- * - MarketAnalysisInput - The input type for the getMarketAnalysis function.
- * - MarketAnalysisOutput - The return type for the getMarketAnalysis function.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const MarketAnalysisInputSchema = z.object({
-  location: z.string().describe('The geographical location (e.g., city, state) for the market analysis.'),
-  crops: z.array(z.string()).optional().describe('A list of specific crops to focus on.'),
-  language: z.string().describe('The language for the response.'),
-});
-export type MarketAnalysisInput = z.infer<typeof MarketAnalysisInputSchema>;
-
-
-const MarketAnalysisOutputSchema = z.object({
-  marketSummary: z.string().describe("A general summary of the current agricultural market conditions in the specified location."),
-  detailedAnalysis: z.array(z.object({
-    cropName: z.string().describe("The name of the crop."),
-    price: z.string().describe("The current average market price for the crop, specified in units like per kg or per gm."),
-    trend: z.enum(['up', 'down', 'stable']).describe("The recent price trend for the crop."),
-    outlook: z.string().describe("A brief outlook or forecast for the crop's market."),
-  })).describe("A detailed analysis for key crops, including prices, trends, and outlooks."),
-  recommendations: z.string().describe("Actionable recommendations for the farmer based on the market analysis."),
-});
-export type MarketAnalysisOutput = z.infer<typeof MarketAnalysisOutputSchema>;
+import { MarketAnalysisInputSchema, MarketAnalysisOutputSchema, type MarketAnalysisInput, type MarketAnalysisOutput } from '@/lib/types';
 
 
 export async function getMarketAnalysis(input: MarketAnalysisInput): Promise<MarketAnalysisOutput> {
@@ -40,16 +19,15 @@ const prompt = ai.definePrompt({
   name: 'getMarketAnalysisPrompt',
   input: { schema: MarketAnalysisInputSchema },
   output: { schema: MarketAnalysisOutputSchema },
-  prompt: `You are an expert agricultural market analyst. Your role is to provide clear, concise, and actionable market insights for farmers.
+  prompt: `You are an expert agricultural market analyst. Your role is to provide clear, real-time market data for farmers in India.
 
-  Based on the provided location: {{{location}}}, and focusing on these crops if specified: {{{crops}}}.
+  Based on the provided location: {{{location}}}.
 
-  Please provide a comprehensive market analysis that includes:
-  1.  A brief, high-level summary of the overall market situation.
-  2.  Detailed analysis for 3-5 key crops relevant to the location, including current prices and recent trends (up, down, or stable).
-  3.  Actionable recommendations for the farmer.
+  Please provide the following information structured according to the output schema:
+  1.  **Market Alert**: Identify the single most impactful market news for the location (e.g., a significant price surge or drop for a major crop) and create a "Market Alert" with a title and a short description.
+  2.  **Today's Prices**: Provide a list of 3-5 key crops relevant to the location. For each crop, provide its name, the primary market (APMC) name, its current price in Rupees, the unit (e.g., "per quintal"), and the percentage price change from the previous day.
 
-  Structure your response according to the output schema. Ensure all prices are in Indian Rupees (₹). When specifying prices, use units like per kilogram (kg) or per gram (gm) instead of larger units like quintals. The entire response must be in {{{language}}}.
+  Ensure all monetary values are in Indian Rupees (₹). The entire response must be in {{{language}}}.
   `,
 });
 
