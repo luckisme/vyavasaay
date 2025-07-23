@@ -15,7 +15,12 @@ import { cn } from '@/lib/utils';
 import { Badge } from '../ui/badge';
 import { Avatar } from '../ui/avatar';
 import { useUser } from '@/hooks/use-user';
-import { languages } from '@/app/page';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface DiscoverProps {
   setActiveFeature: (feature: Feature) => void;
@@ -24,7 +29,10 @@ interface DiscoverProps {
     data: WeatherData | null;
     error: string | null;
     loading: boolean;
-  }
+  },
+  onSearchSubmit: (question: string) => void;
+  languages: { value: string; label: string; short: string; }[];
+  onLanguageChange: (langCode: string) => void;
 }
 
 const PhoneIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -46,9 +54,10 @@ const CalculatorIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 
-export default function Discover({ setActiveFeature, userName, weatherState }: DiscoverProps) {
+export default function Discover({ setActiveFeature, userName, weatherState, onSearchSubmit, languages, onLanguageChange }: DiscoverProps) {
   const { t } = useTranslation();
   const { user } = useUser();
+  const [searchQuery, setSearchQuery] = React.useState('');
   
   const quickLinks = [
     {
@@ -81,6 +90,13 @@ export default function Discover({ setActiveFeature, userName, weatherState }: D
 
   const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
+  const handleSearchFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      onSearchSubmit(searchQuery);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
         {/* Header */}
@@ -90,7 +106,20 @@ export default function Discover({ setActiveFeature, userName, weatherState }: D
             </div>
             <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
-                <Button variant="ghost" size="icon"> <Globe className="h-5 w-5" /> </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Globe className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {languages.map((lang) => (
+                      <DropdownMenuItem key={lang.value} onClick={() => onLanguageChange(lang.value)}>
+                        {lang.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Avatar>
                     <Image src="/images/image.png" alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
                 </Avatar>
@@ -98,21 +127,24 @@ export default function Discover({ setActiveFeature, userName, weatherState }: D
         </header>
 
         {/* Search and Call */}
-        <div className="relative">
-        </div>
-        <div className="flex items-center gap-2">
+        <form onSubmit={handleSearchFormSubmit} className="flex items-center gap-2">
             <div className="relative flex-grow">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder={t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')} className="pl-10 h-12 rounded-full bg-white"/>
+                <Input 
+                    placeholder={t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')} 
+                    className="pl-10 h-12 rounded-full bg-white"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
             </div>
             {offlineCallNumber && (
                 <a href={`tel:${offlineCallNumber}`}>
-                    <Button size="icon" className="rounded-full h-12 w-12 bg-primary hover:bg-primary/90">
+                    <Button type="button" size="icon" className="rounded-full h-12 w-12 bg-primary hover:bg-primary/90">
                         <PhoneIcon className="h-6 w-6 text-primary-foreground" />
                     </Button>
                 </a>
             )}
-        </div>
+        </form>
 
         {/* Weather Section */}
         <div className="space-y-4">

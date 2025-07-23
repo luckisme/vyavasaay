@@ -25,8 +25,9 @@ import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import CropCalculator from '@/components/features/crop-calculator';
 import CropSelector from '@/components/features/crop-selector';
+import AskVyavasaay from '@/components/features/ask-vyavasay';
 
-export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'grow-hub';
+export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'grow-hub' | 'ask';
 
 export const languages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -48,6 +49,8 @@ function AppCore() {
   const { user, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('discover');
+  const [initialQuestion, setInitialQuestion] = useState<string | null>(null);
+
   const [dataStates, setDataStates] = useState<DataStates>({
     weather: { data: null, error: null, loading: true },
     market: { data: null, error: null, loading: true },
@@ -96,6 +99,11 @@ function AppCore() {
       setUserProfile({ ...user, language: langCode });
     }
   };
+  
+  const handleSearchSubmit = (question: string) => {
+    setInitialQuestion(question);
+    setActiveFeature('ask');
+  };
 
   const renderFeature = () => {
     if (!user) return null;
@@ -112,9 +120,18 @@ function AppCore() {
         return <CropCalculator />;
       case 'selector':
         return <CropSelector />;
+      case 'ask':
+        return <AskVyavasaay initialQuestion={initialQuestion || undefined} />;
       case 'discover':
       default:
-        return <Discover setActiveFeature={setActiveFeature} userName={user.name} weatherState={dataStates.weather} />;
+        return <Discover 
+            setActiveFeature={setActiveFeature} 
+            userName={user.name} 
+            weatherState={dataStates.weather} 
+            onSearchSubmit={handleSearchSubmit} 
+            languages={languages}
+            onLanguageChange={handleLanguageChange}
+        />;
     }
   };
   
