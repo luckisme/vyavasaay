@@ -7,10 +7,12 @@ import { answerFarmerQuestion } from '@/ai/flows/answer-farmer-question';
 import { summarizeGovernmentScheme } from '@/ai/flows/summarize-government-scheme';
 import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import { calculateCropCosts } from '@/ai/flows/calculate-crop-costs';
+import { suggestCrops } from '@/ai/flows/suggest-crops';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs';
+import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 
 // Define languages directly in the server action file to avoid import issues from client components.
@@ -193,5 +195,29 @@ export async function calculateCropCostsAction(
     } catch (e) {
         console.error(e);
         return { data: null, error: 'Sorry, I could not calculate the costs. Please try rephrasing your input.' };
+    }
+}
+
+// Action for Crop Selector
+export interface SuggestCropsState {
+    data: CropSuggestionOutput | null;
+    error: string | null;
+    loading: boolean;
+}
+export async function suggestCropsAction(
+    userInput: string,
+    language: string
+): Promise<Omit<SuggestCropsState, 'loading'>> {
+    if (!userInput.trim()) {
+        return { data: null, error: 'Please provide details for crop suggestion.' };
+    }
+    const languageName = languages.find(l => l.value === language)?.label || 'English';
+
+    try {
+        const result = await suggestCrops({ userInput, language: languageName });
+        return { data: result, error: null };
+    } catch (e) {
+        console.error(e);
+        return { data: null, error: 'Sorry, I could not suggest any crops. Please try rephrasing your input.' };
     }
 }

@@ -8,6 +8,8 @@ import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
 import CropCalculator from './crop-calculator';
+import CropSelector from './crop-selector';
+import { Separator } from '../ui/separator';
 
 interface DiscoverProps {
   setActiveFeature: (feature: Feature) => void;
@@ -100,8 +102,9 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
         </a>
       )}
       
-      <>
+      <div className="space-y-8">
         <CropCalculator />
+        <CropSelector />
 
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground font-headline mb-4">{t('discover.resourcesTitle', 'Farming Resources')}</h2>
@@ -144,7 +147,7 @@ export default function Discover({ setActiveFeature, userName }: DiscoverProps) 
             </Card>
           ))}
         </div>
-      </>
+      </div>
     </div>
   );
 }
