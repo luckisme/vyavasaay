@@ -1,18 +1,27 @@
 
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { summarizeSchemesAction } from '@/app/actions';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Landmark, Tractor, FileText, BarChart, ExternalLink, Leaf } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
-import { useUser } from '@/hooks/use-user';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
-import { languages } from '@/app/page';
-import { ChatInterface } from './ask-vyavasay';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { cn } from '@/lib/utils';
+
+
+const TractorIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 4H21V6H3V4Z"></path>
+        <path d="M3 10H21V12H3V10Z"></path>
+        <path d="M8 16H16V18H8V16Z"></path>
+        <path d="M12 2V22"></path>
+    </svg>
+);
+
 
 type GovtSchemesProps = {
     state: {
@@ -22,27 +31,38 @@ type GovtSchemesProps = {
     }
 }
 
+const getSchemeIcon = (schemeName: string) => {
+    const lowerCaseName = schemeName.toLowerCase();
+    if (lowerCaseName.includes('credit')) return Tractor;
+    if (lowerCaseName.includes('bima') || lowerCaseName.includes('insurance')) return FileText;
+    if (lowerCaseName.includes('soil')) return Leaf;
+    return Landmark;
+};
+
+
+const getBadgeClass = (status: string) => {
+    switch (status.toLowerCase()) {
+        case 'active':
+            return 'bg-green-100 text-green-800 hover:bg-green-100/80';
+        case 'seasonal':
+            return 'bg-orange-100 text-orange-800 hover:bg-orange-100/80';
+        case 'free':
+            return 'bg-blue-100 text-blue-800 hover:bg-blue-100/80';
+        default:
+            return 'bg-gray-100 text-gray-800 hover:bg-gray-100/80';
+    }
+}
+
 export default function GovtSchemes({ state }: GovtSchemesProps) {
   const { t } = useTranslation();
   
   return (
-    <div className="grid md:grid-cols-2 gap-8 items-start">
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline">{t('govtSchemes.resultTitle')}</CardTitle>
-                <CardDescription>{t('govtSchemes.resultDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <SchemeResults state={state} />
-            </CardContent>
-        </Card>
-        <div className="md:sticky md:top-24">
-            <ChatInterface
-                title={t('govtSchemes.chatTitle', 'Chat About Schemes')}
-                placeholder={t('govtSchemes.chatPlaceholder', 'Ask about eligibility or how to apply...')}
-                initialMessage={t('govtSchemes.chatInitialMessage', 'Ask for more details about the schemes listed or find other schemes.')}
-            />
+    <div className="space-y-6">
+        <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold font-headline">{t('govtSchemes.title', 'Available Schemes')}</h1>
+            <Button variant="link" className="text-primary pr-0">{t('discover.seeAll', 'View All')}</Button>
         </div>
+        <SchemeResults state={state} />
     </div>
   );
 }
@@ -57,10 +77,8 @@ function SchemeResults({ state }: GovtSchemesProps) {
                     <Loader2 className="h-6 w-6 animate-spin text-primary"/>
                     <p className="text-muted-foreground">{t('govtSchemes.button_pending', 'Finding Schemes...')}</p>
                 </div>
-                 <div className="space-y-2 pt-4">
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
+                 <div className="space-y-4 pt-4">
+                    {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-40 w-full" />)}
                 </div>
             </div>
         )
@@ -81,26 +99,37 @@ function SchemeResults({ state }: GovtSchemesProps) {
     }
 
     return (
-        <Accordion type="single" collapsible className="w-full">
-            {state.data.relevantSchemes.map((scheme, index) => (
-                <AccordionItem value={`item-${index}`} key={index}>
-                    <AccordionTrigger className="font-semibold text-primary">{scheme.schemeName}</AccordionTrigger>
-                    <AccordionContent className="space-y-4 text-muted-foreground">
-                        <div>
-                            <h4 className="font-semibold text-foreground">{t('govtSchemes.summaryBenefits', 'Summary & Benefits')}</h4>
-                            <p className="whitespace-pre-wrap">{scheme.summary}</p>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-foreground">{t('govtSchemes.eligibility', 'Eligibility')}</h4>
-                            <p className="whitespace-pre-wrap">{scheme.eligibility}</p>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-foreground">{t('govtSchemes.applicationProcess', 'Application Process')}</h4>
-                            <p className="whitespace-pre-wrap">{scheme.applicationProcess}</p>
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-            ))}
-        </Accordion>
+        <div className="space-y-4">
+            {state.data.relevantSchemes.map((scheme, index) => {
+                const Icon = getSchemeIcon(scheme.schemeName);
+                return (
+                    <Card key={index} className="shadow-sm hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                            <div className="flex gap-4">
+                                <div className={cn("p-3 rounded-lg h-12 w-12 flex items-center justify-center", getBadgeClass(scheme.status))}>
+                                    <Icon className="h-6 w-6" />
+                                </div>
+                                <div className="flex-1 space-y-2">
+                                    <div className="flex justify-between items-start">
+                                        <h3 className="font-bold text-lg">{scheme.schemeName}</h3>
+                                        <Badge variant="outline" className={cn("border", getBadgeClass(scheme.status))}>{scheme.status}</Badge>
+                                    </div>
+                                    <p className="text-muted-foreground text-sm">{scheme.description}</p>
+                                    <ul className="text-sm text-muted-foreground list-disc pl-5 grid grid-cols-2 gap-x-4">
+                                        {scheme.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}
+                                    </ul>
+                                    <div className="pt-2">
+                                       <Button variant="outline">
+                                           <ExternalLink className="mr-2 h-4 w-4"/>
+                                           {scheme.ctaButton}
+                                       </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+            })}
+        </div>
     );
 }
