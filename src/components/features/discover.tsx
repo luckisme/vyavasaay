@@ -147,7 +147,7 @@ export default function Discover({ setActiveFeature, userName, weatherState, wea
         {/* Header */}
         <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={42} height={42} />
+                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={56} height={56} />
             </div>
             <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
