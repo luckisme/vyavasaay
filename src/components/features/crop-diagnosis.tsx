@@ -7,12 +7,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Camera, Upload, AlertTriangle, ArrowLeft, Loader2, Sparkles } from 'lucide-react';
-import { diagnoseCropAction, type DiagnoseState } from '@/app/actions';
+import { diagnoseCropAction, type DiagnoseState, getCommonCropIssuesAction } from '@/app/actions';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Feature } from '@/app/page';
+import type { CommonCropIssuesOutput } from '@/ai/flows/get-common-crop-issues';
+import { Skeleton } from '../ui/skeleton';
+
 
 const initialState: DiagnoseState = {
   data: null,
@@ -33,7 +36,7 @@ const MicroscopeIcon = (props: React.SVGProps<SVGSVGElement>) => (
 )
 
 const AphidIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" stroke="currentColor">
+    <svg {...props} width="48" height="48" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" stroke="currentColor">
         <path d="M16 8.9c-.8.8-1.7 1.1-2.5 1.1-1.5 0-2.5-1.7-2.5-3.2 0-1.2.7-2.3 1.5-3 .9-.8 2-1.3 3.5-1.3 2.5 0 4.5 2.8 4.5 5.5 0 1.2-.3 2.3-.8 3.3" stroke="hsl(120, 70%, 50%)"></path>
         <path d="M13.5 10s-1 .5-2.5-1c-1.5-1.5-1.5-2.5-1.5-2.5" stroke="hsl(120, 70%, 50%)"></path><path d="M11 14.5c0 1-.5 1.5-1.5 1.5-1 0-1.5-.5-1.5-1.5" stroke="hsl(120, 70%, 50%)"></path>
         <path d="M7 16.5c-1 0-1.5-.5-1.5-1.5 0-1 .5-1.5 1.5-1.5" stroke="hsl(120, 70%, 50%)"></path><path d="M4.5 18c-1 0-1.5-.5-1.5-1.5 0-1 .5-1.5 1.5-1.5" stroke="hsl(120, 70%, 50%)"></path>
@@ -65,6 +68,20 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [recentDiagnoses, setRecentDiagnoses] = useState<RecentDiagnosis[]>([]);
+  const [commonIssues, setCommonIssues] = useState<CommonCropIssuesOutput['issues']>([]);
+  const [isIssuesLoading, setIsIssuesLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.location) {
+      getCommonCropIssuesAction(user.location, language)
+        .then(data => {
+            setCommonIssues(data.issues);
+        })
+        .catch(console.error)
+        .finally(() => setIsIssuesLoading(false));
+    }
+  }, [user, language]);
+
 
   useEffect(() => {
     if (state.data) {
@@ -322,16 +339,25 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
                 Common Issues This Season
             </h2>
             <div className="grid grid-cols-2 gap-4">
-                <Card className="text-center flex flex-col items-center p-4">
-                    <AphidIcon className="h-10 w-10 mb-2"/>
-                    <p className="font-semibold">Aphids</p>
-                    <p className="text-xs text-muted-foreground">Common pest</p>
-                </Card>
-                 <Card className="text-center flex flex-col items-center p-4">
-                    <FungalIcon className="h-10 w-10 mb-2"/>
-                    <p className="font-semibold">Fungal Disease</p>
-                    <p className="text-xs text-muted-foreground">Monsoon related</p>
-                </Card>
+                 {isIssuesLoading ? (
+                    <>
+                        <Skeleton className="h-32" />
+                        <Skeleton className="h-32" />
+                    </>
+                ) : commonIssues.length > 0 ? (
+                    commonIssues.map((issue, index) => {
+                        const Icon = issue.name.toLowerCase().includes('aphid') ? AphidIcon : FungalIcon;
+                        return (
+                             <Card key={index} className="text-center flex flex-col items-center p-4">
+                                <Icon className="h-10 w-10 mb-2"/>
+                                <p className="font-semibold">{issue.name}</p>
+                                <p className="text-xs text-muted-foreground">{issue.reason}</p>
+                            </Card>
+                        )
+                    })
+                ) : (
+                    <p className="text-muted-foreground col-span-2">No common issues found for your location at this time.</p>
+                )}
             </div>
         </div>
     </div>

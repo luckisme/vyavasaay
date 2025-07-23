@@ -9,6 +9,7 @@ import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import { calculateCropCosts } from '@/ai/flows/calculate-crop-costs';
 import { suggestCrops } from '@/ai/flows/suggest-crops';
 import { generateWeatherAlert } from '@/ai/flows/generate-weather-alert';
+import { getCommonCropIssues } from '@/ai/flows/get-common-crop-issues';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import type { MarketAnalysisOutput } from '@/lib/types';
@@ -16,6 +17,7 @@ import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs'
 import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
+import type { CommonCropIssuesOutput } from '@/ai/flows/get-common-crop-issues';
 
 const allLanguages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -234,5 +236,24 @@ export async function suggestCropsAction(
     } catch (e) {
         console.error(e);
         return { data: null, error: 'Sorry, I could not suggest any crops. Please try rephrasing your input.' };
+    }
+}
+
+// Action for Common Crop Issues
+export async function getCommonCropIssuesAction(
+    location: string,
+    language: string
+): Promise<CommonCropIssuesOutput> {
+    const languageName = allLanguages.find(l => l.value === language)?.label || 'English';
+    const month = new Date().toLocaleString('default', { month: 'long' });
+    const season = `Current month is ${month}`;
+
+    try {
+        const result = await getCommonCropIssues({ location, season, language: languageName });
+        return result;
+    } catch (e) {
+        console.error(e);
+        // Return an empty array on error so the UI doesn't break
+        return { issues: [] };
     }
 }
