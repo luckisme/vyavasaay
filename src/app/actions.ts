@@ -8,14 +8,15 @@ import { summarizeGovernmentScheme } from '@/ai/flows/summarize-government-schem
 import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import { calculateCropCosts } from '@/ai/flows/calculate-crop-costs';
 import { suggestCrops } from '@/ai/flows/suggest-crops';
+import { generateWeatherAlert } from '@/ai/flows/generate-weather-alert';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs';
 import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
+import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
 
-// Define languages directly in the server action file to avoid import issues from client components.
 const languages = [
     { value: 'en', label: 'English' },
     { value: 'hi', label: 'हिन्दी' },
@@ -171,6 +172,19 @@ export async function getWeatherAction(location: string): Promise<WeatherData | 
     } catch (e) {
         console.error(e);
         return { error: 'An unexpected error occurred while fetching weather data.' };
+    }
+}
+
+// Action for Weather Alert Generation
+export type WeatherAlert = WeatherAlertOutput;
+export async function generateWeatherAlertAction(weatherData: WeatherData, language: string): Promise<WeatherAlert> {
+    try {
+        const result = await generateWeatherAlert({ weather: weatherData, language });
+        return result;
+    } catch (e) {
+        console.error('Failed to generate weather alert:', e);
+        // Return a default, safe alert in case of an AI error
+        return { alert: "Check local weather advisories for the latest updates.", severity: "info" };
     }
 }
 

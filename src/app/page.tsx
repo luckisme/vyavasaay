@@ -19,8 +19,8 @@ import { UserProvider, useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
-import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction } from '@/app/actions';
-import type { WeatherData } from '@/app/actions';
+import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction } from '@/app/actions';
+import type { WeatherData, WeatherAlert } from '@/app/actions';
 import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import CropCalculator from '@/components/features/crop-calculator';
@@ -43,6 +43,7 @@ interface DataStates {
     weather: { data: WeatherData | null; error: string | null; loading: boolean; };
     market: { data: MarketAnalysisOutput | null; error: string | null; loading: boolean; };
     schemes: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; };
+    weatherAlert: { data: WeatherAlert | null; error: string | null; loading: boolean; };
 }
 
 function AppCore() {
@@ -55,6 +56,7 @@ function AppCore() {
     weather: { data: null, error: null, loading: true },
     market: { data: null, error: null, loading: true },
     schemes: { data: null, error: null, loading: true },
+    weatherAlert: { data: null, error: null, loading: true },
   });
 
 
@@ -75,6 +77,12 @@ function AppCore() {
                 setDataStates(s => ({ ...s, weather: { data: null, error: result.error, loading: false }}));
             } else {
                 setDataStates(s => ({ ...s, weather: { data: result, error: null, loading: false }}));
+                // After fetching weather, generate the alert.
+                generateWeatherAlertAction(result, languageName).then(alertResult => {
+                    setDataStates(s => ({ ...s, weatherAlert: { data: alertResult, error: null, loading: false }}));
+                }).catch(e => {
+                    setDataStates(s => ({ ...s, weatherAlert: { data: null, error: e.message, loading: false }}));
+                });
             }
         });
 
@@ -127,7 +135,8 @@ function AppCore() {
         return <Discover 
             setActiveFeature={setActiveFeature} 
             userName={user.name} 
-            weatherState={dataStates.weather} 
+            weatherState={dataStates.weather}
+            weatherAlertState={dataStates.weatherAlert}
             onSearchSubmit={handleSearchSubmit} 
             languages={languages}
             onLanguageChange={handleLanguageChange}

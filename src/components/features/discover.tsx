@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '../ui/skeleton';
-import { type WeatherData } from '@/app/actions';
+import { type WeatherData, type WeatherAlert } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { Badge } from '../ui/badge';
 import { Avatar } from '../ui/avatar';
@@ -29,7 +29,12 @@ interface DiscoverProps {
     data: WeatherData | null;
     error: string | null;
     loading: boolean;
-  },
+  };
+  weatherAlertState: {
+    data: WeatherAlert | null;
+    error: string | null;
+    loading: boolean;
+  };
   onSearchSubmit: (question: string) => void;
   languages: { value: string; label: string; short: string; }[];
   onLanguageChange: (langCode: string) => void;
@@ -54,7 +59,39 @@ const CalculatorIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 
-export default function Discover({ setActiveFeature, userName, weatherState, onSearchSubmit, languages, onLanguageChange }: DiscoverProps) {
+const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']}) => {
+    const { t } = useTranslation();
+
+    if (state.loading) {
+        return <Skeleton className="h-16 w-full" />;
+    }
+
+    if (state.error || !state.data) {
+        return null; // Don't show the card if there's an error or no data
+    }
+    
+    const { alert, severity } = state.data;
+
+    const alertStyles = {
+        warning: 'bg-red-500 text-white',
+        info: 'bg-yellow-400 text-black',
+    };
+
+    return (
+        <Card className={cn("border-none shadow-lg", alertStyles[severity])}>
+            <CardContent className="p-4 flex items-center gap-4">
+                <AlertTriangle className="h-6 w-6"/>
+                <div>
+                    <p className="font-bold">{t('discover.weatherAlertTitle', 'Weather Alert')}</p>
+                    <p className="text-sm">{alert}</p>
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
+
+
+export default function Discover({ setActiveFeature, userName, weatherState, weatherAlertState, onSearchSubmit, languages, onLanguageChange }: DiscoverProps) {
   const { t } = useTranslation();
   const { user } = useUser();
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -148,15 +185,7 @@ export default function Discover({ setActiveFeature, userName, weatherState, onS
 
         {/* Weather Section */}
         <div className="space-y-4">
-             <Card className="bg-red-500 text-white border-none shadow-lg">
-                <CardContent className="p-4 flex items-center gap-4">
-                    <AlertTriangle className="h-6 w-6 text-white"/>
-                    <div>
-                        <p className="font-bold">{t('discover.weatherAlertTitle', 'Weather Alert')}</p>
-                        <p className="text-sm">{t('discover.weatherAlertBody', 'Heavy rain expected tomorrow. Secure crops and machinery.')}</p>
-                    </div>
-                </CardContent>
-            </Card>
+             <WeatherAlertCard state={weatherAlertState} />
             {weatherState.loading && <Skeleton className="h-48 w-full rounded-2xl" />}
             {weatherState.data && (
                 <Card className="bg-gradient-to-br from-blue-400 to-purple-500 text-white border-none shadow-xl rounded-2xl overflow-hidden">
