@@ -17,7 +17,7 @@ const GovernmentSchemeOutputSchema = z.object({
       description: z.string().describe("A concise, one-sentence summary of the scheme's main benefit."),
       keyFeatures: z.array(z.string()).describe("A list of 2-3 short, bullet-point-style key features or benefits."),
       ctaButton: z.string().describe("The call-to-action text for the button (e.g., 'Apply Online', 'Calculate Premium', 'Register Now')."),
-      link: z.string().url().describe("The most relevant official government URL for the scheme.")
+      link: z.string().describe("The most relevant official government URL for the scheme.")
     })
   ).describe('A list of 2-3 government schemes most relevant to the farmer.'),
 });
