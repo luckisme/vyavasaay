@@ -38,7 +38,8 @@ const knowledgeLibraryItems = [
       description: 'Complete guide for organic fertilizer preparation using kitchen waste and cow dung.',
       tags: ['AI Query', 'Organic', 'DIY'],
       imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg",
-      dataAiHint: 'farm fertilizer',
+      dataAiHint: 'compost fertilizer',
+      link: 'https://www.marthastewart.com/how-to-make-homemade-fertilizer-7481114'
     },
     {
       title: 'Mastering Drip Irrigation',
@@ -140,22 +141,33 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                     </Button>
                 </div>
                 <div className="space-y-4">
-                {resourcesToShow.map((res) => (
-                    <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white">
-                        <div className="relative h-40 w-full">
-                            <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
-                        </div>
-                        <CardContent className="p-4">
-                            <h3 className="font-bold">{res.title}</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{res.description}</p>
-                            <div className="flex items-center justify-between mt-4">
-                                <div className="flex gap-2">
-                                    {res.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
-                                </div>
+                {resourcesToShow.map((res) => {
+                    const resourceCard = (
+                        <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white">
+                            <div className="relative h-40 w-full">
+                                <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
                             </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                            <CardContent className="p-4">
+                                <h3 className="font-bold">{res.title}</h3>
+                                <p className="text-sm text-muted-foreground mt-1">{res.description}</p>
+                                <div className="flex items-center justify-between mt-4">
+                                    <div className="flex gap-2">
+                                        {res.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    );
+
+                    if (res.link) {
+                        return (
+                            <a href={res.link} target="_blank" rel="noopener noreferrer" key={res.title}>
+                                {resourceCard}
+                            </a>
+                        )
+                    }
+                    return resourceCard;
+                })}
                 </div>
             </div>
         </div>
