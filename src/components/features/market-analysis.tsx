@@ -56,36 +56,16 @@ const CollapsibleOutlook = ({ text, className }: { text: string, className?: str
     );
 };
 
-export default function MarketAnalysis() {
-  const { t, language } = useTranslation();
-  const { user } = useUser();
-  const [state, setState] = useState<{
-    data: MarketAnalysisOutput | null;
-    error: string | null;
-    loading: boolean;
-  }>({ data: null, error: null, loading: true });
-
-  useEffect(() => {
-    if (!user) {
-        setState({ data: null, error: null, loading: false });
-        return;
+type MarketAnalysisProps = {
+    state: {
+        data: MarketAnalysisOutput | null;
+        error: string | null;
+        loading: boolean;
     }
+}
 
-    const fetchAnalysis = async () => {
-        setState({ loading: true, error: null, data: null });
-        const languageName = languages.find(l => l.value === language)?.label || 'English';
-        try {
-            const result = await getMarketAnalysisAction(user.location, languageName);
-            setState({ loading: false, error: null, data: result });
-        } catch (e) {
-            const error = e instanceof Error ? e.message : "An unknown error occurred.";
-            setState({ loading: false, error, data: null });
-        }
-    };
-
-    fetchAnalysis();
-  }, [user, language]);
-
+export default function MarketAnalysis({ state }: MarketAnalysisProps) {
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
 
   const MainContent = () => {

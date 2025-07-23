@@ -14,41 +14,17 @@ import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-sch
 import { languages } from '@/app/page';
 import { ChatInterface } from './ask-vyavasay';
 
-export default function GovtSchemes() {
-  const { t, language } = useTranslation();
-  const { user } = useUser();
-  const [state, setState] = useState<{
-    data: GovernmentSchemeOutput | null;
-    error: string | null;
-    loading: boolean;
-  }>({ data: null, error: null, loading: true });
+type GovtSchemesProps = {
+    state: {
+        data: GovernmentSchemeOutput | null;
+        error: string | null;
+        loading: boolean;
+    }
+}
 
-  const farmerDetails = useMemo(() => {
-    if (!user) return '';
-    return t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
-  }, [user, t]);
-
-  useEffect(() => {
-    if (!user || !farmerDetails) {
-        setState({ data: null, error: null, loading: false});
-        return;
-    };
-
-    const fetchSchemes = async () => {
-        setState(s => ({ ...s, loading: true, error: null }));
-        const languageName = languages.find(l => l.value === language)?.label || 'English';
-        try {
-            const result = await summarizeSchemesAction(farmerDetails, languageName);
-            setState({ data: result, error: null, loading: false });
-        } catch (e) {
-            const error = e instanceof Error ? e.message : "An unknown error occurred.";
-            setState({ data: null, error, loading: false });
-        }
-    };
-    
-    fetchSchemes();
-  }, [user, farmerDetails, language]);
-
+export default function GovtSchemes({ state }: GovtSchemesProps) {
+  const { t } = useTranslation();
+  
   return (
     <div className="grid md:grid-cols-2 gap-8 items-start">
         <Card>
@@ -71,7 +47,7 @@ export default function GovtSchemes() {
   );
 }
 
-function SchemeResults({ state }: { state: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; } }) {
+function SchemeResults({ state }: GovtSchemesProps) {
     const { t } = useTranslation();
 
     if (state.loading) {

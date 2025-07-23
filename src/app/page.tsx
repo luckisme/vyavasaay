@@ -19,6 +19,10 @@ import { UserProvider, useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
+import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction } from '@/app/actions';
+import type { WeatherData } from '@/app/actions';
+import type { MarketAnalysisOutput } from '@/ai/flows/get-market-analysis';
+import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 
 export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather';
 
@@ -32,16 +36,58 @@ export const languages = [
     { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ' },
 ];
 
+interface DataStates {
+    weather: { data: WeatherData | null; error: string | null; loading: boolean; };
+    market: { data: MarketAnalysisOutput | null; error: string | null; loading: boolean; };
+    schemes: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; };
+}
+
 function AppCore() {
   const { user, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('discover');
+  const [dataStates, setDataStates] = useState<DataStates>({
+    weather: { data: null, error: null, loading: true },
+    market: { data: null, error: null, loading: true },
+    schemes: { data: null, error: null, loading: true },
+  });
+
 
   useEffect(() => {
     if (user?.language) {
       setLanguage(user.language);
     }
   }, [user?.language, setLanguage]);
+
+  useEffect(() => {
+    if (user?.location) {
+        const languageName = languages.find(l => l.value === language)?.label || 'English';
+        const farmerDetails = t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
+
+        // Fetch Weather
+        getWeatherAction(user.location).then(result => {
+            if ('error' in result) {
+                setDataStates(s => ({ ...s, weather: { data: null, error: result.error, loading: false }}));
+            } else {
+                setDataStates(s => ({ ...s, weather: { data: result, error: null, loading: false }}));
+            }
+        });
+
+        // Fetch Market Analysis
+        getMarketAnalysisAction(user.location, languageName).then(data => {
+            setDataStates(s => ({ ...s, market: { data, error: null, loading: false }}));
+        }).catch(e => {
+            setDataStates(s => ({ ...s, market: { data: null, error: e.message, loading: false }}));
+        });
+
+        // Fetch Government Schemes
+        summarizeSchemesAction(farmerDetails, languageName).then(data => {
+            setDataStates(s => ({ ...s, schemes: { data, error: null, loading: false }}));
+        }).catch(e => {
+            setDataStates(s => ({ ...s, schemes: { data: null, error: e.message, loading: false }}));
+        });
+    }
+  }, [user, language, t]);
 
   const handleLanguageChange = (langCode: string) => {
     if (user) {
@@ -55,11 +101,11 @@ function AppCore() {
       case 'diagnose':
         return <CropDiagnosis />;
       case 'market':
-        return <MarketAnalysis />;
+        return <MarketAnalysis state={dataStates.market} />;
       case 'schemes':
-        return <GovtSchemes />;
+        return <GovtSchemes state={dataStates.schemes} />;
       case 'weather':
-        return <Weather />;
+        return <Weather state={dataStates.weather} />;
       case 'discover':
       default:
         return <Discover setActiveFeature={setActiveFeature} userName={user.name} />;

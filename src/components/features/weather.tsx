@@ -1,16 +1,23 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useUser } from '@/hooks/use-user';
-import { getWeatherAction, type WeatherData } from '@/app/actions';
+import React from 'react';
+import { type WeatherData } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, Thermometer, Wind, Droplets, Sunrise, Sunset } from 'lucide-react';
+import { AlertCircle, Thermometer, Wind, Droplets } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslation } from '@/hooks/use-translation';
 import { ChatInterface } from './ask-vyavasay';
+
+type WeatherProps = {
+    state: {
+        data: WeatherData | null;
+        error: string | null;
+        loading: boolean;
+    }
+}
 
 const WeatherCardSkeleton = () => (
     <Card>
@@ -87,34 +94,9 @@ const WeatherInfo = ({ data }: { data: WeatherData }) => {
     )
 }
 
-export default function Weather() {
+export default function Weather({ state }: WeatherProps) {
     const { t } = useTranslation();
-    const { user } = useUser();
-    const [state, setState] = useState<{
-        data: WeatherData | null;
-        error: string | null;
-        loading: boolean;
-    }>({ data: null, error: null, loading: true });
-
-    useEffect(() => {
-        if (!user?.location) {
-            setState({ loading: false, error: "Location not set. Please set your location in your profile.", data: null });
-            return;
-        }
-
-        const fetchWeather = async () => {
-            setState({ loading: true, error: null, data: null });
-            const result = await getWeatherAction(user.location);
-            if ('error' in result) {
-                setState({ loading: false, error: result.error, data: null });
-            } else {
-                setState({ loading: false, error: null, data: result });
-            }
-        };
-
-        fetchWeather();
-    }, [user?.location]);
-
+    
     return (
         <div className="grid gap-8 md:grid-cols-2 items-start">
             <div className="space-y-8">
