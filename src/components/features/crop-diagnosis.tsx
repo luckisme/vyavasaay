@@ -25,6 +25,12 @@ const initialState: DiagnoseState = {
   error: null,
 };
 
+interface RecentDiagnosis {
+  imageUrl: string;
+  diagnosis: string;
+  date: string;
+}
+
 function SubmitButton({ disabled }: { disabled?: boolean }) {
   const { pending } = useFormStatus();
   const { t } = useTranslation();
@@ -106,12 +112,21 @@ export default function CropDiagnosis() {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [showResultChat, setShowResultChat] = useState(false);
+  const [recentDiagnoses, setRecentDiagnoses] = useState<RecentDiagnosis[]>([]);
 
   const { pending } = useFormStatus();
 
   useEffect(() => {
     if (state.data) {
         setShowResultChat(true);
+        if (preview && state.data.diagnosis.disease) {
+            const newDiagnosis: RecentDiagnosis = {
+                imageUrl: preview,
+                diagnosis: state.data.diagnosis.disease,
+                date: new Date().toLocaleDateString(),
+            };
+            setRecentDiagnoses(prev => [newDiagnosis, ...prev].slice(0, 3));
+        }
     } else if (state.error) {
         toast({
           variant: 'destructive',
@@ -119,7 +134,7 @@ export default function CropDiagnosis() {
           description: state.error,
         });
     }
-  }, [state, t, toast]);
+  }, [state, t, toast, preview]);
 
   const resizeImage = (file: File): Promise<File> => {
     return new Promise((resolve) => {
@@ -263,30 +278,6 @@ export default function CropDiagnosis() {
     return [];
   };
 
-  const recentDiagnoses = [
-    {
-      imageUrl: '/images/WhatsApp Image 2025-07-10 at 5.26.22 PM.jpeg',
-      dataAiHint: 'diseased leaf',
-      cropName: 'Tomato',
-      diagnosis: 'Early Blight',
-      date: '2 days ago'
-    },
-    {
-      imageUrl: '/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (1).jpeg',
-      dataAiHint: 'infested leaf',
-      cropName: 'Cotton',
-      diagnosis: 'Aphid Infestation',
-      date: '5 days ago'
-    },
-    {
-      imageUrl: '/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg',
-      dataAiHint: 'yellowed plant',
-      cropName: 'Soybean',
-      diagnosis: 'Nitrogen Deficiency',
-      date: '1 week ago'
-    }
-  ];
-
   const commonIssues = [
     {
       name: 'Powdery Mildew',
@@ -398,37 +389,39 @@ export default function CropDiagnosis() {
         )}
 
         {/* Recent Diagnoses Section */}
-        <div className="space-y-4">
-            <h2 className="text-xl font-bold font-headline">Recent Diagnoses</h2>
-            <Carousel
-                opts={{
-                    align: "start",
-                }}
-                className="w-full"
-            >
-                <CarouselContent>
-                    {recentDiagnoses.map((item, index) => (
-                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                            <div className="p-1">
-                                <Card>
-                                    <CardContent className="flex flex-col items-center justify-center p-0">
-                                      <div className="w-full h-32 relative">
-                                        <Image src={item.imageUrl} alt={item.cropName} layout="fill" objectFit="cover" className="rounded-t-lg" data-ai-hint={item.dataAiHint} />
-                                      </div>
-                                      <div className="p-4 w-full">
-                                        <h3 className="font-semibold">{item.cropName} - {item.diagnosis}</h3>
-                                        <p className="text-sm text-muted-foreground">{item.date}</p>
-                                      </div>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious className="hidden sm:flex" />
-                <CarouselNext className="hidden sm:flex" />
-            </Carousel>
-        </div>
+        {recentDiagnoses.length > 0 && (
+          <div className="space-y-4">
+              <h2 className="text-xl font-bold font-headline">Recent Diagnoses</h2>
+              <Carousel
+                  opts={{
+                      align: "start",
+                  }}
+                  className="w-full"
+              >
+                  <CarouselContent>
+                      {recentDiagnoses.map((item, index) => (
+                          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                              <div className="p-1">
+                                  <Card>
+                                      <CardContent className="flex flex-col items-center justify-center p-0">
+                                        <div className="w-full h-32 relative">
+                                          <Image src={item.imageUrl} alt={item.diagnosis} layout="fill" objectFit="cover" className="rounded-t-lg" />
+                                        </div>
+                                        <div className="p-4 w-full">
+                                          <h3 className="font-semibold">{item.diagnosis}</h3>
+                                          <p className="text-sm text-muted-foreground">{item.date}</p>
+                                        </div>
+                                      </CardContent>
+                                  </Card>
+                              </div>
+                          </CarouselItem>
+                      ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="hidden sm:flex" />
+                  <CarouselNext className="hidden sm:flex" />
+              </Carousel>
+          </div>
+        )}
 
         {/* Common Issues Section */}
         <div className="space-y-4">
@@ -452,3 +445,4 @@ export default function CropDiagnosis() {
     </div>
   );
 }
+
