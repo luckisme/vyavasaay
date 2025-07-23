@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { Upload, X, AlertCircle, Camera, ArrowLeft, Loader2, Sparkles } from 'lucide-react';
+import { Upload, X, AlertCircle, Camera, ArrowLeft, Loader2, Sparkles, Bug, Wind, Sun } from 'lucide-react';
 import { diagnoseCropAction, type DiagnoseState } from '@/app/actions';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
@@ -17,6 +17,8 @@ import type { ChatMessage } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const initialState: DiagnoseState = {
   data: null,
@@ -31,10 +33,13 @@ function SubmitButton({ disabled }: { disabled?: boolean }) {
       {pending ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {t('cropDiagnosis.button_pending')}
+            {t('cropDiagnosis.button_pending', 'Diagnosing...')}
           </>
       ) : (
-        t('cropDiagnosis.button')
+        <>
+            <Sparkles className="mr-2 h-4 w-4" />
+            {t('cropDiagnosis.button', 'Diagnose Crop')}
+        </>
       )}
     </Button>
   );
@@ -155,6 +160,7 @@ export default function CropDiagnosis() {
         setFile(resizedFile);
         setPreview(URL.createObjectURL(resizedFile));
         setShowResultChat(false);
+        setActiveTab('preview');
     }
   };
 
@@ -192,7 +198,7 @@ export default function CropDiagnosis() {
   useEffect(() => {
     if (activeTab === 'camera' && !isCameraActive) {
       startCamera();
-    } else if (activeTab === 'upload' && isCameraActive) {
+    } else if (activeTab !== 'camera' && isCameraActive) {
       stopCamera();
     }
   }, [activeTab, isCameraActive, startCamera, stopCamera]);
@@ -218,6 +224,7 @@ export default function CropDiagnosis() {
         setFile(resizedFile);
         setShowResultChat(false);
         stopCamera();
+        setActiveTab('preview');
     }
   };
 
@@ -229,9 +236,7 @@ export default function CropDiagnosis() {
     if (fileInputRef.current) {
         fileInputRef.current.value = '';
     }
-    if(activeTab === 'camera' && !isCameraActive) {
-        startCamera();
-    }
+    setActiveTab('upload');
   }
 
   const extendedFormAction = (formData: FormData) => {
@@ -258,99 +263,123 @@ export default function CropDiagnosis() {
     return [];
   };
 
+  const recentDiagnoses = [
+    {
+      imageUrl: '/images/WhatsApp Image 2025-07-10 at 5.26.22 PM.jpeg',
+      dataAiHint: 'diseased leaf',
+      cropName: 'Tomato',
+      diagnosis: 'Early Blight',
+      date: '2 days ago'
+    },
+    {
+      imageUrl: '/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (1).jpeg',
+      dataAiHint: 'infested leaf',
+      cropName: 'Cotton',
+      diagnosis: 'Aphid Infestation',
+      date: '5 days ago'
+    },
+    {
+      imageUrl: '/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg',
+      dataAiHint: 'yellowed plant',
+      cropName: 'Soybean',
+      diagnosis: 'Nitrogen Deficiency',
+      date: '1 week ago'
+    }
+  ];
+
+  const commonIssues = [
+    {
+      name: 'Powdery Mildew',
+      description: 'A fungal disease that appears as white powdery spots on leaves and stems.',
+      icon: Wind
+    },
+    {
+      name: 'Aphids',
+      description: 'Small sap-sucking insects that can cause leaf curling and transmit viruses.',
+      icon: Bug
+    },
+    {
+      name: 'Late Blight',
+      description: 'A serious fungal disease affecting tomatoes and potatoes, thriving in cool, moist conditions.',
+      icon: Sun
+    }
+  ];
+
   return (
-    <div className="space-y-4">
-        <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
-                <ArrowLeft />
-            </Button>
-            <div>
-                <h1 className="text-2xl font-bold font-headline">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
-                <p className="text-muted-foreground">{t('cropDiagnosis.descriptionPage', 'AI-powered crop disease and pest detection')}</p>
-            </div>
+    <div className="space-y-6">
+        <div>
+            <h1 className="text-2xl font-bold font-headline">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
+            <p className="text-muted-foreground">{t('cropDiagnosis.descriptionPage', 'AI-powered crop disease and pest detection')}</p>
         </div>
 
-        <Card className="bg-green-600 text-white overflow-hidden">
-            <CardContent className="p-6 grid md:grid-cols-2 items-center gap-6">
-                <div>
-                    <h2 className="text-2xl font-bold font-headline">{t('cropDiagnosis.quickDiagnosisTitle', 'Quick Diagnosis')}</h2>
-                    <p className="opacity-90 mt-1">{t('cropDiagnosis.quickDiagnosisDescription', 'Upload a photo of your crop for instant analysis')}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <Button 
-                        variant="secondary" 
-                        className="w-full bg-white/20 hover:bg-white/30 text-white" 
-                        onClick={() => { setActiveTab('camera'); setPreview(null); }}>
-                        <Camera className="mr-2 h-4 w-4"/> {t('cropDiagnosis.takePhoto', 'Take Photo')}
-                    </Button>
-                    <Button 
-                        variant="secondary" 
-                        className="w-full bg-white/20 hover:bg-white/30 text-white" 
-                        onClick={() => { setActiveTab('upload'); fileInputRef.current?.click(); }}>
-                        <Upload className="mr-2 h-4 w-4"/> {t('cropDiagnosis.uploadImage', 'Upload Image')}
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
-        
-        <form action={extendedFormAction}>
-            <input id="photo-input" name="photo" type="file" accept="image/*" onChange={handleFileChange} ref={fileInputRef} className="sr-only" />
-            <input type="hidden" name="location" value={user?.location || ''} />
-            <input type="hidden" name="language" value={language} />
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('cropDiagnosis.uploadTitle', 'Diagnose Your Crop')}</CardTitle>
+            <CardDescription>{t('cropDiagnosis.uploadDescription', 'Upload a file or use your camera to get an AI-powered diagnosis.')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'upload' | 'camera')} className="w-full">
+                <TabsList className={cn("grid w-full grid-cols-2", (preview || pending) && "hidden")}>
+                    <TabsTrigger value="upload">{t('cropDiagnosis.uploadTab', 'Upload File')}</TabsTrigger>
+                    <TabsTrigger value="camera">{t('cropDiagnosis.cameraTab', 'Use Camera')}</TabsTrigger>
+                </TabsList>
+                <TabsContent value="upload" className="mt-4">
+                  <div 
+                    className="w-full h-48 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="h-8 w-8 text-muted-foreground" />
+                    <p className="mt-2 text-muted-foreground">{t('cropDiagnosis.uploadArea', 'Drag & drop file or click to upload')}</p>
+                  </div>
+                </TabsContent>
+                <TabsContent value="camera" className="mt-4">
+                  <div className="w-full aspect-video border-2 border-dashed rounded-lg flex items-center justify-center relative bg-black">
+                      {hasCameraPermission === false ? (
+                            <Alert variant="destructive" className="w-5/6">
+                              <AlertCircle className="h-4 w-4" />
+                              <AlertTitle>Camera Access Denied</AlertTitle>
+                              <AlertDescription>Please enable camera permissions in your browser settings.</AlertDescription>
+                          </Alert>
+                      ) : (
+                        <>
+                          <video ref={videoRef} className={cn("w-full h-full object-cover", {"hidden": !isCameraActive})} autoPlay playsInline muted />
+                          {!isCameraActive && hasCameraPermission && <Loader2 className="h-8 w-8 animate-spin text-white"/>}
+                        </>
+                      )}
+                  </div>
+                  <Button type="button" onClick={handleTakePicture} disabled={!hasCameraPermission || !isCameraActive} className="w-full mt-4">
+                      <Camera className="mr-2 h-4 w-4" /> {t('cropDiagnosis.takePictureButton', 'Take Picture')}
+                  </Button>
+                </TabsContent>
+              </Tabs>
 
-            {preview ? (
-              <Card>
-                  <CardHeader>
-                    <CardTitle>{t('cropDiagnosis.imagePreviewTitle', 'Image Preview')}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+              <form action={extendedFormAction}>
+                  <input id="photo-input" name="photo" type="file" accept="image/*" onChange={handleFileChange} ref={fileInputRef} className="sr-only" />
+                  <input type="hidden" name="location" value={user?.location || ''} />
+                  <input type="hidden" name="language" value={language} />
+
+                  {pending && (
+                      <div className="text-center p-8 space-y-4">
+                          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+                          <p className="text-muted-foreground">{t('cropDiagnosis.loadingMessage', 'Analyzing your crop... This may take a moment.')}</p>
+                          <Skeleton className="h-64 w-full" />
+                      </div>
+                  )}
+
+                  {!pending && preview && (
+                    <div className="mt-4">
                       <div className="w-full h-64 border rounded-lg flex items-center justify-center relative">
-                          <Image src={preview} alt={t('cropDiagnosis.imagePreviewAlt')} layout="fill" objectFit="contain" className="rounded-md" />
+                          <Image src={preview} alt={t('cropDiagnosis.imagePreviewAlt', 'Image Preview')} layout="fill" objectFit="contain" className="rounded-md" />
                           <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 h-8 w-8" onClick={handleRemoveImage}>
                               <X className="h-4 w-4" />
                           </Button>
                       </div>
-                  </CardContent>
-                  <CardFooter>
-                     <SubmitButton disabled={pending} />
-                  </CardFooter>
-              </Card>
-            ) : (
-                activeTab === 'camera' && (
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="w-full aspect-video border-2 border-dashed rounded-lg flex items-center justify-center relative bg-black">
-                                {hasCameraPermission === false ? (
-                                     <Alert variant="destructive" className="w-5/6">
-                                        <AlertCircle className="h-4 w-4" />
-                                        <AlertTitle>Camera Access Denied</AlertTitle>
-                                        <AlertDescription>Please enable camera permissions in your browser settings.</AlertDescription>
-                                    </Alert>
-                                ) : (
-                                  <>
-                                    <video ref={videoRef} className={cn("w-full h-full object-cover", {"hidden": !isCameraActive})} autoPlay playsInline muted />
-                                    {!isCameraActive && hasCameraPermission && <Loader2 className="h-8 w-8 animate-spin text-white"/>}
-                                  </>
-                                )}
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="button" onClick={handleTakePicture} disabled={!hasCameraPermission || !isCameraActive} className="w-full">
-                                <Camera className="mr-2 h-4 w-4" /> {t('cropDiagnosis.takePictureButton', 'Take Picture')}
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                )
-            )}
-        </form>
-
-        {pending && (
-            <div className="text-center p-8 space-y-4">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                <p className="text-muted-foreground">{t('cropDiagnosis.loadingMessage', 'Analyzing your crop... This may take a moment.')}</p>
-                <Skeleton className="h-64 w-full" />
-            </div>
-        )}
+                      <SubmitButton disabled={pending} />
+                    </div>
+                  )}
+              </form>
+          </CardContent>
+        </Card>
 
         {!pending && state.data && (
             <DiagnosisResult result={state.data} />
@@ -363,11 +392,63 @@ export default function CropDiagnosis() {
                 placeholder={t('cropDiagnosis.chatPlaceholder')}
                 initialMessage={t('cropDiagnosis.chatInitialMessage')}
                 initialMessages={getInitialChatMessages()}
-                key={state.data?.diagnosis.disease} // Re-mounts chat when a new diagnosis is made
+                key={state.data?.diagnosis.disease} 
             />
           </div>
         )}
+
+        {/* Recent Diagnoses Section */}
+        <div className="space-y-4">
+            <h2 className="text-xl font-bold font-headline">Recent Diagnoses</h2>
+            <Carousel
+                opts={{
+                    align: "start",
+                }}
+                className="w-full"
+            >
+                <CarouselContent>
+                    {recentDiagnoses.map((item, index) => (
+                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                            <div className="p-1">
+                                <Card>
+                                    <CardContent className="flex flex-col items-center justify-center p-0">
+                                      <div className="w-full h-32 relative">
+                                        <Image src={item.imageUrl} alt={item.cropName} layout="fill" objectFit="cover" className="rounded-t-lg" data-ai-hint={item.dataAiHint} />
+                                      </div>
+                                      <div className="p-4 w-full">
+                                        <h3 className="font-semibold">{item.cropName} - {item.diagnosis}</h3>
+                                        <p className="text-sm text-muted-foreground">{item.date}</p>
+                                      </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden sm:flex" />
+                <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+        </div>
+
+        {/* Common Issues Section */}
+        <div className="space-y-4">
+            <h2 className="text-xl font-bold font-headline">Common Issues this Season</h2>
+            <Card>
+                <CardContent className="p-4 space-y-4">
+                    {commonIssues.map((issue, index) => (
+                        <div key={index} className="flex items-start gap-4">
+                            <div className="bg-muted p-2 rounded-full">
+                                <issue.icon className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold">{issue.name}</h3>
+                                <p className="text-sm text-muted-foreground">{issue.description}</p>
+                            </div>
+                        </div>
+                    ))}
+                </CardContent>
+            </Card>
+        </div>
     </div>
   );
 }
-
