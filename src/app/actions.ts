@@ -183,7 +183,7 @@ export async function generateWeatherAlertAction(weatherData: WeatherData, langu
     try {
         // const result = await generateWeatherAlert({ weather: weatherData, language });
         // return result;
-        return { alert: "Heavy rain and strong winds expected in the next 3 hours. Secure equipment and protect crops.", severity: "warning" };
+        return { alert: "Severe hailstorm warning for the next hour. Protect vulnerable crops and take shelter.", severity: "warning" };
     } catch (e) {
         console.error('Failed to generate weather alert:', e);
         // Return a default, safe alert in case of an AI error
