@@ -87,7 +87,6 @@ export default function Discover({ setActiveFeature, userName, weatherState }: D
         <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={36} height={36} />
-                <h1 className="text-xl font-bold text-primary">Vyavasaay</h1>
             </div>
             <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
@@ -100,8 +99,6 @@ export default function Discover({ setActiveFeature, userName, weatherState }: D
 
         {/* Search and Call */}
         <div className="relative">
-             <p className="text-2xl font-bold tracking-tight text-foreground mb-2">{t('discover.welcomePersonalized', 'Hello, {{name}}!', {name: userName})}</p>
-             <p className="text-muted-foreground mb-4">{t('dashboard.welcome_message', 'Your AI-powered agricultural assistant is ready to help.')}</p>
         </div>
         <div className="flex items-center gap-2">
             <div className="relative flex-grow">
