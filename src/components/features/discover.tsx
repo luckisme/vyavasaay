@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, Phone, CloudSun, Calculator, Lightbulb, Sprout, Search, AlertTriangle, Wind, Droplets, Thermometer, ArrowRight } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, CloudSun, Calculator, Lightbulb, Sprout, Search, AlertTriangle, Wind, Droplets, Thermometer, ArrowRight, Bell, Globe } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
@@ -62,7 +62,7 @@ export default function Discover({ setActiveFeature, userName, weatherState }: D
     {
         name: t('cropCalculator.title', 'Cost Calculator'),
         description: t('cropCalculator.description', 'Calculate farming costs and profits'),
-        icon: CalculatorIcon,
+        icon: Calculator,
         feature: 'calculator' as Feature,
         color: 'bg-purple-100 text-purple-800',
         icon_path: 'purple'
