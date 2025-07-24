@@ -66,7 +66,7 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
     const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
     return (
-        <header className="px-4 pt-4 bg-[#F5F5DC]">
+        <header>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 -mt-16">
                     <div>
@@ -126,8 +126,8 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                 </div>
                 {offlineCallNumber && (
                     <a href={`tel:${offlineCallNumber}`}>
-                        <Button variant="outline" className="h-12 w-12 rounded-full p-0 flex-shrink-0 bg-white shadow-sm border-gray-200">
-                            <Phone className="h-5 w-5 text-primary" />
+                        <Button variant="destructive" className="h-12 w-12 rounded-full p-0 flex-shrink-0 shadow-sm">
+                            <Phone className="h-5 w-5" />
                         </Button>
                     </a>
                 )}
@@ -264,8 +264,8 @@ function AppCore() {
             <div className="flex flex-col w-full min-h-screen">
                 <SidebarInset>
                     <main className="flex-1 flex flex-col overflow-auto bg-[#F5F5DC]">
-                       {activeFeature === 'discover' && <AppHeader setActiveFeature={setActiveFeature} />}
-                        <div className="p-4 sm:p-6 pb-24 md:pb-6 flex-1">
+                       {activeFeature === 'discover' && <div className="p-4 sm:p-6 pb-0"><AppHeader setActiveFeature={setActiveFeature} /></div>}
+                        <div className="p-4 sm:p-6 pt-0 pb-24 md:pb-6 flex-1">
                             {renderFeature()}
                         </div>
                     </main>
