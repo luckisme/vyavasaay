@@ -21,7 +21,7 @@ import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
 import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction } from '@/app/actions';
 import type { WeatherData } from '@/app/actions';
-import type { WeatherAlert } from '@/ai/flows/generate-weather-alert';
+import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
 import type { MarketAnalysisOutput } from '@/lib/types';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import CropCalculator from '@/components/features/crop-calculator';
@@ -46,7 +46,7 @@ interface DataStates {
     weather: { data: WeatherData | null; error: string | null; loading: boolean; };
     market: { data: MarketAnalysisOutput | null; error: string | null; loading: boolean; };
     schemes: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; };
-    weatherAlert: { data: WeatherAlert | null; error: string | null; loading: boolean; };
+    weatherAlert: { data: WeatherAlertOutput | null; error: string | null; loading: boolean; };
 }
 
 const PhoneIcon = (props: React.SVGProps<SVGSVGElement>) => (
