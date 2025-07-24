@@ -14,7 +14,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Globe, Bell, Search, Mic, LogOut } from 'lucide-react';
+import { Globe, Bell, Search, Mic, LogOut, Phone } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
 import { UserProvider, useUser } from '@/hooks/use-user';
 import { useAuth } from '@/hooks/use-auth';
@@ -62,6 +62,8 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
             setUserProfile({ ...user, language: langCode });
         }
     };
+    
+    const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
     return (
         <header className="px-4 pt-4 bg-[#F5F5DC]">
@@ -107,19 +109,28 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                     </DropdownMenu>
                 </div>
             </div>
-             <div 
-                className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200 -mt-6"
-                onClick={() => setActiveFeature('ask')}
-            >
-                <span className="pl-4 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
-                <div className="absolute right-2 flex items-center gap-1">
-                    <Button type="button" size="icon" variant="ghost" className="rounded-full h-9 w-9 text-muted-foreground">
-                        <Mic className="h-5 w-5" />
-                    </Button>
-                     <Button type="button" size="icon" className="rounded-full h-9 w-9 bg-primary hover:bg-primary/90">
-                        <Search className="h-5 w-5 text-primary-foreground" />
-                    </Button>
+             <div className="flex items-center gap-2 -mt-6">
+                 <div 
+                    className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
+                    onClick={() => setActiveFeature('ask')}
+                >
+                    <span className="pl-4 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
+                    <div className="absolute right-2 flex items-center gap-1">
+                        <Button type="button" size="icon" variant="ghost" className="rounded-full h-9 w-9 text-muted-foreground">
+                            <Mic className="h-5 w-5" />
+                        </Button>
+                         <Button type="button" size="icon" className="rounded-full h-9 w-9 bg-primary hover:bg-primary/90">
+                            <Search className="h-5 w-5 text-primary-foreground" />
+                        </Button>
+                    </div>
                 </div>
+                {offlineCallNumber && (
+                    <a href={`tel:${offlineCallNumber}`}>
+                        <Button variant="outline" className="h-12 w-12 rounded-full p-0 flex-shrink-0 bg-white shadow-sm border-gray-200">
+                            <Phone className="h-5 w-5 text-primary" />
+                        </Button>
+                    </a>
+                )}
             </div>
         </header>
     );
