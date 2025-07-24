@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, CloudSun, Calculator, Lightbulb, Sprout, Search, AlertTriangle, Wind, Droplets, Thermometer, ArrowRight, Bell, Globe, ArrowUpRight } from 'lucide-react';
 import type { Feature } from '@/app/page';
@@ -53,7 +53,7 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
     const { t } = useTranslation();
 
     if (state.loading) {
-        return <Skeleton className="h-16 w-full rounded-2xl" />;
+        return <Skeleton className="h-[52px] w-full rounded-2xl" />;
     }
 
     if (state.error || !state.data) {
@@ -68,11 +68,11 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
             "border-none shadow-lg rounded-2xl text-white", 
             isWarning ? 'bg-red-500' : 'bg-yellow-500'
         )}>
-            <CardContent className="p-4 flex items-center gap-4">
-                <AlertTriangle className="h-6 w-6 text-white"/>
-                <div>
-                    <p className="font-bold">{t('discover.weatherAlertTitle', 'Weather Alert')}: <span className="font-normal">{alert}</span></p>
+            <CardContent className="p-3 flex items-center gap-3">
+                <div className="bg-white/20 p-2 rounded-full">
+                    <AlertTriangle className="h-5 w-5 text-white"/>
                 </div>
+                <p className="font-semibold text-sm flex-1">{t('discover.weatherAlertTitle', 'Weather Alert')}: <span className="font-normal">{alert}</span></p>
             </CardContent>
         </Card>
     );
@@ -82,6 +82,7 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
 export default function Discover({ setActiveFeature, weatherState, weatherAlertState }: DiscoverProps) {
   const { t } = useTranslation();
   const [showAllResources, setShowAllResources] = useState(false);
+  const [isResourcesLoading, setIsResourcesLoading] = useState(true);
   
   const quickLinks = [
     {
@@ -126,6 +127,14 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
       link: 'https://extension.sdstate.edu/organic-pest-control-methods'
     }
   ]
+
+  useEffect(() => {
+    // Simulate fetching resources
+    const timer = setTimeout(() => {
+        setIsResourcesLoading(false);
+    }, 1500); // 1.5 seconds delay to show skeleton
+    return () => clearTimeout(timer);
+  }, []);
 
   const resourcesToShow = showAllResources ? allResources : allResources.slice(0, 1);
 
@@ -198,42 +207,63 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
                     <Sprout className="h-5 w-5 text-primary"/>
                     {t('discover.resourcesTitle', 'Farming Resources')}
                 </h2>
-                <Button variant="link" className="text-primary pr-0" onClick={() => setShowAllResources(!showAllResources)}>
-                  {showAllResources ? 'See Less' : t('discover.seeAll', 'See All')}
-                   <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
+                {!isResourcesLoading && (
+                    <Button variant="link" className="text-primary pr-0" onClick={() => setShowAllResources(!showAllResources)}>
+                      {showAllResources ? 'See Less' : t('discover.seeAll', 'See All')}
+                       <ArrowRight className="h-4 w-4 ml-1" />
+                    </Button>
+                )}
             </div>
             <div className="space-y-4">
-              {resourcesToShow.map((res) => {
-                  const resourceCard = (
-                    <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white">
-                        <div className="relative h-40 w-full">
-                            <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
-                        </div>
-                        <CardContent className="p-4">
-                            <h3 className="font-bold">{res.title}</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{res.description}</p>
-                            <div className="flex items-center justify-between mt-4">
-                              <div className="flex gap-2">
-                                  {res.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
-                              </div>
-                               <div className="p-2 rounded-full bg-gray-100">
-                                <ArrowUpRight className="h-4 w-4 text-gray-600" />
-                               </div>
+              {isResourcesLoading ? (
+                  [...Array(1)].map((_, i) => (
+                    <Card key={i} className="overflow-hidden bg-white">
+                        <Skeleton className="h-40 w-full" />
+                        <CardContent className="p-4 space-y-2">
+                            <Skeleton className="h-5 w-3/4" />
+                            <Skeleton className="h-4 w-full" />
+                            <div className="flex items-center justify-between pt-2">
+                                <div className="flex gap-2">
+                                    <Skeleton className="h-6 w-16 rounded-full" />
+                                    <Skeleton className="h-6 w-16 rounded-full" />
+                                </div>
+                                <Skeleton className="h-8 w-8 rounded-full" />
                             </div>
                         </CardContent>
                     </Card>
-                  );
+                  ))
+              ) : (
+                resourcesToShow.map((res) => {
+                    const resourceCard = (
+                      <Card key={res.title} className="overflow-hidden transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white">
+                          <div className="relative h-40 w-full">
+                              <Image src={res.imageUrl} alt={res.title} layout="fill" objectFit="cover" data-ai-hint={res.dataAiHint} />
+                          </div>
+                          <CardContent className="p-4">
+                              <h3 className="font-bold">{res.title}</h3>
+                              <p className="text-sm text-muted-foreground mt-1">{res.description}</p>
+                              <div className="flex items-center justify-between mt-4">
+                                <div className="flex gap-2">
+                                    {res.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
+                                </div>
+                                 <div className="p-2 rounded-full bg-gray-100">
+                                  <ArrowUpRight className="h-4 w-4 text-gray-600" />
+                                 </div>
+                              </div>
+                          </CardContent>
+                      </Card>
+                    );
 
-                  if (res.link) {
-                    return (
-                        <a href={res.link} target="_blank" rel="noopener noreferrer" key={res.title} className="block">
-                            {resourceCard}
-                        </a>
-                    )
-                  }
-                  return resourceCard;
-              })}
+                    if (res.link) {
+                      return (
+                          <a href={res.link} target="_blank" rel="noopener noreferrer" key={res.title} className="block">
+                              {resourceCard}
+                          </a>
+                      )
+                    }
+                    return resourceCard;
+                })
+              )}
           </div>
         </div>
     </div>
