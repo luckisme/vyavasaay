@@ -47,6 +47,7 @@ const knowledgeLibraryItems = [
       tags: ['Water Management', 'Modern Farming'],
       imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM.jpeg",
       dataAiHint: 'drip irrigation',
+      link: 'https://www.agrivi.com/blog/drip-irrigation-as-the-most-efficient-irrigation-system-type/',
     },
     {
       title: 'Natural Pest Control Methods',
