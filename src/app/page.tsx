@@ -71,12 +71,12 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
     return (
         <header className="px-4 pt-4 bg-[#F5F5DC] space-y-4">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <div className="-mt-16">
+                <div className="flex items-center gap-2 -mt-16">
+                    <div>
                         <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={170} height={170} />
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 -mt-16">
                     <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
