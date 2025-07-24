@@ -31,7 +31,6 @@ import GrowHub from '@/components/features/grow-hub';
 import Profile from '@/components/features/profile';
 
 export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'ask' | 'grow-hub' | 'profile';
-
 export const languages = [
     { value: 'en', label: 'English', short: 'En' },
     { value: 'hi', label: 'हिन्दी', short: 'हि' },
