@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Discover from '@/components/features/discover';
 import CropDiagnosis from '@/components/features/crop-diagnosis';
@@ -12,10 +13,11 @@ import OnboardingModal from '@/components/onboarding-modal';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Globe, Bell, Search, Mic } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Globe, Bell, Search, Mic, LogOut } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
 import { UserProvider, useUser } from '@/hooks/use-user';
+import { useAuth } from '@/hooks/use-auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
@@ -50,33 +52,26 @@ interface DataStates {
     weatherTip: { data: WeatherTip | null; error: string | null; loading: boolean; };
 }
 
-const PhoneIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-    </svg>
-)
-
 const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void }) => {
     const { user, setUserProfile } = useUser();
     const { setLanguage, t } = useTranslation();
+    const { signOutUser } = useAuth();
     
     const handleLanguageChange = (langCode: string) => {
         if (user) {
             setUserProfile({ ...user, language: langCode });
         }
     };
-    
-    const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
     return (
-        <header className="px-4 pt-2 bg-[#F5F5DC]">
+        <header className="px-4 pt-4 bg-[#F5F5DC]">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 -mt-10">
+                <div className="flex items-center gap-2 -mt-16">
                     <div>
                         <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={170} height={170} />
                     </div>
                 </div>
-                <div className="flex items-center gap-2 -mt-10">
+                <div className="flex items-center gap-2 -mt-16">
                     <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -92,9 +87,24 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                         ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
-                    <Avatar className="cursor-pointer" onClick={() => setActiveFeature('profile')}>
-                        <Image src={user?.profilePicture || "/images/image.png"} alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
-                    </Avatar>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                             <Avatar className="cursor-pointer">
+                                <Image src={user?.profilePicture || "/images/image.png"} alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
+                            </Avatar>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => setActiveFeature('profile')}>
+                                Profile
+                            </DropdownMenuItem>
+                             <DropdownMenuItem onClick={signOutUser}>
+                                <LogOut className="mr-2 h-4 w-4" />
+                                <span>Log out</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
              <div 
@@ -116,7 +126,7 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
 }
 
 function AppCore() {
-  const { user, setUserProfile } = useUser();
+  const { user, isUserLoading, needsOnboarding, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('discover');
   
@@ -136,7 +146,7 @@ function AppCore() {
   }, [user?.language, setLanguage]);
 
   useEffect(() => {
-    if (user) {
+    if (user && !needsOnboarding) {
         const languageName = languages.find(l => l.value === language)?.label || 'English';
         const farmerDetails = t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
         
@@ -192,7 +202,15 @@ function AppCore() {
             setDataStates(s => ({ ...s, schemes: { data: null, error: e.message, loading: false }}));
         });
     }
-  }, [user, language, t]);
+  }, [user, language, t, needsOnboarding]);
+
+  if (isUserLoading) {
+        return (
+            <div className="flex h-screen w-screen items-center justify-center">
+                <Skeleton className="h-24 w-24 rounded-full" />
+            </div>
+        )
+    }
 
   const renderFeature = () => {
     if (!user) return null;
@@ -228,8 +246,8 @@ function AppCore() {
   
   return (
     <>
-      <OnboardingModal isOpen={!user} />
-      {user && (
+      <OnboardingModal isOpen={needsOnboarding} />
+      {user && !needsOnboarding && (
          <SidebarProvider>
             <AppSidebar activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
             <div className="flex flex-col w-full min-h-screen">
@@ -249,29 +267,36 @@ function AppCore() {
   );
 }
 
-function AppContent() {
-    const { isUserLoading } = useUser();
-    
-    if (isUserLoading) {
-        return (
+function AuthBoundary({ children }: { children: React.ReactNode }) {
+    const { authUser, isLoading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading && !authUser) {
+            router.push('/login');
+        }
+    }, [authUser, isLoading, router]);
+
+    if (isLoading || !authUser) {
+         return (
             <div className="flex h-screen w-screen items-center justify-center">
                 <Skeleton className="h-24 w-24 rounded-full" />
             </div>
         )
     }
 
-    return (
-        <TranslationProvider>
-            <AppCore />
-        </TranslationProvider>
-    );
+    return <>{children}</>;
 }
 
 
 export default function Home() {
   return (
-    <UserProvider>
-        <AppContent />
-    </UserProvider>
+    <TranslationProvider>
+        <UserProvider>
+            <AuthBoundary>
+                <AppCore />
+            </AuthBoundary>
+        </UserProvider>
+    </TranslationProvider>
   )
 }

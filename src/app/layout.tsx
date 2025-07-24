@@ -3,6 +3,7 @@ import type {Metadata} from 'next';
 import { Noto_Sans } from 'next/font/google'
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
+import { AppAuthProvider } from '@/hooks/use-auth';
 
 const noto_sans = Noto_Sans({
   subsets: ['latin'],
@@ -24,8 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={noto_sans.className}>
       <body>
-        {children}
-        <Toaster />
+        <AppAuthProvider>
+          {children}
+          <Toaster />
+        </AppAuthProvider>
       </body>
     </html>
   );

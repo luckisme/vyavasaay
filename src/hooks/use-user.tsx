@@ -2,8 +2,13 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useAuth } from './use-auth';
+import { db } from '@/lib/firebase';
 
 export interface UserProfile {
+  uid: string;
+  phone: string;
   name: string;
   location: string;
   language: string;
@@ -15,55 +20,80 @@ export interface UserProfile {
 
 interface UserContextType {
   user: UserProfile | null;
-  setUserProfile: (profile: UserProfile | null) => void;
+  setUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
   isUserLoading: boolean;
+  needsOnboarding: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-const defaultUser: UserProfile = {
-    name: 'Rohan',
-    location: 'Nashik, Maharashtra',
-    language: 'en',
-    landArea: 5.2,
-    soilType: 'Black Cotton Soil',
-    primaryCrops: 'Wheat, Cotton, Sugarcane',
-    profilePicture: '/images/image.png'
-}
-
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const { authUser, isLoading: isAuthLoading } = useAuth();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+
+  const fetchUserProfile = useCallback(async (uid: string, phone: string) => {
+    setIsUserLoading(true);
+    const userDocRef = doc(db, 'users', uid);
+    try {
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists()) {
+        setUser(docSnap.data() as UserProfile);
+        setNeedsOnboarding(false);
+      } else {
+        // This is a new user, trigger onboarding
+        console.log('User profile does not exist, triggering onboarding.');
+        setUser({ uid, phone, name: '', location: '', language: 'en' }); // Temporary user object
+        setNeedsOnboarding(true);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    } finally {
+      setIsUserLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    try {
-        const storedUser = localStorage.getItem('vyavasaay-user-temp');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        } else {
-            // Set default user if no user is in local storage (for first-time onboarding)
-            // In a real app, this might be null until they log in or complete onboarding.
-            // For the prototype, we can start with a default to show the profile page.
-            //setUser(defaultUser); 
+    if (!isAuthLoading) {
+      if (authUser) {
+        if (!user || user.uid !== authUser.uid) { // Fetch only if user is different
+          fetchUserProfile(authUser.uid, authUser.phoneNumber!);
         }
-    } catch (e) {
-        console.error("Could not parse user from localStorage", e);
-        // setUser(defaultUser);
-    }
-    setIsUserLoading(false);
-  }, []);
-
-  const setUserProfile = useCallback((profile: UserProfile | null) => {
-    if (profile) {
-        localStorage.setItem('vyavasaay-user-temp', JSON.stringify(profile));
-        setUser(profile);
-    } else {
-        localStorage.removeItem('vyavasaay-user-temp');
+      } else {
         setUser(null);
+        setIsUserLoading(false);
+        setNeedsOnboarding(false);
+      }
     }
-  }, []);
+  }, [authUser, isAuthLoading, fetchUserProfile, user]);
 
-  const value = { user, setUserProfile, isUserLoading };
+  const setUserProfile = useCallback(async (profileUpdate: Partial<UserProfile>) => {
+    if (!authUser) return;
+
+    const userDocRef = doc(db, 'users', authUser.uid);
+    try {
+      // Get current profile to merge with updates
+      const currentProfile = (await getDoc(userDocRef)).data() || { uid: authUser.uid, phone: authUser.phoneNumber };
+      
+      const updatedProfile = {
+        ...currentProfile,
+        ...profileUpdate,
+      };
+
+      await setDoc(userDocRef, updatedProfile, { merge: true });
+      setUser(updatedProfile as UserProfile);
+      
+      // If this update came from onboarding, mark it as complete
+      if (needsOnboarding && updatedProfile.name && updatedProfile.location) {
+        setNeedsOnboarding(false);
+      }
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+    }
+  }, [authUser, needsOnboarding]);
+
+  const value = { user, setUserProfile, isUserLoading, needsOnboarding };
 
   return (
     <UserContext.Provider value={value}>
