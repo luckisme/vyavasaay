@@ -72,7 +72,7 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
         <header className="px-4 pt-4 bg-[#F5F5DC] space-y-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <div>
+                    <div className="-mt-16">
                         <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={170} height={170} />
                     </div>
                 </div>
