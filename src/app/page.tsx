@@ -13,7 +13,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Globe, Bell, Search } from 'lucide-react';
+import { Globe, Bell, Search, Mic } from 'lucide-react';
 import { TranslationProvider, useTranslation } from '@/hooks/use-translation';
 import { UserProvider, useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -68,14 +68,14 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
     const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
     return (
-        <header className="px-4 pb-4 sm:px-6 sm:pb-6 bg-[#F5F5DC] space-y-4">
-            <div className="flex items-center justify-between pt-0">
+        <header className="px-4 pt-4 bg-[#F5F5DC] space-y-4">
+            <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <div className="-mt-10">
-                        <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={170} height={170} />
+                    <div className="-mt-4">
+                        <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={100} height={100} />
                     </div>
                 </div>
-                <div className="flex items-center gap-2 -mt-10">
+                <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -96,21 +96,19 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                     </Avatar>
                 </div>
             </div>
-             <div className="flex items-center gap-2">
-                 <div 
-                    className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
-                    onClick={() => setActiveFeature('ask')}
-                >
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <span className="pl-12 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
+             <div 
+                className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
+                onClick={() => setActiveFeature('ask')}
+            >
+                <span className="pl-4 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
+                <div className="absolute right-2 flex items-center gap-1">
+                    <Button type="button" size="icon" variant="ghost" className="rounded-full h-9 w-9 text-muted-foreground">
+                        <Mic className="h-5 w-5" />
+                    </Button>
+                     <Button type="button" size="icon" className="rounded-full h-9 w-9 bg-primary hover:bg-primary/90">
+                        <Search className="h-5 w-5 text-primary-foreground" />
+                    </Button>
                 </div>
-                {offlineCallNumber && (
-                    <a href={`tel:${offlineCallNumber}`}>
-                        <Button type="button" size="icon" className="rounded-full h-12 w-12 bg-primary hover:bg-primary/90">
-                            <PhoneIcon className="h-6 w-6 text-primary-foreground" />
-                        </Button>
-                    </a>
-                )}
             </div>
         </header>
     );

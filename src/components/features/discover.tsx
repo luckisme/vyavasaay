@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, CloudSun, Calculator, Lightbulb, Sprout, Search, AlertTriangle, Wind, Droplets, Thermometer, ArrowRight, Bell, Globe } from 'lucide-react';
+import { Leaf, TrendingUp, Landmark, Youtube, Newspaper, Link as LinkIcon, CloudSun, Calculator, Lightbulb, Sprout, Search, AlertTriangle, Wind, Droplets, Thermometer, ArrowRight, Bell, Globe, ArrowUpRight } from 'lucide-react';
 import type { Feature } from '@/app/page';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
@@ -53,7 +53,7 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
     const { t } = useTranslation();
 
     if (state.loading) {
-        return <Skeleton className="h-16 w-full" />;
+        return <Skeleton className="h-16 w-full rounded-2xl" />;
     }
 
     if (state.error || !state.data) {
@@ -61,19 +61,17 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
     }
     
     const { alert, severity } = state.data;
-
-    const alertStyles = {
-        warning: 'bg-red-100 border-red-500 text-red-800',
-        info: 'bg-yellow-100 border-yellow-500 text-yellow-800',
-    };
+    const isWarning = severity === 'warning';
 
     return (
-        <Card className={cn("border-2 shadow-lg", alertStyles[severity])}>
+        <Card className={cn(
+            "border-none shadow-lg rounded-2xl text-white", 
+            isWarning ? 'bg-red-500' : 'bg-yellow-500'
+        )}>
             <CardContent className="p-4 flex items-center gap-4">
-                <AlertTriangle className={cn("h-6 w-6", severity === 'warning' ? 'text-red-600' : 'text-yellow-600')}/>
+                <AlertTriangle className="h-6 w-6 text-white"/>
                 <div>
-                    <p className="font-bold">{t('discover.weatherAlertTitle', 'Weather Alert')}</p>
-                    <p className="text-sm">{alert}</p>
+                    <p className="font-bold">{t('discover.weatherAlertTitle', 'Weather Alert')}: <span className="font-normal">{alert}</span></p>
                 </div>
             </CardContent>
         </Card>
@@ -92,15 +90,13 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
         icon: Sprout,
         feature: 'selector' as Feature,
         color: 'bg-green-100 text-green-800',
-        icon_path: 'green'
     },
     {
         name: t('cropCalculator.title', 'Cost Calculator'),
         description: t('cropCalculator.description', 'Calculate farming costs and profits'),
         icon: Calculator,
         feature: 'calculator' as Feature,
-        color: 'bg-purple-100 text-purple-800',
-        icon_path: 'purple'
+        color: 'bg-blue-100 text-blue-800',
     }
   ]
 
@@ -172,18 +168,23 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
                  <Leaf className="h-5 w-5 text-primary"/>
                  {t('discover.quickLinks', 'Quick Links')}
             </h2>
-            <div className="grid gap-4 grid-cols-2">
+            <div className="space-y-4">
                 {quickLinks.map((item) => (
                     <Card
                         key={item.name}
-                        className="flex flex-col justify-center items-center text-center p-4 transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white"
+                        className="flex justify-between items-center text-left p-4 transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg hover:-translate-y-1 bg-white"
                         onClick={() => setActiveFeature(item.feature)}
                     >
-                        <div className={cn('p-3 rounded-full mb-3', item.color)}>
-                           <item.icon className="w-7 h-7" />
+                        <div className="flex items-center gap-4">
+                           <div className={cn('p-3 rounded-full', item.color)}>
+                               <item.icon className="w-6 h-6" />
+                           </div>
+                           <div>
+                              <p className="font-bold text-sm">{item.name}</p>
+                              <CardDescription className="text-xs mt-1">{item.description}</CardDescription>
+                           </div>
                         </div>
-                        <p className="font-bold text-sm">{item.name}</p>
-                        <CardDescription className="text-xs mt-1">{item.description}</CardDescription>
+                        <ArrowRight className="h-5 w-5 text-muted-foreground" />
                     </Card>
                 ))}
             </div>
@@ -194,10 +195,11 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
             <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-bold tracking-tight text-foreground font-headline flex items-center gap-2">
                     <Sprout className="h-5 w-5 text-primary"/>
-                    {t('discover.resourcesTitle', 'Farming Resources for You')}
+                    {t('discover.resourcesTitle', 'Farming Resources')}
                 </h2>
                 <Button variant="link" className="text-primary pr-0" onClick={() => setShowAllResources(!showAllResources)}>
                   {showAllResources ? 'See Less' : t('discover.seeAll', 'See All')}
+                   <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
             </div>
             <div className="space-y-4">
@@ -214,6 +216,9 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
                               <div className="flex gap-2">
                                   {res.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
                               </div>
+                               <div className="p-2 rounded-full bg-gray-100">
+                                <ArrowUpRight className="h-4 w-4 text-gray-600" />
+                               </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -221,7 +226,7 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
 
                   if (res.link) {
                     return (
-                        <a href={res.link} target="_blank" rel="noopener noreferrer" key={res.title}>
+                        <a href={res.link} target="_blank" rel="noopener noreferrer" key={res.title} className="block">
                             {resourceCard}
                         </a>
                     )
