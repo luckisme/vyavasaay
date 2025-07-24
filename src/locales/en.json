@@ -29,12 +29,13 @@
     "welcomePersonalized": "Hello, {{name}}!",
     "searchPlaceholder": "Ask Vyavasaay anything...",
     "weatherAlertTitle": "Weather Alert",
+    "todaysWeather": "Today's Weather",
     "smartAlertTitle": "Perfect for banana plantation!",
     "smartAlertBody": "Ideal humidity and temperature conditions detected.",
     "quickLinks": "Quick Links",
-    "resourcesTitle": "Farming Resources for You",
+    "resourcesTitle": "Farming Resources",
     "seeAll": "See All",
-    "resourcesTitle": "Farming Resources"
+    "seeLess": "See Less"
   },
   "cropDiagnosis": {
     "title": "Crop Diagnosis",
@@ -61,12 +62,29 @@
     "title": "Cost Calculator",
     "description": "Calculate farming costs and profits",
     "descriptionPage": "Estimate the cost and potential profit of growing a crop. Provide details like crop type, land size, input costs (seed, fertilizer, labour), and expected market price.",
-    "placeholder": "e.g., I want to grow tomatoes in 1 acre. Seed cost is ₹1500, fertilizer ₹2000..."
+    "placeholder": "e.g., I want to grow tomatoes in 1 acre. Seed cost is ₹1500, fertilizer ₹2000...",
+    "summaryTitle": "Farming Cost Summary",
+    "totalCost": "Total Cost",
+    "expectedYield": "Expected Yield",
+    "marketPrice": "Market Price",
+    "totalRevenue": "Total Revenue",
+    "estimatedProfit": "Estimated Profit",
+    "proTip": "Pro Tip",
+    "calculating": "Calculating...",
+    "calculateButton": "Calculate",
+    "resultPlaceholder": "Your cost calculation will appear here."
   },
   "cropSelector": {
     "title": "Crop Selector",
     "description": "Get AI-powered crop recommendations",
-    "descriptionPage": "Get suggestions for the best crops to grow. Provide details like land size, location, soil, and season."
+    "descriptionPage": "Get suggestions for the best crops to grow. Provide details like land size, location, soil, and season.",
+    "placeholder": "e.g., I have 2 acres of black soil land in Maharashtra. It's monsoon season with decent water availability.",
+    "suggestionsTitle": "Crop Suggestions",
+    "profit": "Profit",
+    "proTip": "Pro Tip",
+    "suggesting": "Suggesting...",
+    "suggestButton": "Suggest Crops",
+    "resultPlaceholder": "Your crop suggestions will appear here."
   },
   "askVyavasaay": {
     "title": "Ask Vyavasaay",
@@ -78,6 +96,8 @@
   "marketAnalysis": {
     "title": "Market Analysis",
     "description": "Your AI assistant for agricultural market data. Ask about crop prices, trends, and more.",
+    "descriptionPage": "Real-time market prices for {{location}}",
+    "yourArea": "your area",
     "placeholder": "Ask about crop prices...",
     "initialMessage": "Ask a question to get started with market analysis.",
     "noData": "No market analysis data available at this time.",
@@ -86,6 +106,10 @@
     "detailedTitle": "Crop Market Analysis",
     "recommendationsTitle": "AI Recommendations",
     "recommendationsDescription": "Actionable advice based on the current market analysis.",
+    "todaysPrices": "Today's Prices",
+    "priceAlerts": "Price Alerts",
+    "marketCategories": "Market Categories",
+    "commodities": "commodities",
     "table": {
       "crop": "Crop",
       "price": "Price",
@@ -96,6 +120,16 @@
       "up": "Up",
       "down": "Down",
       "stable": "Stable"
+    },
+    "categories": {
+        "cereals": "Cereals",
+        "vegetables": "Vegetables",
+        "fruits": "Fruits",
+        "spices": "Spices",
+        "stable": "Stable",
+        "rising": "Rising",
+        "seasonal": "Seasonal",
+        "volatile": "Volatile"
     },
     "chatTitle": "Chat About Markets",
     "chatPlaceholder": "Ask about prices or trends...",
@@ -120,7 +154,82 @@
     "applicationProcess": "Application Process",
     "chatTitle": "Chat About Schemes",
     "chatPlaceholder": "Ask about eligibility or how to apply...",
-    "chatInitialMessage": "Ask for more details about the schemes listed or find other schemes."
+    "chatInitialMessage": "Ask for more details about the schemes listed or find other schemes.",
+     "quicklink": {
+      "title": "Quick Links",
+      "docs": {
+        "title": "Document Checklist",
+        "desc": "Required documents"
+      },
+      "helpline": {
+        "title": "Helpline Numbers",
+        "desc": "Get assistance"
+      },
+      "office": {
+        "title": "Nearest Office",
+        "desc": "Find locations"
+      },
+      "track": {
+        "title": "Track Application",
+        "desc": "Real-time status"
+      }
+    }
+  },
+  "growHub": {
+    "title": "Grow Hub",
+    "description": "Connect, learn, and grow together with fellow farmers",
+    "joinConversation": {
+      "title": "Join the Conversation",
+      "description": "Connect with 50K+ farmers across India",
+      "askButton": "Ask Question",
+      "marketplaceButton": "Marketplace"
+    },
+    "recentDiscussions": {
+      "title": "Recent Discussions",
+      "viewAll": "View All",
+      "replies": "replies"
+    },
+    "knowledgeLibrary": {
+      "title": "Knowledge Library"
+    }
+  },
+   "profile": {
+    "title": "Profile",
+    "role": "Farmer",
+    "membership": "Premium Member",
+    "stats": {
+      "queries": "AI Queries",
+      "acres": "Acres Tracked",
+      "crops": "Crops Grown"
+    },
+    "farm": {
+      "title": "My Farm",
+      "editButton": "Edit",
+      "farmNameSuffix": "'s Family Farm",
+      "est": "Est. 1985",
+      "acres": "acres"
+    },
+    "landArea": "Land Area (in acres)",
+    "soilType": "Soil Type",
+    "primaryCrops": "Primary Crops (comma-separated)",
+    "updateSuccess": {
+      "title": "Profile Updated",
+      "description": "Your information has been saved successfully."
+    },
+    "updateError": {
+      "title": "Update Failed"
+    },
+    "editSheet": {
+      "title": "Edit Profile",
+      "description": "Make changes to your profile here. Click save when you're done.",
+      "errors": {
+        "nameRequired": "Name is required",
+        "locationRequired": "Location is required"
+      },
+      "selectLanguage": "Select language",
+      "saving": "Saving...",
+      "saveButton": "Save Changes"
+    }
   },
   "weather": {
     "title": "Weather",
@@ -137,15 +246,18 @@
   "sidebar": {
     "discover": "Discover",
     "dashboard": "Dashboard",
-    "diagnose": "Crop Diagnosis",
-    "marketAnalysis": "Market Analysis",
-    "schemes": "Govt. Schemes",
+    "diagnose": "Diagnosis",
+    "marketAnalysis": "Market",
+    "schemes": "Schemes",
+    "growHub": "Grow Hub",
     "weather": "Weather",
     "callHelpline": "Call Helpline"
   },
   "header": {
     "avatarAlt": "Farmer avatar",
-    "language": "Language"
+    "language": "Language",
+    "profile": "Profile",
+    "logout": "Log out"
   },
   "onboarding": {
     "title": "Welcome to Vyavasaay",

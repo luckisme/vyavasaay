@@ -35,7 +35,7 @@ function CalculationResult({ data }: { data: CalculateCostsState['data'] }) {
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h3 className="text-xl font-bold font-headline">Farming Cost Summary</h3>
+                <h3 className="text-xl font-bold font-headline">{t('cropCalculator.summaryTitle', 'Farming Cost Summary')}</h3>
                 <p className="text-muted-foreground">{data.cropName} ({data.area})</p>
             </div>
             
@@ -50,36 +50,36 @@ function CalculationResult({ data }: { data: CalculateCostsState['data'] }) {
 
             <div className="border-t pt-4 space-y-4">
                 <div className="flex justify-between items-center text-lg font-semibold">
-                    <span className="text-foreground">Total Cost</span>
+                    <span className="text-foreground">{t('cropCalculator.totalCost', 'Total Cost')}</span>
                     <span>{formatCurrency(data.totalCost)}</span>
                 </div>
             </div>
 
              <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Expected Yield</span>
+                    <span className="text-muted-foreground">{t('cropCalculator.expectedYield', 'Expected Yield')}</span>
                     <span className="font-medium">{data.expectedYield}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Market Price</span>
+                    <span className="text-muted-foreground">{t('cropCalculator.marketPrice', 'Market Price')}</span>
                     <span className="font-medium">{data.marketPrice}</span>
                 </div>
                 <div className="flex justify-between items-center text-lg font-semibold">
-                    <span className="text-foreground">Total Revenue</span>
+                    <span className="text-foreground">{t('cropCalculator.totalRevenue', 'Total Revenue')}</span>
                     <span className="text-green-600">{formatCurrency(data.totalRevenue)}</span>
                 </div>
             </div>
 
              <div className="border-t pt-4 space-y-2">
                  <div className="flex justify-between items-center text-xl font-bold">
-                    <span className="text-foreground">Estimated Profit</span>
+                    <span className="text-foreground">{t('cropCalculator.estimatedProfit', 'Estimated Profit')}</span>
                     <span className="text-green-600">{formatCurrency(data.estimatedProfit)}</span>
                 </div>
             </div>
 
             <Alert className="bg-green-50 border-green-200">
                 <Sparkles className="h-4 w-4 text-green-700" />
-                <AlertTitle className="text-green-800 font-semibold">Pro Tip</AlertTitle>
+                <AlertTitle className="text-green-800 font-semibold">{t('cropCalculator.proTip', 'Pro Tip')}</AlertTitle>
                 <AlertDescription className="text-green-700">
                     {data.tip}
                 </AlertDescription>
@@ -124,12 +124,12 @@ export default function CropCalculator() {
                         {state.loading ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Calculating...
+                                {t('cropCalculator.calculating', 'Calculating...')}
                             </>
                         ) : (
                              <>
                                 <Wand2 className="mr-2 h-4 w-4" />
-                                Calculate
+                                {t('cropCalculator.calculateButton', 'Calculate')}
                             </>
                         )}
                     </Button>
@@ -159,7 +159,7 @@ export default function CropCalculator() {
                     {state.data && <CalculationResult data={state.data} />}
                      {!state.loading && !state.error && !state.data && (
                         <div className="text-center text-muted-foreground h-full flex flex-col items-center justify-center">
-                            <p>Your cost calculation will appear here.</p>
+                            <p>{t('cropCalculator.resultPlaceholder', 'Your cost calculation will appear here.')}</p>
                         </div>
                     )}
                 </div>

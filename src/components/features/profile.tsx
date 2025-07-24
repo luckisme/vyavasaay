@@ -62,10 +62,10 @@ function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isO
                 ...data,
                 // if you had a new picture URL from server, you'd set it here
             });
-            toast({ title: "Profile Updated", description: "Your information has been saved successfully." });
+            toast({ title: t('profile.updateSuccess.title', "Profile Updated"), description: t('profile.updateSuccess.description', "Your information has been saved successfully.") });
             onOpenChange(false);
         } else {
-            toast({ variant: "destructive", title: "Update Failed", description: result.error });
+            toast({ variant: "destructive", title: t('profile.updateError.title', "Update Failed"), description: result.error });
         }
     };
   
@@ -73,32 +73,32 @@ function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isO
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Edit Profile</SheetTitle>
+            <SheetTitle>{t('profile.editSheet.title', 'Edit Profile')}</SheetTitle>
             <SheetDescription>
-              Make changes to your profile here. Click save when you're done.
+              {t('profile.editSheet.description', 'Make changes to your profile here. Click save when you\'re done.')}
             </SheetDescription>
           </SheetHeader>
           <ScrollArea className="h-[calc(100%-120px)] pr-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
                 <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" {...register("name", { required: "Name is required" })} />
+                <Label htmlFor="name">{t('onboarding.name', 'Name')}</Label>
+                <Input id="name" {...register("name", { required: t('profile.editSheet.errors.nameRequired', "Name is required") })} />
                 {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
                 </div>
                 <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input id="location" {...register("location", { required: "Location is required" })} />
+                <Label htmlFor="location">{t('onboarding.location', 'Location')}</Label>
+                <Input id="location" {...register("location", { required: t('profile.editSheet.errors.locationRequired', "Location is required") })} />
                 {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
                 </div>
                 <div className="space-y-2">
-                <Label>Language</Label>
+                <Label>{t('header.language', 'Language')}</Label>
                 <Controller
                     name="language"
                     control={control}
                     render={({ field }) => (
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select language" />
+                                <SelectValue placeholder={t('profile.editSheet.selectLanguage', "Select language")} />
                             </SelectTrigger>
                             <SelectContent>
                                 {languages.map(lang => (
@@ -110,15 +110,15 @@ function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isO
                 />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="landArea">Land Area (in acres)</Label>
+                    <Label htmlFor="landArea">{t('profile.landArea', 'Land Area (in acres)')}</Label>
                     <Input id="landArea" type="number" step="0.1" {...register("landArea")} />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="soilType">Soil Type</Label>
+                    <Label htmlFor="soilType">{t('profile.soilType', 'Soil Type')}</Label>
                     <Input id="soilType" {...register("soilType")} />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="primaryCrops">Primary Crops (comma-separated)</Label>
+                    <Label htmlFor="primaryCrops">{t('profile.primaryCrops', 'Primary Crops (comma-separated)')}</Label>
                     <Input id="primaryCrops" {...register("primaryCrops")} />
                 </div>
                 <div className="hidden">
@@ -129,7 +129,7 @@ function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isO
           </ScrollArea>
            <SheetFooter>
                 <Button type="button" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    {isSubmitting ? t('profile.editSheet.saving', 'Saving...') : t('profile.editSheet.saveButton', 'Save Changes')}
                 </Button>
             </SheetFooter>
         </SheetContent>
@@ -139,6 +139,7 @@ function EditProfileSheet({ isOpen, onOpenChange, user, onProfileUpdate }: { isO
 
 export default function Profile({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void; }) {
     const { user, setUserProfile } = useUser();
+    const { t } = useTranslation();
     const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -181,7 +182,7 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-bold font-headline">Profile</h1>
+                    <h1 className="text-2xl font-bold font-headline">{t('profile.title', 'Profile')}</h1>
                 </div>
             </header>
 
@@ -203,44 +204,44 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
                     </div>
                     <div className="flex-grow">
                         <h2 className="text-xl font-bold text-green-800">{user.name}</h2>
-                        <p className="text-sm text-muted-foreground">Farmer &bull; {user.location}</p>
-                        <Badge className="mt-2 bg-yellow-400 text-yellow-900 hover:bg-yellow-400/90">Premium Member</Badge>
+                        <p className="text-sm text-muted-foreground">{t('profile.role', 'Farmer')} &bull; {user.location}</p>
+                        <Badge className="mt-2 bg-yellow-400 text-yellow-900 hover:bg-yellow-400/90">{t('profile.membership', 'Premium Member')}</Badge>
                     </div>
                 </div>
             </div>
 
             <Card className="bg-green-600 text-white shadow-lg rounded-xl">
                 <CardContent className="p-4 flex justify-around">
-                    <StatCard value={15} label="AI Queries" />
-                    <StatCard value={user.landArea || 0} label="Acres Tracked" />
-                    <StatCard value={user.primaryCrops?.split(',').length || 0} label="Crops Grown" />
+                    <StatCard value={15} label={t('profile.stats.queries', 'AI Queries')} />
+                    <StatCard value={user.landArea || 0} label={t('profile.stats.acres', 'Acres Tracked')} />
+                    <StatCard value={user.primaryCrops?.split(',').length || 0} label={t('profile.stats.crops', 'Crops Grown')} />
                 </CardContent>
             </Card>
 
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold font-headline flex items-center gap-2">
-                        <Tractor className="h-5 w-5 text-primary" /> My Farm
+                        <Tractor className="h-5 w-5 text-primary" /> {t('profile.farm.title', 'My Farm')}
                     </h2>
                     <Button variant="ghost" onClick={() => setIsEditSheetOpen(true)}>
-                        <Edit className="mr-2 h-4 w-4" /> Edit
+                        <Edit className="mr-2 h-4 w-4" /> {t('profile.farm.editButton', 'Edit')}
                     </Button>
                 </div>
                 <Card className="overflow-hidden">
                     <div className="relative h-40 w-full">
                          <Image src="/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg" alt="Wheat farm" layout="fill" objectFit="cover" data-ai-hint="compost fertilizer" />
                         <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-4">
-                            <h3 className="text-white font-bold text-lg">{user.name}'s Family Farm</h3>
-                            <p className="text-white/90 text-sm">Est. 1985 &bull; {user.landArea} acres</p>
+                            <h3 className="text-white font-bold text-lg">{user.name}{t('profile.farm.farmNameSuffix', "'s Family Farm")}</h3>
+                            <p className="text-white/90 text-sm">{t('profile.farm.est', 'Est. 1985')} &bull; {user.landArea} {t('profile.farm.acres', 'acres')}</p>
                         </div>
                     </div>
                     <CardContent className="p-4 grid grid-cols-2 gap-4">
                         <div>
-                            <p className="text-sm text-muted-foreground">Primary Crops</p>
+                            <p className="text-sm text-muted-foreground">{t('profile.primaryCrops', 'Primary Crops')}</p>
                             <p className="font-semibold">{user.primaryCrops}</p>
                         </div>
                          <div>
-                            <p className="text-sm text-muted-foreground">Soil Type</p>
+                            <p className="text-sm text-muted-foreground">{t('profile.soilType', 'Soil Type')}</p>
                             <p className="font-semibold">{user.soilType}</p>
                         </div>
                     </CardContent>

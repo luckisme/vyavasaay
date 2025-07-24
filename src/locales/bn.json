@@ -22,7 +22,13 @@
     }
   },
   "discover": {
-    "resourcesTitle": "কৃষি সম্পদ"
+    "resourcesTitle": "কৃষি সম্পদ",
+    "searchPlaceholder": "ব্যবসায়কে কিছু জিজ্ঞাসা করুন...",
+    "todaysWeather": "আজকের আবহাওয়া",
+    "weatherAlertTitle": "আবহাওয়া সতর্কতা",
+    "quickLinks": "দ্রুত লিঙ্ক",
+    "seeAll": "সব দেখুন",
+    "seeLess": "কম দেখুন"
   },
   "cropDiagnosis": {
     "title": "ফসল নির্ণয়",
@@ -39,6 +45,34 @@
     "error": "ত্রুটি",
     "imagePreviewAlt": "ফসল প্রিভিউ"
   },
+  "cropCalculator": {
+    "title": "খরচ ক্যালকুলেটর",
+    "description": "চাষের খরচ এবং লাভ গণনা করুন",
+    "descriptionPage": "একটি ফসল চাষের খরচ এবং সম্ভাব্য লাভ অনুমান করুন। ফসলের ধরন, জমির আকার, ইনপুট খরচ (বীজ, সার, শ্রম), এবং প্রত্যাশিত বাজার মূল্যের মতো বিবরণ দিন।",
+    "placeholder": "যেমন, আমি ১ একর জমিতে টমেটো চাষ করতে চাই। বীজের খরচ ₹১৫০০, সার ₹২০০০...",
+    "summaryTitle": "চাষের খরচের সারাংশ",
+    "totalCost": "মোট খরচ",
+    "expectedYield": "প্রত্যাশিত ফলন",
+    "marketPrice": "বাজার মূল্য",
+    "totalRevenue": "মোট রাজস্ব",
+    "estimatedProfit": "আনুমানিক লাভ",
+    "proTip": "বিশেষ টিপ",
+    "calculating": "গণনা করা হচ্ছে...",
+    "calculateButton": "গণনা করুন",
+    "resultPlaceholder": "আপনার খরচ গণনা এখানে প্রদর্শিত হবে।"
+  },
+  "cropSelector": {
+    "title": "ফসল নির্বাচনকারী",
+    "description": "এআই-চালিত ফসলের সুপারিশ পান",
+    "descriptionPage": "চাষের জন্য সেরা ফসলের পরামর্শ পান। জমির আকার, অবস্থান, মাটি এবং ঋতুর মতো বিবরণ দিন।",
+    "placeholder": "যেমন, আমার মহারাষ্ট্রে ২ একর কালো মাটির জমি আছে। এটি বর্ষাকাল এবং জলের उपलब्धता ভাল।",
+    "suggestionsTitle": "ফসলের পরামর্শ",
+    "profit": "লাভ",
+    "proTip": "বিশেষ টিপ",
+    "suggesting": "পরামর্শ দেওয়া হচ্ছে...",
+    "suggestButton": "ফসলের পরামর্শ দিন",
+    "resultPlaceholder": "আপনার ফসলের পরামর্শ এখানে প্রদর্শিত হবে।"
+  },
   "askVyavasaay": {
     "title": "ব্যবসায় জিজ্ঞাসা করুন",
     "description": "কৃষি সংক্রান্ত প্রশ্নের জন্য আপনার এআই সহকারী। বাজারের দাম, আবহাওয়া ইত্যাদি সম্পর্কে জিজ্ঞাসা করুন।",
@@ -50,7 +84,23 @@
     "title": "বাজার বিশ্লেষণ",
     "description": "কৃষি বাজার ডেটার জন্য আপনার এআই সহকারী। ফসলের দাম, প্রবণতা এবং আরও অনেক কিছু সম্পর্কে জিজ্ঞাসা করুন।",
     "placeholder": "ফসলের দাম সম্পর্কে জিজ্ঞাসা করুন...",
-    "initialMessage": "বাজার বিশ্লেষণ শুরু করতে একটি প্রশ্ন জিজ্ঞাসা করুন।"
+    "initialMessage": "বাজার বিশ্লেষণ শুরু করতে একটি প্রশ্ন জিজ্ঞাসা করুন。",
+    "descriptionPage": "{{location}} এর জন্য রিয়েল-টাইম বাজার মূল্য",
+    "yourArea": "আপনার এলাকা",
+    "todaysPrices": "আজকের দাম",
+    "priceAlerts": "মূল্য সতর্কতা",
+    "marketCategories": "বাজার বিভাগ",
+    "commodities": "পণ্য",
+    "categories": {
+      "cereals": "শস্য",
+      "vegetables": "শাকসবজি",
+      "fruits": "ফল",
+      "spices": "মশলা",
+      "stable": "স্থিতিশীল",
+      "rising": "বাড়ছে",
+      "seasonal": "মৌসুমী",
+      "volatile": "অস্থির"
+    }
   },
   "govtSchemes": {
     "title": "সরকারি প্রকল্প",
@@ -66,19 +116,97 @@
     "resultPlaceholder": "প্রকল্প খুঁজে পেতে আপনার বিবরণ লিখুন এবং বোতামে ক্লিক করুন।",
     "summaryBenefits": "সারাংশ এবং সুবিধা",
     "eligibility": "যোগ্যতা",
-    "applicationProcess": "আবেদন প্রক্রিয়া"
+    "applicationProcess": "আবেদন প্রক্রিয়া",
+    "quicklink": {
+      "title": "দ্রুত লিঙ্ক",
+      "docs": {
+        "title": "নথি চেকলিস্ট",
+        "desc": "প্রয়োজনীয় নথি"
+      },
+      "helpline": {
+        "title": "হেল্পলাইন নম্বর",
+        "desc": "সহায়তা পান"
+      },
+      "office": {
+        "title": "নিকটতম অফিস",
+        "desc": "অবস্থান খুঁজুন"
+      },
+      "track": {
+        "title": "আবেদন ট্র্যাক করুন",
+        "desc": "রিয়েল-টাইম স্থিতি"
+      }
+    }
+  },
+  "growHub": {
+    "title": "গ্রো হাব",
+    "description": "সহকর্মী কৃষকদের সাথে সংযোগ স্থাপন করুন, শিখুন এবং একসাথে বাড়ুন",
+    "joinConversation": {
+      "title": "কথোপকথনে যোগ দিন",
+      "description": "ভারত জুড়ে ৫০ হাজারেরও বেশি কৃষকদের সাথে সংযোগ স্থাপন করুন",
+      "askButton": "প্রশ্ন জিজ্ঞাসা করুন",
+      "marketplaceButton": "মার্কেটপ্লেস"
+    },
+    "recentDiscussions": {
+      "title": "সাম্প্রতিক আলোচনা",
+      "viewAll": "সব দেখুন",
+      "replies": "উত্তর"
+    },
+    "knowledgeLibrary": {
+      "title": "জ্ঞান গ্রন্থাগার"
+    }
+  },
+  "profile": {
+    "title": "প্রোফাইল",
+    "role": "কৃষক",
+    "membership": "প্রিমিয়াম সদস্য",
+    "stats": {
+      "queries": "এআই প্রশ্ন",
+      "acres": "একর ট্র্যাক করা হয়েছে",
+      "crops": "চাষ করা ফসল"
+    },
+    "farm": {
+      "title": "আমার খামার",
+      "editButton": "সম্পাদনা করুন",
+      "farmNameSuffix": "এর পারিবারিক খামার",
+      "est": "স্থাপিত ১৯৮৫",
+      "acres": "একর"
+    },
+    "landArea": "জমির আয়তন (একরে)",
+    "soilType": "মাটির ধরন",
+    "primaryCrops": "প্রধান ফসল (কমা দ্বারা পৃথক)",
+    "updateSuccess": {
+      "title": "প্রোফাইল আপডেট করা হয়েছে",
+      "description": "আপনার তথ্য সফলভাবে সংরক্ষিত হয়েছে।"
+    },
+    "updateError": {
+      "title": "আপডেট ব্যর্থ হয়েছে"
+    },
+    "editSheet": {
+      "title": "প্রোফাইল সম্পাদনা করুন",
+      "description": "এখানে আপনার প্রোফাইলে পরিবর্তন করুন। সম্পন্ন হলে সংরক্ষণ ক্লিক করুন।",
+      "errors": {
+        "nameRequired": "নাম প্রয়োজন",
+        "locationRequired": "অবস্থান প্রয়োজন"
+      },
+      "selectLanguage": "ভাষা নির্বাচন করুন",
+      "saving": "সংরক্ষণ করা হচ্ছে...",
+      "saveButton": "পরিবর্তনগুলি সংরক্ষণ করুন"
+    }
   },
   "sidebar": {
     "discover": "আবিষ্কার",
     "dashboard": "ড্যাশবোর্ড",
     "diagnose": "ফসল নির্ণয়",
-    "marketAnalysis": "বাজার বিশ্লেষণ",
-    "schemes": "সরকারি প্রকল্প",
+    "marketAnalysis": "বাজার",
+    "schemes": "প্রকল্প",
+    "growHub": "গ্রো হাব",
     "callHelpline": "হেল্পলাইনে কল করুন"
   },
   "header": {
     "avatarAlt": "কৃষক অবতার",
-    "language": "ভাষা"
+    "language": "ভাষা",
+    "profile": "প্রোফাইল",
+    "logout": "লগ আউট"
   },
   "onboarding": {
     "title": "ব্যবসায়-এ স্বাগতম",

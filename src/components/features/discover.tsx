@@ -154,7 +154,7 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
                     <CardContent className="p-5 relative">
                         <div className="flex justify-between items-start">
                              <div>
-                                <p className="text-sm font-medium">{t('weather.title')} &bull; Today's Weather</p>
+                                <p className="text-sm font-medium">{t('weather.title')} &bull; {t('discover.todaysWeather', "Today's Weather")}</p>
                                 <p className="text-4xl font-bold mt-1">{Math.round(weatherState.data.temperature)}°C</p>
                                 <p className="capitalize">{weatherState.data.description}</p>
                                 <p className="text-xs opacity-80 mt-1">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} &bull; {weatherState.data.location}</p>
@@ -219,7 +219,7 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
                 </h2>
                 {!isResourcesLoading && (
                     <Button variant="link" className="text-primary pr-0" onClick={() => setShowAllResources(!showAllResources)}>
-                      {showAllResources ? 'See Less' : t('discover.seeAll', 'See All')}
+                      {showAllResources ? t('discover.seeLess', 'See Less') : t('discover.seeAll', 'See All')}
                        <ArrowRight className="h-4 w-4 ml-1" />
                     </Button>
                 )}

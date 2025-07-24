@@ -39,7 +39,7 @@ export default function BottomNav({ activeFeature, setActiveFeature }: BottomNav
     {
       feature: 'grow-hub' as Feature,
       icon: Users,
-      label: 'Grow Hub',
+      label: t('sidebar.growHub', 'Grow Hub'),
     },
   ];
 

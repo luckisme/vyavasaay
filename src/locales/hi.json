@@ -26,7 +26,13 @@
     }
   },
    "discover": {
-    "resourcesTitle": "खेती संसाधन"
+    "resourcesTitle": "खेती संसाधन",
+    "searchPlaceholder": "व्यावसाय से कुछ भी पूछें...",
+    "todaysWeather": "आज का मौसम",
+    "weatherAlertTitle": "मौसम चेतावनी",
+    "quickLinks": "त्वरित लिंक",
+    "seeAll": "सभी देखें",
+    "seeLess": "कम देखें"
   },
   "cropDiagnosis": {
     "title": "फसल निदान",
@@ -43,6 +49,34 @@
     "error": "त्रुटि",
     "imagePreviewAlt": "फसल पूर्वावलोकन"
   },
+  "cropCalculator": {
+    "title": "लागत कैलकुलेटर",
+    "description": "खेती की लागत और लाभ की गणना करें",
+    "descriptionPage": "एक फसल उगाने की लागत और संभावित लाभ का अनुमान लगाएं। फसल का प्रकार, भूमि का आकार, इनपुट लागत (बीज, उर्वरक, श्रम), और अपेक्षित बाजार मूल्य जैसे विवरण प्रदान करें।",
+    "placeholder": "जैसे, मैं 1 एकड़ में टमाटर उगाना चाहता हूं। बीज की लागत ₹1500, उर्वरक ₹2000...",
+    "summaryTitle": "खेती लागत सारांश",
+    "totalCost": "कुल लागत",
+    "expectedYield": "अपेक्षित उपज",
+    "marketPrice": "बाजार मूल्य",
+    "totalRevenue": "कुल राजस्व",
+    "estimatedProfit": "अनुमानित लाभ",
+    "proTip": "प्रो टिप",
+    "calculating": "गणना हो रही है...",
+    "calculateButton": "गणना करें",
+    "resultPlaceholder": "आपकी लागत गणना यहाँ दिखाई देगी।"
+  },
+  "cropSelector": {
+    "title": "फसल चयनकर्ता",
+    "description": "एआई-संचालित फसल सिफारिशें प्राप्त करें",
+    "descriptionPage": "उगाने के लिए सर्वोत्तम फसलों के लिए सुझाव प्राप्त करें। भूमि का आकार, स्थान, मिट्टी और मौसम जैसे विवरण प्रदान करें।",
+    "placeholder": "जैसे, मेरे पास महाराष्ट्र में 2 एकड़ काली मिट्टी की भूमि है। यह मानसून का मौसम है और पानी की उपलब्धता अच्छी है।",
+    "suggestionsTitle": "फसल सुझाव",
+    "profit": "लाभ",
+    "proTip": "प्रो टिप",
+    "suggesting": "सुझाव दे रहा है...",
+    "suggestButton": "फसलें सुझाएं",
+    "resultPlaceholder": "आपके फसल सुझाव यहां दिखाई देंगे।"
+  },
   "askVyavasaay": {
     "title": "व्यावसाय से पूछें",
     "description": "कृषि संबंधी प्रश्नों के लिए आपका एआई सहायक। बाजार मूल्य, मौसम आदि के बारे में पूछें।",
@@ -53,6 +87,8 @@
   "marketAnalysis": {
     "title": "बाजार विश्लेषण",
     "description": "कृषि बाजार डेटा के लिए आपका एआई सहायक। फसल की कीमतों, रुझानों आदि के बारे में पूछें।",
+    "descriptionPage": "{{location}} के लिए वास्तविक समय बाजार मूल्य",
+    "yourArea": "आपका क्षेत्र",
     "placeholder": "फसल की कीमतों के बारे में पूछें...",
     "initialMessage": "बाजार विश्लेषण के साथ आरंभ करने के लिए एक प्रश्न पूछें।",
     "noData": "इस समय कोई बाजार विश्लेषण डेटा उपलब्ध नहीं है।",
@@ -61,6 +97,10 @@
     "detailedTitle": "फसल बाजार विश्लेषण",
     "recommendationsTitle": "एआई सिफारिशें",
     "recommendationsDescription": "वर्तमान बाजार विश्लेषण पर आधारित कार्रवाई योग्य सलाह।",
+    "todaysPrices": "आज की कीमतें",
+    "priceAlerts": "मूल्य अलर्ट",
+    "marketCategories": "बाजार श्रेणियाँ",
+    "commodities": "वस्तुएं",
     "table": {
       "crop": "फसल",
       "price": "कीमत",
@@ -71,6 +111,16 @@
       "up": "ऊपर",
       "down": "नीचे",
       "stable": "स्थिर"
+    },
+     "categories": {
+        "cereals": "अनाज",
+        "vegetables": "सब्जियां",
+        "fruits": "फल",
+        "spices": "मसाले",
+        "stable": "स्थिर",
+        "rising": "बढ़ रहा है",
+        "seasonal": "मौसमी",
+        "volatile": "अस्थिर"
     },
     "chatTitle": "बाजारों के बारे में चैट करें",
     "chatPlaceholder": "कीमतों या रुझानों के बारे में पूछें...",
@@ -93,7 +143,82 @@
     "applicationProcess": "आवेदन प्रक्रिया",
     "chatTitle": "योजनाओं के बारे में चैट करें",
     "chatPlaceholder": "पात्रता या आवेदन कैसे करें के बारे में पूछें...",
-    "chatInitialMessage": "सूचीबद्ध योजनाओं के बारे में अधिक जानकारी के लिए पूछें या अन्य योजनाएं खोजें।"
+    "chatInitialMessage": "सूचीबद्ध योजनाओं के बारे में अधिक जानकारी के लिए पूछें या अन्य योजनाएं खोजें।",
+    "quicklink": {
+      "title": "त्वरित लिंक",
+      "docs": {
+        "title": "दस्तावेज़ चेकलिस्ट",
+        "desc": "आवश्यक दस्तावेज़"
+      },
+      "helpline": {
+        "title": "हेल्पलाइन नंबर",
+        "desc": "सहायता प्राप्त करें"
+      },
+      "office": {
+        "title": "निकटतम कार्यालय",
+        "desc": "स्थान खोजें"
+      },
+      "track": {
+        "title": "आवेदन ट्रैक करें",
+        "desc": "वास्तविक समय स्थिति"
+      }
+    }
+  },
+  "growHub": {
+    "title": "ग्रो हब",
+    "description": "साथी किसानों के साथ जुड़ें, सीखें और एक साथ बढ़ें",
+    "joinConversation": {
+      "title": "बातचीत में शामिल हों",
+      "description": "पूरे भारत में 50 हजार से अधिक किसानों से जुड़ें",
+      "askButton": "प्रश्न पूछें",
+      "marketplaceButton": "बाज़ार"
+    },
+    "recentDiscussions": {
+      "title": "हाल की चर्चाएँ",
+      "viewAll": "सभी देखें",
+      "replies": "उत्तर"
+    },
+    "knowledgeLibrary": {
+      "title": "ज्ञान पुस्तकालय"
+    }
+  },
+  "profile": {
+    "title": "प्रोफ़ाइल",
+    "role": "किसान",
+    "membership": "प्रीमियम सदस्य",
+    "stats": {
+      "queries": "एआई प्रश्न",
+      "acres": "एकड़ ट्रैक किए गए",
+      "crops": "उगाई गई फसलें"
+    },
+    "farm": {
+      "title": "मेरा खेत",
+      "editButton": "संपादित करें",
+      "farmNameSuffix": "का पारिवारिक खेत",
+      "est": "स्थापित 1985",
+      "acres": "एकड़"
+    },
+    "landArea": "भूमि क्षेत्र (एकड़ में)",
+    "soilType": "मिट्टी का प्रकार",
+    "primaryCrops": "मुख्य फसलें (अल्पविराम से अलग)",
+    "updateSuccess": {
+      "title": "प्रोफ़ाइल अपडेट किया गया",
+      "description": "आपकी जानकारी सफलतापूर्वक सहेजी गई है।"
+    },
+    "updateError": {
+      "title": "अपडेट विफल"
+    },
+    "editSheet": {
+      "title": "प्रोफ़ाइल संपादित करें",
+      "description": "यहां अपने प्रोफ़ाइल में बदलाव करें। जब हो जाए तो सहेजें पर क्लिक करें।",
+      "errors": {
+        "nameRequired": "नाम आवश्यक है",
+        "locationRequired": "स्थान आवश्यक है"
+      },
+      "selectLanguage": "भाषा चुनें",
+      "saving": "सहेज रहा है...",
+      "saveButton": "बदलाव सहेजें"
+    }
   },
    "weather": {
     "title": "मौसम",
@@ -110,15 +235,18 @@
   "sidebar": {
     "discover": "खोज",
     "dashboard": "डैशबोर्ड",
-    "diagnose": "फसल निदान",
-    "marketAnalysis": "बाजार विश्लेषण",
-    "schemes": "सरकारी योजनाएं",
+    "diagnose": "निदान",
+    "marketAnalysis": "बाजार",
+    "schemes": "योजनाएं",
+    "growHub": "ग्रो हब",
     "weather": "मौसम",
     "callHelpline": "हेल्पलाइन पर कॉल करें"
   },
   "header": {
     "avatarAlt": "किसान अवतार",
-    "language": "भाषा"
+    "language": "भाषा",
+    "profile": "प्रोफ़ाइल",
+    "logout": "लॉग आउट करें"
   },
   "onboarding": {
     "title": "व्यावसाय में आपका स्वागत है",

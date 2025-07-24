@@ -22,7 +22,13 @@
     }
   },
   "discover": {
-    "resourcesTitle": "शेती संसाधने"
+    "resourcesTitle": "शेती संसाधने",
+    "searchPlaceholder": "व्यावसायला काहीही विचारा...",
+    "todaysWeather": "आजचे हवामान",
+    "weatherAlertTitle": "हवामान सूचना",
+    "quickLinks": "द्रुत दुवे",
+    "seeAll": "सर्व पहा",
+    "seeLess": "कमी पहा"
   },
   "cropDiagnosis": {
     "title": "पीक निदान",
@@ -39,6 +45,34 @@
     "error": "त्रुटी",
     "imagePreviewAlt": "पीक पूर्वावलोकन"
   },
+  "cropCalculator": {
+    "title": "खर्च कॅल्क्युलेटर",
+    "description": "शेतीचा खर्च आणि नफा मोजा",
+    "descriptionPage": "पीक लागवडीचा खर्च आणि संभाव्य नफा अंदाजे मोजा. पिकाचा प्रकार, जमिनीचे क्षेत्रफळ, लागवडीचा खर्च (बियाणे, खते, मजुरी), आणि अपेक्षित बाजारभाव यासारखे तपशील द्या.",
+    "placeholder": "उदा. मला १ एकरमध्ये टोमॅटो लावायचे आहेत. बियाण्याचा खर्च ₹१५००, खतांचा ₹२०००...",
+    "summaryTitle": "शेती खर्च सारांश",
+    "totalCost": "एकूण खर्च",
+    "expectedYield": "अपेक्षित उत्पन्न",
+    "marketPrice": "बाजारभाव",
+    "totalRevenue": "एकूण महसूल",
+    "estimatedProfit": "अंदाजित नफा",
+    "proTip": "प्रो टीप",
+    "calculating": "गणना होत आहे...",
+    "calculateButton": "गणना करा",
+    "resultPlaceholder": "तुमच्या खर्चाची गणना येथे दिसेल."
+  },
+  "cropSelector": {
+    "title": "पीक निवडक",
+    "description": "एआय-चालित पीक शिफारसी मिळवा",
+    "descriptionPage": "कोणती पिके घ्यावीत यासाठी सूचना मिळवा. जमिनीचे क्षेत्रफळ, स्थान, माती आणि हंगाम यासारखे तपशील द्या.",
+    "placeholder": "उदा. माझ्याकडे महाराष्ट्रात २ एकर काळी मातीची जमीन आहे. पावसाळा आहे आणि पाण्याची उपलब्धता चांगली आहे.",
+    "suggestionsTitle": "पीक सूचना",
+    "profit": "नफा",
+    "proTip": "प्रो टीप",
+    "suggesting": "सूचना देत आहे...",
+    "suggestButton": "पिके सुचवा",
+    "resultPlaceholder": "तुमच्या पीक सूचना येथे दिसतील."
+  },
   "askVyavasaay": {
     "title": "व्यावसायला विचारा",
     "description": "कृषी प्रश्नांसाठी तुमचा एआय सहाय्यक. बाजारभाव, हवामान इत्यादीबद्दल विचारा.",
@@ -50,7 +84,23 @@
     "title": "बाजार विश्लेषण",
     "description": "कृषी बाजार डेटासाठी तुमचा एआय सहाय्यक. पिकांचे भाव, ट्रेंड आणि अधिकबद्दल विचारा.",
     "placeholder": "पिकांच्या भावाबद्दल विचारा...",
-    "initialMessage": "बाजार विश्लेषण सुरू करण्यासाठी एक प्रश्न विचारा."
+    "initialMessage": "बाजार विश्लेषण सुरू करण्यासाठी एक प्रश्न विचारा。",
+    "descriptionPage": "{{location}} साठी वास्तविक-वेळेचे बाजारभाव",
+    "yourArea": "तुमचा परिसर",
+    "todaysPrices": "आजचे भाव",
+    "priceAlerts": "भाव सूचना",
+    "marketCategories": "बाजार श्रेणी",
+    "commodities": "वस्तू",
+    "categories": {
+      "cereals": "तृणधान्ये",
+      "vegetables": "भाजीपाला",
+      "fruits": "फळे",
+      "spices": "मसाले",
+      "stable": "स्थिर",
+      "rising": "वाढत आहे",
+      "seasonal": "हंगामी",
+      "volatile": "अस्थिर"
+    }
   },
   "govtSchemes": {
     "title": "सरकारी योजना",
@@ -66,19 +116,97 @@
     "resultPlaceholder": "योजना शोधण्यासाठी तुमचा तपशील प्रविष्ट करा आणि बटणावर क्लिक करा.",
     "summaryBenefits": "सारांश आणि फायदे",
     "eligibility": "पात्रता",
-    "applicationProcess": "अर्ज प्रक्रिया"
+    "applicationProcess": "अर्ज प्रक्रिया",
+    "quicklink": {
+      "title": "द्रुत दुवे",
+      "docs": {
+        "title": "कागदपत्र तपासणी सूची",
+        "desc": "आवश्यक कागदपत्रे"
+      },
+      "helpline": {
+        "title": "हेल्पलाइन क्रमांक",
+        "desc": "सहाय्यता मिळवा"
+      },
+      "office": {
+        "title": "जवळचे कार्यालय",
+        "desc": "ठिकाणे शोधा"
+      },
+      "track": {
+        "title": "अर्ज ट्रॅक करा",
+        "desc": "वास्तविक-वेळेची स्थिती"
+      }
+    }
+  },
+  "growHub": {
+    "title": "ग्रो हब",
+    "description": "सहकारी शेतकऱ्यांशी संपर्क साधा, शिका आणि एकत्र वाढा",
+    "joinConversation": {
+      "title": "संभाषणात सामील व्हा",
+      "description": "भारतभरातील ५० हजारांहून अधिक शेतकऱ्यांशी संपर्क साधा",
+      "askButton": "प्रश्न विचारा",
+      "marketplaceButton": "बाजारपेठ"
+    },
+    "recentDiscussions": {
+      "title": "अलीकडील चर्चा",
+      "viewAll": "सर्व पहा",
+      "replies": "उत्तरे"
+    },
+    "knowledgeLibrary": {
+      "title": "ज्ञान लायब्ररी"
+    }
+  },
+  "profile": {
+    "title": "प्रोफाइल",
+    "role": "शेतकरी",
+    "membership": "प्रीमियम सदस्य",
+    "stats": {
+      "queries": "एआय प्रश्न",
+      "acres": "एकर ट्रॅक केले",
+      "crops": "पिकवलेली पिके"
+    },
+    "farm": {
+      "title": "माझे शेत",
+      "editButton": "संपादित करा",
+      "farmNameSuffix": "चे कौटुंबिक शेत",
+      "est": "स्थापित १९८५",
+      "acres": "एकर"
+    },
+    "landArea": "जमिनीचे क्षेत्र (एकरमध्ये)",
+    "soilType": "मातीचा प्रकार",
+    "primaryCrops": "मुख्य पिके (स्वल्पविरामाने वेगळे करा)",
+    "updateSuccess": {
+      "title": "प्रोफाइल अपडेट केले",
+      "description": "तुमची माहिती यशस्वीरित्या जतन केली आहे."
+    },
+    "updateError": {
+      "title": "अपडेट अयशस्वी"
+    },
+    "editSheet": {
+      "title": "प्रोफाइल संपादित करा",
+      "description": "येथे तुमच्या प्रोफाइलमध्ये बदल करा. पूर्ण झाल्यावर जतन करा क्लिक करा.",
+      "errors": {
+        "nameRequired": "नाव आवश्यक आहे",
+        "locationRequired": "स्थान आवश्यक आहे"
+      },
+      "selectLanguage": "भाषा निवडा",
+      "saving": "जतन करत आहे...",
+      "saveButton": "बदल जतन करा"
+    }
   },
   "sidebar": {
     "discover": "शोधा",
     "dashboard": "डॅशबोर्ड",
-    "diagnose": "पीक निदान",
-    "marketAnalysis": "बाजार विश्लेषण",
-    "schemes": "सरकारी योजना",
+    "diagnose": "निदान",
+    "marketAnalysis": "बाजार",
+    "schemes": "योजना",
+    "growHub": "ग्रो हब",
     "callHelpline": "हेल्पलाइनवर कॉल करा"
   },
   "header": {
     "avatarAlt": "शेतकरी अवतार",
-    "language": "भाषा"
+    "language": "भाषा",
+    "profile": "प्रोफाइल",
+    "logout": "लॉग आउट"
   },
   "onboarding": {
     "title": "व्यावसायमध्ये आपले स्वागत आहे",

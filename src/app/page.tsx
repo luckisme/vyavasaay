@@ -99,11 +99,11 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                             <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => setActiveFeature('profile')}>
-                                Profile
+                                {t('header.profile', 'Profile')}
                             </DropdownMenuItem>
                              <DropdownMenuItem onClick={signOutUser}>
                                 <LogOut className="mr-2 h-4 w-4" />
-                                <span>Log out</span>
+                                <span>{t('header.logout', 'Log out')}</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

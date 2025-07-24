@@ -71,10 +71,10 @@ export default function GovtSchemes({ state }: GovtSchemesProps) {
   const { t } = useTranslation();
   
   const quickLinks = [
-    { icon: FileText, title: 'Document Checklist', description: 'Required documents' },
-    { icon: Phone, title: 'Helpline Numbers', description: 'Get assistance' },
-    { icon: Building2, title: 'Nearest Office', description: 'Find locations' },
-    { icon: RefreshCw, title: 'Track Application', description: 'Real-time status' },
+    { icon: FileText, title: t('govtSchemes.quicklink.docs.title', 'Document Checklist'), description: t('govtSchemes.quicklink.docs.desc', 'Required documents') },
+    { icon: Phone, title: t('govtSchemes.quicklink.helpline.title', 'Helpline Numbers'), description: t('govtSchemes.quicklink.helpline.desc', 'Get assistance') },
+    { icon: Building2, title: t('govtSchemes.quicklink.office.title', 'Nearest Office'), description: t('govtSchemes.quicklink.office.desc', 'Find locations') },
+    { icon: RefreshCw, title: t('govtSchemes.quicklink.track.title', 'Track Application'), description: t('govtSchemes.quicklink.track.desc', 'Real-time status') },
   ];
 
   return (
@@ -85,7 +85,7 @@ export default function GovtSchemes({ state }: GovtSchemesProps) {
         <SchemeResults state={state} />
 
         <div className="space-y-4 pt-4">
-            <h2 className="text-xl font-bold font-headline flex items-center gap-2">Quick Links</h2>
+            <h2 className="text-xl font-bold font-headline flex items-center gap-2">{t('govtSchemes.quicklink.title', 'Quick Links')}</h2>
             <div className="grid grid-cols-2 gap-4">
                 {quickLinks.map(link => <QuickLinkCard key={link.title} {...link} />)}
             </div>

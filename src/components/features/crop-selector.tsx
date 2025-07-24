@@ -20,12 +20,13 @@ const initialState: SuggestCropsState = {
 };
 
 function SuggestionResult({ data }: { data: SuggestCropsState['data'] }) {
+    const { t } = useTranslation();
     if (!data) return null;
 
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h3 className="text-xl font-bold font-headline">Crop Suggestions</h3>
+                <h3 className="text-xl font-bold font-headline">{t('cropSelector.suggestionsTitle', 'Crop Suggestions')}</h3>
             </div>
             
             <div className="space-y-4">
@@ -37,7 +38,7 @@ function SuggestionResult({ data }: { data: SuggestCropsState['data'] }) {
                         <CardContent className="space-y-3">
                             <p className="text-muted-foreground pl-1">{crop.reasoning}</p>
                             <Badge variant="secondary" className="font-semibold text-green-700">
-                                Profit: {crop.estimatedProfit}
+                                {t('cropSelector.profit', 'Profit')}: {crop.estimatedProfit}
                             </Badge>
                         </CardContent>
                     </Card>
@@ -46,7 +47,7 @@ function SuggestionResult({ data }: { data: SuggestCropsState['data'] }) {
 
             <Alert className="bg-green-50 border-green-200">
                 <Sparkles className="h-4 w-4 text-green-700" />
-                <AlertTitle className="text-green-800 font-semibold">Pro Tip</AlertTitle>
+                <AlertTitle className="text-green-800 font-semibold">{t('cropSelector.proTip', 'Pro Tip')}</AlertTitle>
                 <AlertDescription className="text-green-700">
                     {data.tip}
                 </AlertDescription>
@@ -82,7 +83,7 @@ export default function CropSelector() {
                     <Textarea
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        placeholder="e.g., I have 2 acres of black soil land in Maharashtra. It's monsoon season with decent water availability."
+                        placeholder={t('cropSelector.placeholder', "e.g., I have 2 acres of black soil land in Maharashtra. It's monsoon season with decent water availability.")}
                         className="min-h-[150px]"
                         required
                     />
@@ -90,12 +91,12 @@ export default function CropSelector() {
                         {state.loading ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Suggesting...
+                                {t('cropSelector.suggesting', 'Suggesting...')}
                             </>
                         ) : (
                              <>
                                 <Sprout className="mr-2 h-4 w-4" />
-                                Suggest Crops
+                                {t('cropSelector.suggestButton', 'Suggest Crops')}
                             </>
                         )}
                     </Button>
@@ -119,7 +120,7 @@ export default function CropSelector() {
                     {state.data && <SuggestionResult data={state.data} />}
                      {!state.loading && !state.error && !state.data && (
                         <div className="text-center text-muted-foreground">
-                            <p>Your crop suggestions will appear here.</p>
+                            <p>{t('cropSelector.resultPlaceholder', 'Your crop suggestions will appear here.')}</p>
                         </div>
                     )}
                 </div>

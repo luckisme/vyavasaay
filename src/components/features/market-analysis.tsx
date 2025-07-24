@@ -43,10 +43,10 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
     const { user } = useUser();
 
     const marketCategories = [
-        { name: "Cereals", commodities: 12, status: "Stable", icon: Wheat, statusColor: "bg-green-100 text-green-800" },
-        { name: "Vegetables", commodities: 25, status: "Rising", icon: VegetablesIcon, statusColor: "bg-orange-100 text-orange-800" },
-        { name: "Fruits", commodities: 18, status: "Seasonal", icon: Apple, statusColor: "bg-blue-100 text-blue-800" },
-        { name: "Spices", commodities: 8, status: "Volatile", icon: SpicesIcon, statusColor: "bg-red-100 text-red-800" },
+        { name: t('marketAnalysis.categories.cereals', "Cereals"), commodities: 12, status: t('marketAnalysis.categories.stable', "Stable"), icon: Wheat, statusColor: "bg-green-100 text-green-800" },
+        { name: t('marketAnalysis.categories.vegetables', "Vegetables"), commodities: 25, status: t('marketAnalysis.categories.rising', "Rising"), icon: VegetablesIcon, statusColor: "bg-orange-100 text-orange-800" },
+        { name: t('marketAnalysis.categories.fruits', "Fruits"), commodities: 18, status: t('marketAnalysis.categories.seasonal', "Seasonal"), icon: Apple, statusColor: "bg-blue-100 text-blue-800" },
+        { name: t('marketAnalysis.categories.spices', "Spices"), commodities: 8, status: t('marketAnalysis.categories.volatile', "Volatile"), icon: SpicesIcon, statusColor: "bg-red-100 text-red-800" },
     ];
 
 
@@ -101,8 +101,8 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold font-headline text-primary">Market Analysis</h1>
-                <p className="text-muted-foreground">Real-time market prices for {user?.location || 'your area'}</p>
+                <h1 className="text-2xl font-bold font-headline text-primary">{t('marketAnalysis.title', 'Market Analysis')}</h1>
+                <p className="text-muted-foreground">{t('marketAnalysis.descriptionPage', 'Real-time market prices for {{location}}', { location: user?.location || t('marketAnalysis.yourArea', 'your area') })}</p>
             </div>
 
             {/* Market Alert */}
@@ -124,7 +124,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold flex items-center gap-2">
-                        Today's Prices
+                        {t('marketAnalysis.todaysPrices', "Today's Prices")}
                     </h2>
                 </div>
                 <div className="space-y-3">
@@ -155,7 +155,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             {/* Price Alerts */}
             <div className="space-y-4">
                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <Bell className="h-5 w-5 text-primary" /> Price Alerts
+                    <Bell className="h-5 w-5 text-primary" /> {t('marketAnalysis.priceAlerts', 'Price Alerts')}
                 </h2>
                 {priceAlerts.map((alert, index) => {
                     const { Icon, color, iconColor } = getAlertIcon(alert.title);
@@ -177,7 +177,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             {/* Market Categories */}
             <div className="space-y-4">
                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    Market Categories
+                    {t('marketAnalysis.marketCategories', 'Market Categories')}
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
                     {marketCategories.map((cat, index) => (
@@ -187,7 +187,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
                                     <cat.icon className="w-6 h-6 text-primary" />
                                 </div>
                                 <p className="font-semibold">{cat.name}</p>
-                                <p className="text-xs text-muted-foreground">{cat.commodities} commodities</p>
+                                <p className="text-xs text-muted-foreground">{cat.commodities} {t('marketAnalysis.commodities', 'commodities')}</p>
                                 <Badge className={cn("mt-2 text-xs", cat.statusColor)}>{cat.status}</Badge>
                             </CardContent>
                         </Card>

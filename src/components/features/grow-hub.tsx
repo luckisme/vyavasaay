@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MessageSquare, Store, BookOpen, ArrowRight } from 'lucide-react';
 import type { Feature } from '@/app/page';
+import { useTranslation } from '@/hooks/use-translation';
 
 const recentDiscussions = [
     {
@@ -60,6 +61,7 @@ const knowledgeLibraryItems = [
 ]
 
 export default function GrowHub({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void; }) {
+    const { t } = useTranslation();
     const [showAllResources, setShowAllResources] = useState(false);
     const resourcesToShow = showAllResources ? knowledgeLibraryItems : knowledgeLibraryItems.slice(0, 1);
 
@@ -71,8 +73,8 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-bold font-headline">Grow Hub</h1>
-                    <p className="text-muted-foreground">Connect, learn, and grow together with fellow farmers</p>
+                    <h1 className="text-2xl font-bold font-headline">{t('growHub.title', 'Grow Hub')}</h1>
+                    <p className="text-muted-foreground">{t('growHub.description', 'Connect, learn, and grow together with fellow farmers')}</p>
                 </div>
             </header>
 
@@ -81,8 +83,8 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                 <CardContent className="p-5">
                     <div className="flex justify-between items-center">
                          <div>
-                            <h2 className="text-xl font-bold">Join the Conversation</h2>
-                            <p className="text-sm opacity-90 mt-1">Connect with 50K+ farmers across India</p>
+                            <h2 className="text-xl font-bold">{t('growHub.joinConversation.title', 'Join the Conversation')}</h2>
+                            <p className="text-sm opacity-90 mt-1">{t('growHub.joinConversation.description', 'Connect with 50K+ farmers across India')}</p>
                          </div>
                          <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
                             <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={48} height={48} />
@@ -90,10 +92,10 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                     </div>
                     <div className="mt-4 flex gap-4">
                         <Button variant="secondary" className="w-full bg-white/30 text-white hover:bg-white/40" onClick={() => setActiveFeature('ask')}>
-                            <MessageSquare className="mr-2 h-4 w-4" /> Ask Question
+                            <MessageSquare className="mr-2 h-4 w-4" /> {t('growHub.joinConversation.askButton', 'Ask Question')}
                         </Button>
                          <Button variant="secondary" className="w-full bg-white/30 text-white hover:bg-white/40" onClick={() => setActiveFeature('market')}>
-                            <Store className="mr-2 h-4 w-4" /> Marketplace
+                            <Store className="mr-2 h-4 w-4" /> {t('growHub.joinConversation.marketplaceButton', 'Marketplace')}
                         </Button>
                     </div>
                 </CardContent>
@@ -103,10 +105,10 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
             <div className="space-y-4">
                  <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold font-headline flex items-center gap-2">
-                        <MessageSquare className="h-5 w-5 text-primary" /> Recent Discussions
+                        <MessageSquare className="h-5 w-5 text-primary" /> {t('growHub.recentDiscussions.title', 'Recent Discussions')}
                     </h2>
                     <Button variant="link" className="text-primary pr-0">
-                        View All
+                        {t('growHub.recentDiscussions.viewAll', 'View All')}
                     </Button>
                 </div>
                 <div className="space-y-3">
@@ -121,7 +123,7 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                                     </div>
                                     <p className="mt-1 text-foreground">{discussion.question}</p>
                                     <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
-                                        <span>{discussion.replies} replies</span>
+                                        <span>{discussion.replies} {t('growHub.recentDiscussions.replies', 'replies')}</span>
                                         <span>{discussion.time}</span>
                                     </div>
                                 </div>
@@ -136,10 +138,10 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                 <div className="flex justify-between items-center mb-3">
                     <h2 className="text-xl font-bold tracking-tight text-foreground font-headline flex items-center gap-2">
                         <BookOpen className="h-5 w-5 text-primary"/>
-                        Knowledge Library
+                        {t('growHub.knowledgeLibrary.title', 'Knowledge Library')}
                     </h2>
                     <Button variant="link" className="text-primary pr-0" onClick={() => setShowAllResources(!showAllResources)}>
-                      {showAllResources ? 'See Less' : 'See All'}
+                      {showAllResources ? t('discover.seeLess', 'See Less') : t('discover.seeAll', 'See All')}
                     </Button>
                 </div>
                 <div className="space-y-4">
