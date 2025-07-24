@@ -83,8 +83,8 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                             <h2 className="text-xl font-bold">Join the Conversation</h2>
                             <p className="text-sm opacity-90 mt-1">Connect with 50K+ farmers across India</p>
                          </div>
-                         <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={32} height={32} />
+                         <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={48} height={48} />
                          </div>
                     </div>
                     <div className="mt-4 flex gap-4">
@@ -112,7 +112,7 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
                     {recentDiscussions.map((discussion, index) => (
                         <Card key={index} className="shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                             <CardContent className="p-4 flex gap-4">
-                                <Image src={discussion.avatar} alt={discussion.name} width={40} height={40} className="rounded-full h-10 w-10" data-ai-hint={discussion.dataAiHint} />
+                                <Image src={discussion.avatar} alt={discussion.name} width={40} height={40} className="rounded-full h-10 w-10 object-cover" data-ai-hint={discussion.dataAiHint} />
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2">
                                         <p className="font-semibold">{discussion.name}</p>
