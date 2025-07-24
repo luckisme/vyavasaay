@@ -19,9 +19,9 @@ import { UserProvider, useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
-import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction } from '@/app/actions';
+import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction, generateWeatherBasedTipAction } from '@/app/actions';
 import type { WeatherData } from '@/app/actions';
-import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
+import type { WeatherAlert, WeatherTip } from '@/app/actions';
 import type { MarketAnalysisOutput } from '@/lib/types';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import CropCalculator from '@/components/features/crop-calculator';
@@ -46,7 +46,8 @@ interface DataStates {
     weather: { data: WeatherData | null; error: string | null; loading: boolean; };
     market: { data: MarketAnalysisOutput | null; error: string | null; loading: boolean; };
     schemes: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; };
-    weatherAlert: { data: WeatherAlertOutput | null; error: string | null; loading: boolean; };
+    weatherAlert: { data: WeatherAlert | null; error: string | null; loading: boolean; };
+    weatherTip: { data: WeatherTip | null; error: string | null; loading: boolean; };
 }
 
 const PhoneIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -124,6 +125,7 @@ function AppCore() {
     market: { data: null, error: null, loading: true },
     schemes: { data: null, error: null, loading: true },
     weatherAlert: { data: null, error: null, loading: true },
+    weatherTip: { data: null, error: null, loading: true },
   });
 
 
@@ -134,30 +136,43 @@ function AppCore() {
   }, [user?.language, setLanguage]);
 
   useEffect(() => {
-    if (user?.location) {
+    if (user) {
         const languageName = languages.find(l => l.value === language)?.label || 'English';
         const farmerDetails = t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
         
-        setDataStates(s => ({ ...s, weather: { data: null, error: null, loading: true }, weatherAlert: { data: null, error: null, loading: true }}));
+        setDataStates(s => ({ ...s, weather: { data: null, error: null, loading: true }, weatherAlert: { data: null, error: null, loading: true }, weatherTip: { data: null, error: null, loading: true }}));
         getWeatherAction(user.location).then(weatherResult => {
             if ('error' in weatherResult) {
                 setDataStates(s => ({ 
                     ...s, 
                     weather: { data: null, error: weatherResult.error, loading: false },
-                    weatherAlert: { data: null, error: weatherResult.error, loading: false }
+                    weatherAlert: { data: null, error: weatherResult.error, loading: false },
+                    weatherTip: { data: null, error: weatherResult.error, loading: false }
                 }));
             } else {
+                setDataStates(s => ({ ...s, weather: { data: weatherResult, error: null, loading: false }}));
+
                 generateWeatherAlertAction(weatherResult, languageName).then(alertResult => {
                     setDataStates(s => ({ 
                         ...s, 
-                        weather: { data: weatherResult, error: null, loading: false },
                         weatherAlert: { data: alertResult, error: null, loading: false }
                     }));
                 }).catch(e => {
                      setDataStates(s => ({ 
                         ...s, 
-                        weather: { data: weatherResult, error: null, loading: false },
                         weatherAlert: { data: null, error: e.message, loading: false }
+                    }));
+                });
+
+                generateWeatherBasedTipAction(weatherResult, user, languageName).then(tipResult => {
+                    setDataStates(s => ({ 
+                        ...s, 
+                        weatherTip: { data: tipResult, error: null, loading: false }
+                    }));
+                }).catch(e => {
+                     setDataStates(s => ({ 
+                        ...s, 
+                        weatherTip: { data: null, error: e.message, loading: false }
                     }));
                 });
             }
@@ -206,6 +221,7 @@ function AppCore() {
             setActiveFeature={setActiveFeature} 
             weatherState={dataStates.weather}
             weatherAlertState={dataStates.weatherAlert}
+            weatherTipState={dataStates.weatherTip}
         />;
     }
   };

@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '../ui/skeleton';
-import { type WeatherData, type WeatherAlert } from '@/app/actions';
+import { type WeatherData, type WeatherAlert, type WeatherTip } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { Badge } from '../ui/badge';
 import { Avatar } from '../ui/avatar';
@@ -31,6 +31,11 @@ interface DiscoverProps {
   };
   weatherAlertState: {
     data: WeatherAlert | null;
+    error: string | null;
+    loading: boolean;
+  };
+  weatherTipState: {
+    data: WeatherTip | null;
     error: string | null;
     loading: boolean;
   };
@@ -79,7 +84,7 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
 };
 
 
-export default function Discover({ setActiveFeature, weatherState, weatherAlertState }: DiscoverProps) {
+export default function Discover({ setActiveFeature, weatherState, weatherAlertState, weatherTipState }: DiscoverProps) {
   const { t } = useTranslation();
   const [showAllResources, setShowAllResources] = useState(false);
   const [isResourcesLoading, setIsResourcesLoading] = useState(true);
@@ -142,7 +147,7 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
     <div className="flex flex-col gap-6">
         {/* Weather Section */}
         <div className="space-y-4">
-             <WeatherAlertCard state={weatherAlertState} />
+            <WeatherAlertCard state={weatherAlertState} />
             {weatherState.loading && <Skeleton className="h-48 w-full rounded-2xl" />}
             {weatherState.data && (
                 <Card className="bg-gradient-to-br from-blue-400 to-purple-500 text-white border-none shadow-xl rounded-2xl overflow-hidden">
@@ -158,13 +163,18 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
                                 <Image src={weatherState.data.iconUrl} alt={weatherState.data.description} width={64} height={64}/>
                              </div>
                         </div>
-                         <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-lg p-3 flex items-center gap-3">
+                        <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-lg p-3 flex items-center gap-3">
                             <div className="bg-green-500 p-2 rounded-full">
                                 <Sprout className="h-5 w-5 text-white" />
                             </div>
                             <div>
-                                <p className="font-bold text-sm">{t('discover.smartAlertTitle', 'Perfect for banana plantation!')}</p>
-                                <p className="text-xs opacity-90">{t('discover.smartAlertBody', 'Ideal humidity and temperature conditions detected.')}</p>
+                                {weatherTipState.loading ? (
+                                    <Skeleton className="h-4 w-48 bg-white/30" />
+                                ) : (
+                                    <>
+                                        <p className="font-bold text-sm">{weatherTipState.data?.tip}</p>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </CardContent>

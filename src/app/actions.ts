@@ -9,6 +9,7 @@ import { getMarketAnalysis } from '@/ai/flows/get-market-analysis';
 import { calculateCropCosts } from '@/ai/flows/calculate-crop-costs';
 import { suggestCrops } from '@/ai/flows/suggest-crops';
 import { generateWeatherAlert } from '@/ai/flows/generate-weather-alert';
+import { generateWeatherBasedTip } from '@/ai/flows/generate-weather-based-tip';
 import { getCommonCropIssues } from '@/ai/flows/get-common-crop-issues';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
@@ -17,6 +18,7 @@ import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs'
 import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
+import type { WeatherBasedTipOutput } from '@/ai/flows/generate-weather-based-tip';
 import type { CommonCropIssuesOutput } from '@/ai/flows/get-common-crop-issues';
 
 const allLanguages = [
@@ -181,15 +183,28 @@ export async function getWeatherAction(location: string): Promise<WeatherData | 
 export type WeatherAlert = WeatherAlertOutput;
 export async function generateWeatherAlertAction(weatherData: WeatherData, language: string): Promise<WeatherAlert> {
     try {
-        // const result = await generateWeatherAlert({ weather: weatherData, language });
-        // return result;
-        return { alert: "Severe dust storm warning for the next hour. Visibility will be low and strong winds may damage crops. Take necessary precautions.", severity: "warning" };
+        const result = await generateWeatherAlert({ weather: weatherData, language });
+        return result;
     } catch (e) {
         console.error('Failed to generate weather alert:', e);
         // Return a default, safe alert in case of an AI error
         return { alert: "Check local weather advisories for the latest updates.", severity: "info" };
     }
 }
+
+// Action for Weather Based Tip Generation
+export type WeatherTip = WeatherBasedTipOutput;
+export async function generateWeatherBasedTipAction(weatherData: WeatherData, user: UserProfile, language: string): Promise<WeatherTip> {
+    try {
+        const result = await generateWeatherBasedTip({ weather: weatherData, user, language });
+        return result;
+    } catch (e) {
+        console.error('Failed to generate weather based tip:', e);
+        // Return a default, safe tip in case of an AI error
+        return { tip: "Stay updated with the latest weather forecasts for your area." };
+    }
+}
+
 
 // Action for Crop Cost Calculator
 export interface CalculateCostsState {
