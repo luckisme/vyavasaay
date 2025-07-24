@@ -69,7 +69,7 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
     const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
     return (
-        <header className="px-4 pt-4 bg-[#F5F5DC] space-y-4">
+        <header className="px-4 pt-4 bg-[#F5F5DC]">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 -mt-16">
                     <div>
