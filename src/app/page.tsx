@@ -69,14 +69,14 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
     const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
     return (
-        <header className="px-4 pt-4 bg-[#F5F5DC]">
+        <header className="px-4 pt-2 bg-[#F5F5DC]">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 -mt-16">
+                <div className="flex items-center gap-2 -mt-10">
                     <div>
                         <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={170} height={170} />
                     </div>
                 </div>
-                <div className="flex items-center gap-2 -mt-16">
+                <div className="flex items-center gap-2 -mt-10">
                     <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -98,7 +98,7 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                 </div>
             </div>
              <div 
-                className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
+                className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200 -mt-6"
                 onClick={() => setActiveFeature('ask')}
             >
                 <span className="pl-4 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
