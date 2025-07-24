@@ -14,6 +14,7 @@ import type { ChatMessage } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
+import { answerFarmerQuestion } from '@/ai/flows/answer-farmer-question';
 
 const useChatLogic = (initialMessages: ChatMessage[] = []) => {
   const { t, language: langCode } = useTranslation();
@@ -75,7 +76,7 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
 
   const playAudio = useCallback((audioDataUri: string, messageId: string) => {
     if (!audioRef.current) return;
-    
+
     if (activeAudioId === messageId && !audioRef.current.paused) {
       audioRef.current.pause();
       setActiveAudioId(null);
@@ -83,8 +84,16 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
       if (audioRef.current.src !== audioDataUri) {
         audioRef.current.src = audioDataUri;
       }
-      audioRef.current.play();
-      setActiveAudioId(messageId);
+      
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+          setActiveAudioId(messageId);
+        }).catch(error => {
+          console.error("Audio playback failed:", error);
+          setActiveAudioId(null);
+        });
+      }
     }
   }, [activeAudioId]);
 
@@ -109,17 +118,33 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     if (!input.trim() || isLoading || !user) return;
-
+  
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
       content: input,
     };
+  
+    // Create the full history including the new message
+    const currentHistory: { role: 'user' | 'model'; content: string }[] = messages
+        .map(msg => ({
+            role: msg.role,
+            // Ensure content is a string
+            content: typeof msg.content === 'string' ? msg.content : ''
+        }))
+        .filter(msg => typeof msg.content === 'string'); // Filter out any non-string content just in case
+
+
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
-
-    const result = await askVyavasaayAction(input, user, langCode);
+  
+    const result = await askVyavasaayAction(
+      input,
+      user,
+      langCode,
+      currentHistory,
+    );
     
     let assistantMessage: ChatMessage;
     if ('answer' in result) {
