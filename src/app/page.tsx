@@ -68,10 +68,10 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
     const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
 
     return (
-        <header className="px-4 pt-2 pb-4 sm:px-6 sm:pt-4 sm:pb-6 bg-[#F5F5DC] space-y-4">
-            <div className="flex items-center justify-between">
+        <header className="px-4 pb-4 sm:px-6 sm:pb-6 bg-[#F5F5DC] space-y-4">
+            <div className="flex items-center justify-between pt-2">
                 <div className="flex items-center gap-2">
-                    <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={170} height={80} />
+                    <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={80} height={80} />
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
