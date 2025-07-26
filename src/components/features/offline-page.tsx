@@ -77,6 +77,8 @@ const recentConversations = [
 export default function OfflinePage() {
     const { t } = useTranslation();
     const { user } = useUser();
+    const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
+
 
     const handleRetry = () => {
         window.location.reload();
@@ -97,6 +99,30 @@ export default function OfflinePage() {
                     <Button variant="ghost" className="bg-white/20 hover:bg-white/30" onClick={handleRetry}>Retry</Button>
                 </CardContent>
             </Card>
+
+             <div className="space-y-4">
+                <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-primary"/>
+                    Ask Vyavasaay
+                    <Badge variant="outline">Offline Mode</Badge>
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                    <a href={`tel:${offlineCallNumber}`}>
+                        <Card className="bg-green-500 text-white text-center p-4 h-full flex flex-col justify-center items-center cursor-pointer hover:bg-green-600 transition-colors">
+                            <Phone className="h-8 w-8 mb-2" />
+                            <p className="font-bold">Call</p>
+                            <p className="text-xs text-white/90">Instant solution in your own language</p>
+                        </Card>
+                    </a>
+                     <a href={`sms:${offlineCallNumber}`}>
+                        <Card className="bg-orange-500 text-white text-center p-4 h-full flex flex-col justify-center items-center cursor-pointer hover:bg-orange-600 transition-colors">
+                            <MessageSquare className="h-8 w-8 mb-2" />
+                            <p className="font-bold">SMS</p>
+                            <p className="text-xs text-white/90">Get answers on your query</p>
+                        </Card>
+                    </a>
+                </div>
+            </div>
 
             <div className="space-y-4">
                     <div className="flex justify-between items-center">
