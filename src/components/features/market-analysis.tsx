@@ -100,9 +100,9 @@ export default function MarketAnalysis({ state, setActiveFeature }: MarketAnalys
 
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             {/* Header */}
-            <header className="flex items-center gap-4">
+            <header className="flex items-center gap-4 mt-4">
                 <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                     <ArrowLeft className="h-5 w-5" />
                 </Button>

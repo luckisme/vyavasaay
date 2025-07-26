@@ -80,8 +80,8 @@ export default function GovtSchemes({ state, setActiveFeature }: GovtSchemesProp
   ];
 
   return (
-    <div className="space-y-8">
-        <header className="flex items-center gap-4">
+    <div className="space-y-6">
+        <header className="flex items-center gap-4 mt-4">
             <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                 <ArrowLeft className="h-5 w-5" />
             </Button>

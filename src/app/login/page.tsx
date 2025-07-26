@@ -101,7 +101,6 @@ function LoginPageCore() {
         } catch (error: any) {
             console.error(error);
             toast({ variant: "destructive", title: t('login.error.title', "Error"), description: error.message });
-            window.location.reload(); // Reset reCAPTCHA
         } finally {
             setIsLoading(false);
         }
@@ -377,7 +376,7 @@ function LoginPageCore() {
             "flex min-h-screen flex-col items-center justify-start p-4",
             "bg-[#F7FDF3]"
         )}>
-            <div id="recaptcha-container" className="my-4"></div>
+            <div id="recaptcha-container"></div>
             {renderStep()}
         </main>
     );
@@ -394,3 +393,4 @@ export default function LoginPage() {
     
 
     
+

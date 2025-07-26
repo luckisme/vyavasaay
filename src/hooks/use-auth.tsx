@@ -41,10 +41,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const sendOtp = useCallback(async (phoneNumber: string) => {
-    const recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {
-      'size': 'invisible'
-    });
-    return signInWithPhoneNumber(firebaseAuth, phoneNumber, recaptchaVerifier);
+    // Check if a container element exists, and only then create the RecaptchaVerifier
+    const recaptchaContainer = document.getElementById('recaptcha-container');
+    if (!recaptchaContainer) {
+        throw new Error("reCAPTCHA container not found.");
+    }
+    
+    // Ensure the verifier is only created once per call or managed appropriately
+    if (!(window as any).recaptchaVerifier) {
+        (window as any).recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, recaptchaContainer, {
+          'size': 'invisible'
+        });
+    }
+    
+    const recaptchaVerifier = (window as any).recaptchaVerifier;
+
+    try {
+        const confirmationResult = await signInWithPhoneNumber(firebaseAuth, phoneNumber, recaptchaVerifier);
+        return confirmationResult;
+    } catch (error) {
+        // Handle specific errors, e.g., reCAPTCHA expired, and reset if necessary
+        console.error("Error during signInWithPhoneNumber:", error);
+        recaptchaVerifier.render().then((widgetId: any) => {
+            if (typeof (window as any).grecaptcha !== 'undefined') {
+                (window as any).grecaptcha.reset(widgetId);
+            }
+        });
+        throw error; // Re-throw the error to be handled by the caller
+    }
   }, []);
 
   const verifyOtp = useCallback(async (confirmationResult: ConfirmationResult, otp: string) => {

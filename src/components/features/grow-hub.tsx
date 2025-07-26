@@ -12,7 +12,7 @@ import { useTranslation } from '@/hooks/use-translation';
 
 const recentDiscussions = [
     {
-        avatar: '/images/expert-3.jpeg',
+        avatar: '/images/farmer.jpg',
         dataAiHint: 'man in glasses',
         name: 'Rajesh Kumar',
         badge: 'Verified Farmer',
@@ -22,7 +22,7 @@ const recentDiscussions = [
         time: '2 hours ago',
     },
     {
-        avatar: '/images/expert-2.jpeg',
+        avatar: '/images/WhatsApp Image 2025-07-26 at 9.14.57 PM (1).jpeg',
         dataAiHint: 'woman with mask',
         name: 'Priya Mehta',
         badge: 'Expert',
@@ -66,9 +66,9 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
     const resourcesToShow = showAllResources ? knowledgeLibraryItems : knowledgeLibraryItems.slice(0, 1);
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             {/* Header */}
-            <header className="flex items-center gap-4">
+            <header className="flex items-center gap-4 mt-4">
                 <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
