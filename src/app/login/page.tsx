@@ -10,14 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, ArrowLeft, ShieldCheck, MessageSquareText, Timer, Info } from 'lucide-react';
+import { Loader2, ArrowLeft, ShieldCheck, MessageSquareText, Timer, Info, Check, Sparkles } from 'lucide-react';
 import { languages } from '@/app/page';
 import { useTranslation, TranslationProvider } from '@/hooks/use-translation';
-import { useUser } from '@/hooks/use-user';
 import { cn } from '@/lib/utils';
-import { app } from '@/lib/firebase'; // Ensure app is initialized
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-
+import { app } from '@/lib/firebase';
 
 type OnboardingStep = 'language' | 'details' | 'phone' | 'otp';
 
@@ -25,18 +23,17 @@ function LoginPageCore() {
     const [step, setStep] = useState<OnboardingStep>('language');
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { sendOtp, verifyOtp } = useAuth();
+    const { sendOtp } = useAuth();
     const { toast } = useToast();
-    const { t, setLanguage, language } = useTranslation();
+    const { t, setLanguage } = useTranslation();
     
-    // State for all onboarding data
     const [onboardingData, setOnboardingData] = useState({
-        language: 'en',
         name: '',
         location: '',
         phoneNumber: '',
     });
-
+    
+    const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
     const [otp, setOtp] = useState<string[]>(new Array(6).fill(''));
     const [confirmationResult, setConfirmationResult] = useState<any>(null);
     const [resendTimer, setResendTimer] = useState(0);
@@ -53,10 +50,11 @@ function LoginPageCore() {
         return () => clearInterval(interval);
     }, [resendTimer]);
 
-    const handleLanguageSelect = (langCode: string) => {
-        setOnboardingData(prev => ({...prev, language: langCode}));
-        setLanguage(langCode);
-        setStep('details');
+    const handleLanguageContinue = () => {
+        if (selectedLanguage) {
+            setLanguage(selectedLanguage);
+            setStep('details');
+        }
     };
 
     const handleDetailsSubmit = (e: React.FormEvent) => {
@@ -88,8 +86,6 @@ function LoginPageCore() {
         const newOtp = [...otp];
         newOtp[index] = value;
         setOtp(newOtp);
-
-        // Move to next input
         if (value && index < 5) {
             inputRefs.current[index + 1]?.focus();
         }
@@ -100,7 +96,6 @@ function LoginPageCore() {
             inputRefs.current[index - 1]?.focus();
         }
     };
-
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -113,13 +108,12 @@ function LoginPageCore() {
             const credential = await confirmationResult.confirm(otp.join(''));
             const user = credential.user;
 
-            // User is now authenticated, save their profile data
             const userProfile = {
                 uid: user.uid,
                 phone: user.phoneNumber,
                 name: onboardingData.name,
                 location: onboardingData.location,
-                language: onboardingData.language,
+                language: selectedLanguage,
                 profilePicture: '/images/image.png'
             };
             
@@ -145,25 +139,56 @@ function LoginPageCore() {
         if (phone.length !== 10) return phone;
         return `+91 ${phone.substring(0, 3)}XXX-XXX${phone.substring(6)}`;
     }
-
+    
     const renderStep = () => {
         switch (step) {
             case 'language':
                 return (
-                    <Card className="w-full max-w-sm shadow-lg">
-                        <CardHeader className="text-center">
-                             <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} className="mx-auto" />
-                            <CardTitle>Select Your Language</CardTitle>
-                            <CardDescription>Choose your preferred language</CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-2 gap-4">
-                            {languages.map(lang => (
-                                <Button key={lang.value} variant="outline" onClick={() => handleLanguageSelect(lang.value)}>
-                                    {lang.label}
-                                </Button>
+                    <div className="w-full max-w-sm flex flex-col justify-between h-full py-8">
+                        <div className="text-center">
+                            <div className="mx-auto bg-green-500 rounded-full w-16 h-16 flex items-center justify-center mb-4">
+                                <Image src="/images/sprout.png" alt="Sprout" width={32} height={32} />
+                            </div>
+                            <h1 className="text-2xl font-bold text-green-800">Welcome to Vyavasaay</h1>
+                            <p className="text-muted-foreground mt-1">Choose your preferred language</p>
+                            <p className="text-muted-foreground">अपनी भाषा चुनें</p>
+                        </div>
+                        <div className="space-y-3 my-6">
+                            {languages.filter(l => ['hi', 'en', 'mr', 'gu', 'pa', 'ta'].includes(l.value)).map(lang => (
+                                <button
+                                    key={lang.value}
+                                    onClick={() => setSelectedLanguage(lang.value)}
+                                    className={cn(
+                                        "w-full flex items-center p-3 rounded-lg border-2 transition-all",
+                                        selectedLanguage === lang.value
+                                            ? "bg-green-50 border-green-500"
+                                            : "bg-white border-gray-200"
+                                    )}
+                                >
+                                    <div className="w-10 h-10 bg-blue-500 rounded-md flex items-center justify-center text-white font-bold text-xl mr-4">{lang.short}</div>
+                                    <div className="text-left">
+                                        <p className="font-semibold text-gray-800">{lang.native}</p>
+                                        <p className="text-sm text-gray-500">{lang.label}</p>
+                                    </div>
+                                    {selectedLanguage === lang.value && (
+                                        <div className="ml-auto w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                            <Check className="w-4 h-4 text-white" />
+                                        </div>
+                                    )}
+                                </button>
                             ))}
-                        </CardContent>
-                    </Card>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="bg-orange-100 text-orange-700 text-sm p-3 rounded-lg flex items-center justify-center gap-2">
+                                <Sparkles className="w-4 h-4" />
+                                Most farmers choose Hindi & English
+                            </div>
+                            <Button onClick={handleLanguageContinue} disabled={!selectedLanguage} className="w-full bg-green-600 hover:bg-green-700 text-white text-lg h-12">
+                                Continue • जारी रखें
+                            </Button>
+                            <p className="text-center text-xs text-gray-500">You can change this later in settings</p>
+                        </div>
+                    </div>
                 );
             case 'details':
                 return (
@@ -304,8 +329,8 @@ function LoginPageCore() {
     
     return (
         <main className={cn(
-            "flex min-h-screen flex-col items-center justify-center p-4",
-            step === 'otp' ? 'bg-green-50' : 'bg-gray-50'
+            "flex min-h-screen flex-col items-center justify-start p-4",
+            step === 'language' ? 'bg-[#F7FDF3]' : 'bg-gray-50'
         )}>
             <div id="recaptcha-container" className="my-4"></div>
             {renderStep()}

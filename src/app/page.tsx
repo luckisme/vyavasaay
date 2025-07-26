@@ -36,14 +36,17 @@ import OfflinePage from '@/components/features/offline-page';
 export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'ask' | 'grow-hub' | 'profile';
 
 export const languages = [
-    { value: 'en', label: 'English', short: 'En' },
-    { value: 'hi', label: 'हिन्दी', short: 'हि' },
-    { value: 'mr', label: 'मराठी', short: 'म' },
-    { value: 'ta', label: 'தமிழ்', short: 'த' },
-    { value: 'te', label: 'తెలుగు', short: 'తె' },
-    { value: 'bn', label: 'বাংলা', short: 'বা' },
-    { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ' },
+    { value: 'en', label: 'English', short: 'E', native: 'English' },
+    { value: 'hi', label: 'हिन्दी', short: 'ह', native: 'हिन्दी' },
+    { value: 'mr', label: 'मराठी', short: 'म', native: 'मराठी' },
+    { value: 'ta', label: 'தமிழ்', short: 'த', native: 'தமிழ்' },
+    { value: 'te', label: 'తెలుగు', short: 'తె', native: 'తెలుగు' },
+    { value: 'bn', label: 'বাংলা', short: 'ব', native: 'বাংলা' },
+    { value: 'kn', label: 'ಕನ್ನಡ', short: 'ಕ', native: 'ಕನ್ನಡ' },
+    { value: 'gu', label: 'ગુજરાતી', short: 'ગ', native: 'ગુજરાતી' },
+    { value: 'pa', label: 'ਪੰਜਾਬੀ', short: 'ਪ', native: 'ਪੰਜਾਬੀ' },
 ];
+
 
 interface DataStates {
     weather: { data: WeatherData | null; error: string | null; loading: boolean; };
