@@ -146,14 +146,14 @@ function LoginPageCore() {
                 return (
                     <div className="w-full max-w-sm flex flex-col justify-between h-full py-8">
                         <div className="text-center">
-                            <div className="mx-auto bg-green-500 rounded-full w-16 h-16 flex items-center justify-center mb-4">
-                                <Image src="/images/sprout.png" alt="Sprout" width={32} height={32} />
+                            <div className="mx-auto w-24 h-24 flex items-center justify-center mb-4">
+                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={100} height={100} />
                             </div>
                             <h1 className="text-2xl font-bold text-green-800">Welcome to Vyavasaay</h1>
                             <p className="text-muted-foreground mt-1">Choose your preferred language</p>
                         </div>
                         <div className="space-y-3 my-6">
-                            {languages.filter(l => ['hi', 'en', 'mr', 'gu', 'pa', 'ta'].includes(l.value)).map(lang => (
+                            {languages.map(lang => (
                                 <button
                                     key={lang.value}
                                     onClick={() => setSelectedLanguage(lang.value)}
@@ -178,12 +178,8 @@ function LoginPageCore() {
                             ))}
                         </div>
                         <div className="space-y-4">
-                            <div className="bg-orange-100 text-orange-700 text-sm p-3 rounded-lg flex items-center justify-center gap-2">
-                                <Sparkles className="w-4 h-4" />
-                                Most farmers choose Hindi & English
-                            </div>
                             <Button onClick={handleLanguageContinue} disabled={!selectedLanguage} className="w-full bg-green-600 hover:bg-green-700 text-white text-lg h-12">
-                                Continue • जारी रखें
+                                Continue
                             </Button>
                             <p className="text-center text-xs text-gray-500">You can change this later in settings</p>
                         </div>
