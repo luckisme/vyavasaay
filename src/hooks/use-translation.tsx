@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
@@ -79,7 +80,7 @@ export const TranslationProvider = ({ children, initialLanguage = 'en' }: { chil
 
   return (
     <TranslationContext.Provider value={value}>
-      {!isLoading ? children : null /* Or a loading screen */}
+      {children}
     </TranslationContext.Provider>
   );
 };
