@@ -125,25 +125,23 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
       content: input,
     };
   
-    // Create the full history including the new message
-    const currentHistory: { role: 'user' | 'model'; content: string }[] = messages
-        .map(msg => ({
-            role: msg.role,
-            // Ensure content is a string
-            content: typeof msg.content === 'string' ? msg.content : ''
-        }))
-        .filter(msg => typeof msg.content === 'string'); // Filter out any non-string content just in case
-
-
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+
+    // Create the history to send to the action
+    const historyForAction = messages
+        .map(msg => ({
+            role: msg.role === 'assistant' ? 'model' as const : 'user' as const,
+            content: typeof msg.content === 'string' ? msg.content : ''
+        }))
+        .filter(msg => typeof msg.content === 'string');
   
     const result = await askVyavasaayAction(
       input,
       user,
       langCode,
-      currentHistory,
+      historyForAction
     );
     
     let assistantMessage: ChatMessage;

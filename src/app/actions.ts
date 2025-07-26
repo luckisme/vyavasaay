@@ -87,9 +87,9 @@ export async function askVyavasaayAction(
       { role: 'user' as const, content: question }
     ];
 
-    const result = await answerFarmerQuestion({ 
+    const result = await answerFarmerQuestion({
         messages,
-        location: user.location, 
+        location: user.location,
         language: languageName,
         voice: 'Achernar', // Use female voice by default
     });
@@ -310,4 +310,5 @@ export async function updateUserProfileAction(formData: FormData): Promise<{ suc
       return { success: false, error: "Failed to update profile." };
     }
   }
+
 
