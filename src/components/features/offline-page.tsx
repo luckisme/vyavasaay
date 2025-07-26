@@ -2,14 +2,15 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { WifiOff, ArrowLeft, Phone, MessageSquare, BookOpen, Play, Sprout } from 'lucide-react';
+import { WifiOff, ArrowLeft, Phone, MessageSquare, BookOpen, Play, Sprout, Tractor, Dot } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
 import { useUser } from '@/hooks/use-user';
-import { Avatar } from '../ui/avatar';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { cn } from '@/lib/utils';
 
 
 const OfflineHeader = () => {
@@ -36,18 +37,64 @@ const OfflineHeader = () => {
 
 const resources = [
     {
-        title: "Crop Planting Guide",
-        description: "Comprehensive guide covering planting schedules, soil requirements, and best...",
-        tag: "Planting",
-        size: "15.2 MB"
+        title: "Pest Management Manual",
+        description: "Identification and organic control methods for common agricultural pests.",
+        tag: "Pest Control",
+        size: "18.5 MB"
     },
     {
-        title: "Organic Fertilizer Handbook",
-        description: "Complete guide to organic fertilizers, composting techniques, and nutrient...",
-        tag: "Fertilization",
-        size: "12.8 MB"
+        title: "Monsoon Farming Guide",
+        description: "Seasonal farming strategies for monsoon conditions and water management.",
+        tag: "Seasonal",
+        size: "21.3 MB"
     }
 ];
+
+const farmData = {
+    season: "Kharif 2025",
+    crops: [
+        {
+            name: "Cotton",
+            icon: Sprout,
+            area: 3.2,
+            day: 45,
+            status: "Healthy",
+            statusClass: "text-green-600",
+            action: "Irrigation due in 2 days"
+        },
+        {
+            name: "Sugarcane",
+            icon: Sprout,
+            area: 2.0,
+            day: 120,
+            status: "Monitor",
+            statusClass: "text-orange-600",
+            action: "Pest check required"
+        }
+    ]
+}
+
+const recentConversations = [
+    {
+        question: "When is the best time to harvest wheat?",
+        answer: "Wheat should be harvested when the grain moisture content is around 14-16%. Look for...",
+        tag: "Harvesting",
+        time: "2025-07-25 15:30"
+    },
+    {
+        question: "How to control aphids organically?",
+        answer: "Use neem oil spray (2-3ml per liter), introduce ladybugs, or spray soapy water solution early...",
+        tag: "Pest Control",
+        time: "2025-07-24 09:15"
+    },
+    {
+        question: "Best fertilizer for cotton growth?",
+        answer: "Use NPK 19:19:19 at 50kg/hectare during flowering stage. Add organic compost for better soil health.",
+        tag: "Fertilization",
+        time: "2025-07-23 14:45"
+    }
+];
+
 
 export default function OfflinePage() {
     const { t } = useTranslation();
@@ -61,7 +108,7 @@ export default function OfflinePage() {
         <div className="animate-fade-in bg-background min-h-screen">
             <OfflineHeader />
 
-            <div className="p-4 space-y-6">
+            <div className="p-4 space-y-6 pb-24">
 
                 <Card className="bg-red-500 text-white rounded-xl shadow-lg">
                     <CardContent className="p-4 flex items-center justify-between gap-3">
@@ -120,14 +167,13 @@ export default function OfflinePage() {
                     </div>
                 </div>
 
-
                 <div className="space-y-4">
                      <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold font-headline flex items-center gap-2">
                            <BookOpen className="h-5 w-5 text-primary"/>
                            Downloaded Resources
                         </h2>
-                        <Badge className="bg-green-100 text-green-800">4 Available</Badge>
+                        <Badge className="bg-green-100 text-green-800">2 Available</Badge>
                     </div>
                     {resources.map((res, i) => (
                         <Card key={i}>
@@ -149,6 +195,60 @@ export default function OfflinePage() {
                     ))}
                 </div>
 
+                <div className="space-y-4">
+                    <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+                        <Tractor className="h-5 w-5 text-primary" /> My Farm (Last Sync)
+                    </h2>
+                    <Card>
+                        <CardHeader className="p-4">
+                            <CardTitle className="text-base">{farmData.season}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0 space-y-4">
+                            {farmData.crops.map(crop => (
+                                <div key={crop.name} className="flex items-center gap-3">
+                                    <Avatar className="h-10 w-10 bg-green-100">
+                                        <AvatarFallback className="bg-transparent"><crop.icon className="text-green-600"/></AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1">
+                                        <p className="font-semibold">{crop.name}</p>
+                                        <p className="text-sm text-muted-foreground">{crop.area} acres <Dot /> Day {crop.day}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className={cn("font-semibold text-sm", crop.statusClass)}>{crop.status}</p>
+                                        <p className="text-sm text-muted-foreground">{crop.action}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                 <div className="space-y-4">
+                    <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+                        <MessageSquare className="h-5 w-5 text-primary" /> Recent AI Conversations
+                    </h2>
+                    <div className="space-y-3">
+                        {recentConversations.map(convo => (
+                            <Card key={convo.question}>
+                                <CardContent className="p-4 space-y-2">
+                                     <p className="font-semibold text-sm flex items-center gap-2">
+                                        <Avatar className="h-6 w-6 bg-blue-100">
+                                             <AvatarFallback className="bg-transparent text-blue-600 text-xs font-bold">AI</AvatarFallback>
+                                        </Avatar>
+                                        {convo.question}
+                                     </p>
+                                     <p className="text-sm text-muted-foreground pl-8">{convo.answer}</p>
+                                     <div className="flex items-center justify-between pl-8 pt-1">
+                                         <Badge variant="outline">{convo.tag}</Badge>
+                                         <span className="text-xs text-muted-foreground">{convo.time}</span>
+                                     </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+
+                <Button className="w-full fixed bottom-4 left-1/2 -translate-x-1/2 max-w-sm" size="lg">Offline Tips</Button>
             </div>
         </div>
     );
