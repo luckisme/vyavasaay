@@ -20,10 +20,10 @@ import { useAuth } from '@/hooks/use-auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/layout/bottom-nav';
 import { Button } from '@/components/ui/button';
-import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction, generateWeatherBasedTipAction } from '@/app/actions';
+import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction, generateWeatherBasedTipAction, getAgriNewsAction } from '@/app/actions';
 import type { WeatherData } from '@/app/actions';
 import type { WeatherAlert, WeatherTip } from '@/app/actions';
-import type { MarketAnalysisOutput } from '@/lib/types';
+import type { MarketAnalysisOutput, AgriNewsArticle } from '@/lib/types';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import CropCalculator from '@/components/features/crop-calculator';
 import CropSelector from '@/components/features/crop-selector';
@@ -54,6 +54,7 @@ interface DataStates {
     schemes: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; };
     weatherAlert: { data: WeatherAlert | null; error: string | null; loading: boolean; };
     weatherTip: { data: WeatherTip | null; error: string | null; loading: boolean; };
+    agriNews: { data: AgriNewsArticle[] | null; error: string | null; loading: boolean; };
 }
 
 export const AppHeader = ({ setActiveFeature, isOffline = false }: { setActiveFeature: (feature: Feature) => void, isOffline?: boolean }) => {
@@ -154,6 +155,7 @@ function AppCore() {
     schemes: { data: null, error: null, loading: true },
     weatherAlert: { data: null, error: null, loading: true },
     weatherTip: { data: null, error: null, loading: true },
+    agriNews: { data: null, error: null, loading: true },
   });
 
 
@@ -219,6 +221,16 @@ function AppCore() {
         }).catch(e => {
             setDataStates(s => ({ ...s, schemes: { data: null, error: e.message, loading: false }}));
         });
+        
+        setDataStates(s => ({ ...s, agriNews: { data: null, error: null, loading: true }}));
+        getAgriNewsAction(user.location).then(result => {
+            if (result.error) {
+                setDataStates(s => ({ ...s, agriNews: { data: null, error: result.error, loading: false }}));
+            } else {
+                setDataStates(s => ({ ...s, agriNews: { data: result.articles || null, error: null, loading: false }}));
+            }
+        });
+
     }
   }, [user, language, t, isOffline]);
 
@@ -261,6 +273,7 @@ function AppCore() {
             weatherState={dataStates.weather}
             weatherAlertState={dataStates.weatherAlert}
             weatherTipState={dataStates.weatherTip}
+            agriNewsState={dataStates.agriNews}
         />;
     }
   };

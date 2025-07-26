@@ -20,6 +20,8 @@ import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
 import type { WeatherBasedTipOutput } from '@/ai/flows/generate-weather-based-tip';
 import type { CommonCropIssuesOutput } from '@/ai/flows/get-common-crop-issues';
+import type { AgriNewsArticle } from '@/lib/types';
+
 
 const allLanguages = [
     { value: 'en', label: 'English', short: 'En' },
@@ -271,6 +273,64 @@ export async function getCommonCropIssuesAction(
         console.error(e);
         // Return an empty array on error so the UI doesn't break
         return { issues: [] };
+    }
+}
+
+// Action for Agri News
+export async function getAgriNewsAction(location: string): Promise<{ articles?: AgriNewsArticle[], error?: string }> {
+    if (!location) {
+        return { error: 'Location is required for news.' };
+    }
+
+    const apiKey = 'api_live_MA3P1FyXmwA5JruAiR0wQZzqJUQ0UqGNxiuv9fIibXwNy';
+    const city = location.split(',')[0].trim();
+    const query = `agriculture in ${city}`;
+    const url = `https://api.apitube.io/v1/news/articles?q=${encodeURIComponent(query)}&limit=3`;
+    
+    try {
+        const response = await fetch(url, { headers: { 'X-Api-Key': apiKey }});
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('APITube News API Error:', errorData);
+            return { error: `Could not fetch news for "${city}".` };
+        }
+        const data = await response.json();
+        
+        const articles: AgriNewsArticle[] = data.data.map((article: any) => ({
+            title: article.title,
+            location: article.source,
+            imageUrl: article.thumbnail,
+            link: article.url,
+        })).slice(0, 3); // Ensure we only take 3 articles
+
+        return { articles };
+    } catch (e) {
+        console.error(e);
+        // Fallback to static data if API fails
+        const staticArticles: AgriNewsArticle[] = [
+            {
+                title: 'Pest Outbreak Alert',
+                location: 'Raipur',
+                imageUrl: 'https://placehold.co/300x200.png',
+                dataAiHint: 'pest insect',
+                link: '#'
+            },
+            {
+                title: 'Farmers Market',
+                location: 'Pune',
+                imageUrl: 'https://placehold.co/300x200.png',
+                dataAiHint: 'vegetable market',
+                link: '#'
+            },
+            {
+                title: 'Water Shortage',
+                location: 'Solapur',
+                imageUrl: 'https://placehold.co/300x200.png',
+                dataAiHint: 'dry soil',
+                link: '#'
+            }
+        ];
+        return { articles: staticArticles };
     }
 }
 

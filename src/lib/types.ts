@@ -35,3 +35,12 @@ export const MarketAnalysisOutputSchema = z.object({
   })).describe("A list of 2-3 specific, location-based price alerts for the farmer.")
 });
 export type MarketAnalysisOutput = z.infer<typeof MarketAnalysisOutputSchema>;
+
+// Agri News Types
+export interface AgriNewsArticle {
+  title: string;
+  location: string;
+  imageUrl: string;
+  link: string;
+  dataAiHint?: string;
+}

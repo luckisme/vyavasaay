@@ -21,6 +21,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { AgriNewsArticle } from '@/lib/types';
+import AgriNews from './agri-news';
 
 interface DiscoverProps {
   setActiveFeature: (feature: Feature) => void;
@@ -36,6 +38,11 @@ interface DiscoverProps {
   };
   weatherTipState: {
     data: WeatherTip | null;
+    error: string | null;
+    loading: boolean;
+  };
+   agriNewsState: {
+    data: AgriNewsArticle[] | null;
     error: string | null;
     loading: boolean;
   };
@@ -84,7 +91,7 @@ const WeatherAlertCard = ({ state }: { state: DiscoverProps['weatherAlertState']
 };
 
 
-export default function Discover({ setActiveFeature, weatherState, weatherAlertState, weatherTipState }: DiscoverProps) {
+export default function Discover({ setActiveFeature, weatherState, weatherAlertState, weatherTipState, agriNewsState }: DiscoverProps) {
   const { t } = useTranslation();
   const [showAllResources, setShowAllResources] = useState(false);
   const [isResourcesLoading, setIsResourcesLoading] = useState(true);
@@ -182,6 +189,9 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
             )}
         </div>
         
+        {/* Agri News Section */}
+        <AgriNews state={agriNewsState} />
+
         {/* Quick Links */}
         <div>
             <h2 className="text-xl font-bold tracking-tight text-foreground font-headline mb-3 flex items-center gap-2">
