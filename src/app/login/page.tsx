@@ -198,17 +198,17 @@ function LoginPageCore() {
             case 'details':
                 return (
                     <div className="w-full max-w-sm flex flex-col h-full">
-                        <header className="flex items-center gap-4 p-4 -ml-4">
+                        <header className="flex items-center p-4 -ml-4">
                             <Button variant="ghost" size="icon" onClick={goBack}><ArrowLeft/></Button>
-                            <div className="flex items-center gap-2">
-                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={40} height={40} />
-                            </div>
                         </header>
-                        <div className="text-center my-4">
+                         <div className="text-center">
+                            <div className="mx-auto w-40 h-40 flex items-center justify-center mb-4">
+                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} />
+                            </div>
                             <h1 className="text-2xl font-bold text-green-800">{t('onboarding.details.title', 'Tell us about yourself')}</h1>
                             <p className="text-muted-foreground">{t('onboarding.details.description', 'Help us personalize your experience')}</p>
                         </div>
-                        <form onSubmit={handleDetailsSubmit} className="space-y-4 flex-1">
+                        <form onSubmit={handleDetailsSubmit} className="space-y-4 flex-1 mt-4">
                             <Card>
                                 <CardContent className="p-4 space-y-2">
                                     <div className="flex items-start gap-3">
