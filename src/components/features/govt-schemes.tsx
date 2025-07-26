@@ -85,7 +85,7 @@ export default function GovtSchemes({ state }: GovtSchemesProps) {
         <SchemeResults state={state} />
 
         <div className="space-y-4 pt-4">
-            <h2 className="text-xl font-bold font-headline flex items-center gap-2">{t('govtSchemes.quicklink.title', 'Quick Links')}</h2>
+            <h2 className="text-2xl font-bold font-headline flex items-center gap-2">{t('govtSchemes.quicklink.title', 'Quick Links')}</h2>
             <div className="grid grid-cols-2 gap-4">
                 {quickLinks.map(link => <QuickLinkCard key={link.title} {...link} />)}
             </div>

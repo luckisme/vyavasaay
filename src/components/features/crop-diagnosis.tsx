@@ -329,7 +329,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
         )}
 
         <div className="space-y-4">
-            <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+            <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
                 <AlertTriangle className="text-orange-500 h-5 w-5" />
                 Common Issues This Season
             </h2>

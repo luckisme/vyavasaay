@@ -104,7 +104,7 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
             {/* Recent Discussions Section */}
             <div className="space-y-4">
                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-bold font-headline flex items-center gap-2">
+                    <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
                         <MessageSquare className="h-5 w-5 text-primary" /> {t('growHub.recentDiscussions.title', 'Recent Discussions')}
                     </h2>
                     <Button variant="link" className="text-primary pr-0">
@@ -136,7 +136,7 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
             {/* Knowledge Library Section */}
             <div>
                 <div className="flex justify-between items-center mb-3">
-                    <h2 className="text-xl font-bold tracking-tight text-foreground font-headline flex items-center gap-2">
+                    <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
                         <BookOpen className="h-5 w-5 text-primary"/>
                         {t('growHub.knowledgeLibrary.title', 'Knowledge Library')}
                     </h2>

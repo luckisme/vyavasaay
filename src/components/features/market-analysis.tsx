@@ -123,7 +123,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             {/* Today's Prices */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
+                    <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
                         {t('marketAnalysis.todaysPrices', "Today's Prices")}
                     </h2>
                 </div>
@@ -154,7 +154,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
 
             {/* Price Alerts */}
             <div className="space-y-4">
-                 <h2 className="text-xl font-bold flex items-center gap-2">
+                 <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
                     <Bell className="h-5 w-5 text-primary" /> {t('marketAnalysis.priceAlerts', 'Price Alerts')}
                 </h2>
                 {priceAlerts.map((alert, index) => {
@@ -176,7 +176,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
 
             {/* Market Categories */}
             <div className="space-y-4">
-                 <h2 className="text-xl font-bold flex items-center gap-2">
+                 <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
                     {t('marketAnalysis.marketCategories', 'Market Categories')}
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
