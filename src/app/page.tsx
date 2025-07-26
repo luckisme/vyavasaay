@@ -9,7 +9,6 @@ import CropDiagnosis from '@/components/features/crop-diagnosis';
 import MarketAnalysis from '@/components/features/market-analysis';
 import GovtSchemes from '@/components/features/govt-schemes';
 import Weather from '@/components/features/weather';
-import OnboardingModal from '@/components/onboarding-modal';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Avatar } from '@/components/ui/avatar';
 import Image from 'next/image';
@@ -141,7 +140,7 @@ export const AppHeader = ({ setActiveFeature, isOffline = false }: { setActiveFe
 }
 
 function AppCore() {
-  const { user, isUserLoading, needsOnboarding, setUserProfile } = useUser();
+  const { user, isUserLoading } = useUser();
   const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('discover');
   const isOffline = useOffline();
@@ -162,7 +161,7 @@ function AppCore() {
   }, [user?.language, setLanguage]);
 
   useEffect(() => {
-    if (user && !needsOnboarding && !isOffline) {
+    if (user && !isOffline) {
         const languageName = languages.find(l => l.value === language)?.label || 'English';
         const farmerDetails = t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
         
@@ -218,7 +217,7 @@ function AppCore() {
             setDataStates(s => ({ ...s, schemes: { data: null, error: e.message, loading: false }}));
         });
     }
-  }, [user, language, t, needsOnboarding, isOffline]);
+  }, [user, language, t, isOffline]);
 
   if (isUserLoading) {
         return (
@@ -265,8 +264,7 @@ function AppCore() {
   
   return (
     <>
-      <OnboardingModal isOpen={needsOnboarding} />
-      {user && !needsOnboarding && (
+      {user && (
          <SidebarProvider>
             <AppSidebar activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
             <div className="flex flex-col w-full min-h-screen">

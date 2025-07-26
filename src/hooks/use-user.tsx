@@ -22,7 +22,6 @@ interface UserContextType {
   user: UserProfile | null;
   setUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
   isUserLoading: boolean;
-  needsOnboarding: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -31,21 +30,19 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { authUser, isLoading: isAuthLoading } = useAuth();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
-  const fetchUserProfile = useCallback(async (uid: string, phone: string) => {
+  const fetchUserProfile = useCallback(async (uid: string) => {
     setIsUserLoading(true);
     const userDocRef = doc(db, 'users', uid);
     try {
       const docSnap = await getDoc(userDocRef);
       if (docSnap.exists()) {
         setUser(docSnap.data() as UserProfile);
-        setNeedsOnboarding(false);
       } else {
-        // This is a new user, trigger onboarding
-        console.log('User profile does not exist, triggering onboarding.');
-        setUser({ uid, phone, name: '', location: '', language: 'en' }); // Temporary user object
-        setNeedsOnboarding(true);
+        // This case should be handled by the new login flow.
+        // If a user is authenticated but has no profile, it's an edge case.
+        // We redirect them to login to re-do the onboarding.
+        console.warn('User is authenticated but profile does not exist. Redirecting to login.');
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -58,12 +55,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     if (!isAuthLoading) {
       if (authUser) {
         if (!user || user.uid !== authUser.uid) { // Fetch only if user is different
-          fetchUserProfile(authUser.uid, authUser.phoneNumber!);
+          fetchUserProfile(authUser.uid);
+        } else {
+            // User is already loaded and matches authUser
+            setIsUserLoading(false);
         }
       } else {
         setUser(null);
         setIsUserLoading(false);
-        setNeedsOnboarding(false);
       }
     }
   }, [authUser, isAuthLoading, fetchUserProfile, user]);
@@ -84,16 +83,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       await setDoc(userDocRef, updatedProfile, { merge: true });
       setUser(updatedProfile as UserProfile);
       
-      // If this update came from onboarding, mark it as complete
-      if (needsOnboarding && updatedProfile.name && updatedProfile.location) {
-        setNeedsOnboarding(false);
-      }
     } catch (error) {
       console.error("Error updating user profile:", error);
     }
-  }, [authUser, needsOnboarding]);
+  }, [authUser]);
 
-  const value = { user, setUserProfile, isUserLoading, needsOnboarding };
+  const value = { user, setUserProfile, isUserLoading };
 
   return (
     <UserContext.Provider value={value}>

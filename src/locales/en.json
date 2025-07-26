@@ -270,6 +270,42 @@
     "voicePlaceholder": "Select a voice",
     "button": "Save and Continue"
   },
+  "login": {
+    "otpSent": {
+      "title": "OTP Sent",
+      "description": "Check your phone for the verification code."
+    },
+    "error": {
+      "title": "Error",
+      "invalidOtp": "Invalid OTP. Please try again."
+    },
+    "success": {
+      "title": "Success",
+      "description": "You are now logged in."
+    },
+    "phone": {
+      "title": "Mobile Verification",
+      "description": "Enter your number to get an OTP",
+      "placeholder": "Enter 10-digit number",
+      "sendOtpButton": "Send OTP"
+    },
+    "otp": {
+      "title": "Mobile Verification",
+      "subtitle": "OTP Verification",
+      "prompt": "Enter the 6-digit code sent to your mobile number",
+      "codeSentTo": "Code sent to:",
+      "changeButton": "Change",
+      "resendTimer": "Resend in {{seconds}} seconds",
+      "resendButton": "Resend Code",
+      "tips": {
+        "title": "Tips",
+        "tip1": "Code may take 1-2 minutes to arrive",
+        "tip2": "Check your spam folder too",
+        "tip3": "Ensure good network connection"
+      },
+      "verifyButton": "Verify"
+    }
+  },
   "voices": {
     "female": "Female",
     "male": "Male"
