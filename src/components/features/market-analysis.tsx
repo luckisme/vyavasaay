@@ -8,18 +8,20 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowUp, ArrowDown, BarChart, AlertTriangle, Bell, CheckCircle, Apple, Wheat } from 'lucide-react';
+import { ArrowUp, ArrowDown, BarChart, AlertTriangle, Bell, CheckCircle, Apple, Wheat, ArrowLeft } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
 import type { MarketAnalysisOutput } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import type { Feature } from '@/app/page';
 
 type MarketAnalysisProps = {
     state: {
         data: MarketAnalysisOutput | null;
         error: string | null;
         loading: boolean;
-    }
+    },
+    setActiveFeature: (feature: Feature) => void;
 }
 
 const SpicesIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -38,7 +40,7 @@ const VegetablesIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 
-export default function MarketAnalysis({ state }: MarketAnalysisProps) {
+export default function MarketAnalysis({ state, setActiveFeature }: MarketAnalysisProps) {
     const { t } = useTranslation();
     const { user } = useUser();
 
@@ -100,10 +102,15 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div>
-                <h1 className="text-2xl font-bold font-headline text-primary">{t('marketAnalysis.title', 'Market Analysis')}</h1>
-                <p className="text-muted-foreground">{t('marketAnalysis.descriptionPage', 'Real-time market prices for {{location}}', { location: user?.location || t('marketAnalysis.yourArea', 'your area') })}</p>
-            </div>
+            <header className="flex items-center gap-4">
+                <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
+                    <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <div>
+                    <h1 className="text-2xl font-bold text-primary">{t('marketAnalysis.title', 'Market Analysis')}</h1>
+                    <p className="text-muted-foreground">{t('marketAnalysis.descriptionPage', 'Real-time market prices for {{location}}', { location: user?.location || t('marketAnalysis.yourArea', 'your area') })}</p>
+                </div>
+            </header>
 
             {/* Market Alert */}
             <Card className="bg-gradient-to-br from-orange-500 to-red-600 text-white border-none shadow-xl rounded-2xl">
@@ -123,7 +130,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
             {/* Today's Prices */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
                         {t('marketAnalysis.todaysPrices', "Today's Prices")}
                     </h2>
                 </div>
@@ -154,7 +161,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
 
             {/* Price Alerts */}
             <div className="space-y-4">
-                 <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
+                 <h2 className="text-xl font-bold flex items-center gap-2">
                     <Bell className="h-5 w-5 text-primary" /> {t('marketAnalysis.priceAlerts', 'Price Alerts')}
                 </h2>
                 {priceAlerts.map((alert, index) => {
@@ -176,7 +183,7 @@ export default function MarketAnalysis({ state }: MarketAnalysisProps) {
 
             {/* Market Categories */}
             <div className="space-y-4">
-                 <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
+                 <h2 className="text-xl font-bold flex items-center gap-2">
                     {t('marketAnalysis.marketCategories', 'Market Categories')}
                 </h2>
                 <div className="grid grid-cols-2 gap-4">

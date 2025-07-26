@@ -245,7 +245,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
                 <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-                <h1 className="text-2xl font-bold font-headline">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
+                <h1 className="text-2xl font-bold">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
                 <p className="text-muted-foreground">{t('cropDiagnosis.descriptionPage', 'AI-powered crop disease and pest detection')}</p>
             </div>
         </header>
@@ -280,7 +280,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
 
         {state.data && (
             <div className="space-y-4">
-                 <h2 className="text-xl font-bold font-headline">Diagnosis Result</h2>
+                 <h2 className="text-xl font-bold">Diagnosis Result</h2>
                 <Card>
                     <CardContent className="p-4 space-y-4">
                         <div className="flex items-center gap-4">
@@ -307,7 +307,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
 
         {recentDiagnoses.length > 0 && (
           <div className="space-y-4">
-              <h2 className="text-xl font-bold font-headline">Recent Diagnoses</h2>
+              <h2 className="text-xl font-bold">Recent Diagnoses</h2>
               <div className="space-y-3">
                 {recentDiagnoses.map((item, index) => (
                     <Card key={index}>
@@ -329,7 +329,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
         )}
 
         <div className="space-y-4">
-            <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
+            <h2 className="text-xl font-bold flex items-center gap-2">
                 <AlertTriangle className="text-orange-500 h-5 w-5" />
                 Common Issues This Season
             </h2>

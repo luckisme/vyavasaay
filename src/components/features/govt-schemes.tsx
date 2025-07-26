@@ -4,13 +4,14 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, Loader2, Landmark, FileText, Building2, Phone, RefreshCw, ExternalLink, Leaf } from 'lucide-react';
+import { AlertCircle, Loader2, Landmark, FileText, Building2, Phone, RefreshCw, ExternalLink, Leaf, ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
+import type { Feature } from '@/app/page';
 
 
 const TractorIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -28,7 +29,8 @@ type GovtSchemesProps = {
         data: GovernmentSchemeOutput | null;
         error: string | null;
         loading: boolean;
-    }
+    },
+    setActiveFeature: (feature: Feature) => void;
 }
 
 const getSchemeIcon = (schemeName: string) => {
@@ -67,7 +69,7 @@ const QuickLinkCard = ({ icon: Icon, title, description }: { icon: React.Element
     </Card>
 );
 
-export default function GovtSchemes({ state }: GovtSchemesProps) {
+export default function GovtSchemes({ state, setActiveFeature }: GovtSchemesProps) {
   const { t } = useTranslation();
   
   const quickLinks = [
@@ -79,13 +81,19 @@ export default function GovtSchemes({ state }: GovtSchemesProps) {
 
   return (
     <div className="space-y-6">
-        <div>
-            <h1 className="text-2xl font-bold font-headline">{t('govtSchemes.title', 'Available Schemes')}</h1>
-        </div>
+        <header className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
+                <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+                <h1 className="text-2xl font-bold">{t('govtSchemes.title', 'Available Schemes')}</h1>
+            </div>
+        </header>
+        
         <SchemeResults state={state} />
 
         <div className="space-y-4 pt-4">
-            <h2 className="text-2xl font-bold font-headline flex items-center gap-2">{t('govtSchemes.quicklink.title', 'Quick Links')}</h2>
+            <h2 className="text-xl font-bold flex items-center gap-2">{t('govtSchemes.quicklink.title', 'Quick Links')}</h2>
             <div className="grid grid-cols-2 gap-4">
                 {quickLinks.map(link => <QuickLinkCard key={link.title} {...link} />)}
             </div>
@@ -94,7 +102,11 @@ export default function GovtSchemes({ state }: GovtSchemesProps) {
   );
 }
 
-function SchemeResults({ state }: GovtSchemesProps) {
+type SchemeResultsProps = {
+    state: GovtSchemesProps['state']
+}
+
+function SchemeResults({ state }: SchemeResultsProps) {
     const { t } = useTranslation();
 
     if (state.loading) {

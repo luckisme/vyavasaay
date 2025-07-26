@@ -182,7 +182,7 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-bold font-headline">{t('profile.title', 'Profile')}</h1>
+                    <h1 className="text-2xl font-bold">{t('profile.title', 'Profile')}</h1>
                 </div>
             </header>
 
@@ -220,7 +220,7 @@ export default function Profile({ setActiveFeature }: { setActiveFeature: (featu
 
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
                         <Tractor className="h-5 w-5 text-primary" /> {t('profile.farm.title', 'My Farm')}
                     </h2>
                     <Button variant="ghost" onClick={() => setIsEditSheetOpen(true)}>

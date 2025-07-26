@@ -251,9 +251,9 @@ function AppCore() {
       case 'diagnose':
         return <CropDiagnosis setActiveFeature={setActiveFeature} />;
       case 'market':
-        return <MarketAnalysis state={dataStates.market} />;
+        return <MarketAnalysis state={dataStates.market} setActiveFeature={setActiveFeature} />;
       case 'schemes':
-        return <GovtSchemes state={dataStates.schemes} />;
+        return <GovtSchemes state={dataStates.schemes} setActiveFeature={setActiveFeature} />;
       case 'weather':
         return <Weather state={dataStates.weather} />;
       case 'calculator':
