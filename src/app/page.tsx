@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { getMarketAnalysisAction, getWeatherAction, summarizeSchemesAction, generateWeatherAlertAction, generateWeatherBasedTipAction, getAgriNewsAction } from '@/app/actions';
 import type { WeatherData } from '@/app/actions';
 import type { WeatherAlert, WeatherTip } from '@/app/actions';
-import type { MarketAnalysisOutput, AgriNewsArticle } from '@/lib/types';
+import type { MarketAnalysisOutput, AgriNewsOutput } from '@/lib/types';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
 import CropCalculator from '@/components/features/crop-calculator';
 import CropSelector from '@/components/features/crop-selector';
@@ -54,7 +54,7 @@ interface DataStates {
     schemes: { data: GovernmentSchemeOutput | null; error: string | null; loading: boolean; };
     weatherAlert: { data: WeatherAlert | null; error: string | null; loading: boolean; };
     weatherTip: { data: WeatherTip | null; error: string | null; loading: boolean; };
-    agriNews: { data: AgriNewsArticle[] | null; error: string | null; loading: boolean; };
+    agriNews: { data: AgriNewsOutput['articles'] | null; error: string | null; loading: boolean; };
 }
 
 export const AppHeader = ({ setActiveFeature, isOffline = false }: { setActiveFeature: (feature: Feature) => void, isOffline?: boolean }) => {
@@ -223,8 +223,8 @@ function AppCore() {
         });
         
         setDataStates(s => ({ ...s, agriNews: { data: null, error: null, loading: true }}));
-        getAgriNewsAction(user.location).then(result => {
-            if (result.error) {
+        getAgriNewsAction(user.location, languageName).then(result => {
+            if ('error' in result) {
                 setDataStates(s => ({ ...s, agriNews: { data: null, error: result.error, loading: false }}));
             } else {
                 setDataStates(s => ({ ...s, agriNews: { data: result.articles || null, error: null, loading: false }}));

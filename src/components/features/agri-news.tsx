@@ -7,24 +7,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
-import type { AgriNewsArticle } from '@/lib/types';
+import { type AgriNewsOutput } from '@/lib/types';
 import { ArrowRight, Newspaper, MapPin, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 interface AgriNewsProps {
     state: {
-        data: AgriNewsArticle[] | null;
+        data: AgriNewsOutput['articles'] | null;
         error: string | null;
         loading: boolean;
     }
 }
 
-const NewsCard = ({ article }: { article: AgriNewsArticle }) => (
-    <a href={article.link} target="_blank" rel="noopener noreferrer" className="block w-[180px] flex-shrink-0">
+const NewsCard = ({ article }: { article: AgriNewsOutput['articles'][0] }) => (
+    <div className="block w-[180px] flex-shrink-0 cursor-pointer">
         <Card className="overflow-hidden h-full flex flex-col group transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
             <div className="relative h-24">
                 <Image
-                    src={article.imageUrl || 'https://placehold.co/300x200.png'}
+                    src={'https://placehold.co/300x200.png'}
                     alt={article.title}
                     layout="fill"
                     objectFit="cover"
@@ -34,14 +34,17 @@ const NewsCard = ({ article }: { article: AgriNewsArticle }) => (
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             </div>
             <CardContent className="p-3 flex-1 flex flex-col justify-between bg-white">
-                <h3 className="font-bold text-sm leading-snug text-foreground line-clamp-2">{article.title}</h3>
+                <div>
+                  <h3 className="font-bold text-sm leading-snug text-foreground line-clamp-2">{article.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{article.summary}</p>
+                </div>
                 <div className="flex items-center text-xs text-muted-foreground mt-2">
                     <MapPin className="w-3 h-3 mr-1" />
-                    <span>{article.location}</span>
+                    <span>{article.source}</span>
                 </div>
             </CardContent>
         </Card>
-    </a>
+    </div>
 );
 
 const NewsCardSkeleton = () => (

@@ -11,16 +11,16 @@ import { suggestCrops } from '@/ai/flows/suggest-crops';
 import { generateWeatherAlert } from '@/ai/flows/generate-weather-alert';
 import { generateWeatherBasedTip } from '@/ai/flows/generate-weather-based-tip';
 import { getCommonCropIssues } from '@/ai/flows/get-common-crop-issues';
+import { getAgriNews } from '@/ai/flows/get-agri-news';
 import type { DiagnoseCropFromImageOutput } from '@/ai/flows/diagnose-crop-from-image';
 import type { GovernmentSchemeOutput } from '@/ai/flows/summarize-government-scheme';
-import type { MarketAnalysisOutput } from '@/lib/types';
+import type { MarketAnalysisOutput, AgriNewsOutput } from '@/lib/types';
 import type { CropCostCalculationOutput } from '@/ai/flows/calculate-crop-costs';
 import type { CropSuggestionOutput } from '@/ai/flows/suggest-crops';
 import type { UserProfile } from '@/hooks/use-user';
 import type { WeatherAlertOutput } from '@/ai/flows/generate-weather-alert';
 import type { WeatherBasedTipOutput } from '@/ai/flows/generate-weather-based-tip';
 import type { CommonCropIssuesOutput } from '@/ai/flows/get-common-crop-issues';
-import type { AgriNewsArticle } from '@/lib/types';
 
 
 const allLanguages = [
@@ -277,37 +277,19 @@ export async function getCommonCropIssuesAction(
 }
 
 // Action for Agri News
-export async function getAgriNewsAction(location: string): Promise<{ articles?: AgriNewsArticle[], error?: string }> {
+export async function getAgriNewsAction(location: string, language: string): Promise<AgriNewsOutput | { error: string }> {
     if (!location) {
         return { error: 'Location is required for news.' };
     }
+    const languageName = allLanguages.find(l => l.value === language)?.label || 'English';
 
-    const apiKey = 'api_live_MA3P1FyXmwA5JruAiR0wQZzqJUQ0UqGNxiuv9fIibXwNy';
-    const city = location.split(',')[0].trim();
-    const query = `agriculture in ${city}`;
-    const url = `https://api.apitube.io/v1/news/articles?q=${encodeURIComponent(query)}&limit=3`;
-    
     try {
-        const response = await fetch(url, { headers: { 'X-Api-Key': apiKey }});
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('APITube News API Error:', errorData);
-            return { error: `Could not fetch news for "${city}".` };
-        }
-        const data = await response.json();
-        
-        const articles: AgriNewsArticle[] = data.data.map((article: any) => ({
-            title: article.title,
-            location: article.source,
-            imageUrl: article.thumbnail,
-            link: article.url,
-            dataAiHint: 'agriculture news'
-        })).slice(0, 3); // Ensure we only take 3 articles
-
-        return { articles };
+        const result = await getAgriNews({ location, language: languageName });
+        return result;
     } catch (e) {
         console.error(e);
-        return { error: 'An unexpected error occurred while fetching news.' };
+        const errorMessage = e instanceof Error ? e.message : 'An unexpected error occurred while fetching news.';
+        return { error: errorMessage };
     }
 }
 

@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { AgriNewsArticle } from '@/lib/types';
+import { AgriNewsOutput } from '@/lib/types';
 import AgriNews from './agri-news';
 
 interface DiscoverProps {
@@ -42,7 +42,7 @@ interface DiscoverProps {
     loading: boolean;
   };
    agriNewsState: {
-    data: AgriNewsArticle[] | null;
+    data: AgriNewsOutput['articles'] | null;
     error: string | null;
     loading: boolean;
   };
