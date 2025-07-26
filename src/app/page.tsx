@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -111,7 +110,7 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                     </DropdownMenu>
                 </div>
             </div>
-             <div className="flex items-center gap-2 -mt-6">
+             <div className="flex items-center gap-2 -mt-6 mb-6">
                  <div 
                     className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
                     onClick={() => setActiveFeature('ask')}
@@ -277,7 +276,7 @@ function AppCore() {
                     </main>
                 </SidebarInset>
             </div>
-            <BottomNav activeFeature={activeFeature} setActiveFeature={setActiveFeature} />
+            {!isOffline && <BottomNav activeFeature={activeFeature} setActiveFeature={setActiveFeature} />}
         </SidebarProvider>
       )}
     </>
