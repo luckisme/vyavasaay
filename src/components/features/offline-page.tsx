@@ -5,35 +5,14 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { WifiOff, ArrowLeft, Phone, MessageSquare, BookOpen, Play, Sprout, Tractor, Dot } from 'lucide-react';
+import { WifiOff, ArrowLeft, Phone, MessageSquare, BookOpen, Play, Sprout, Tractor, Dot, Lightbulb } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import Image from 'next/image';
 import { useUser } from '@/hooks/use-user';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { cn } from '@/lib/utils';
+import { AppHeader } from '@/app/page';
 
-
-const OfflineHeader = () => {
-    const { user } = useUser();
-    
-    return (
-        <header className="flex items-center justify-between p-4 bg-background">
-            <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-6 w-6" />
-            </Button>
-            <div className="flex items-center gap-2">
-                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={32} height={32} />
-                <span className="font-bold text-lg">Vyavasaay</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <WifiOff className="h-6 w-6 text-red-500" />
-                 <Avatar className="h-8 w-8">
-                    <Image src={user?.profilePicture || "/images/image.png"} alt={user?.name || 'User'} width={32} height={32} />
-                </Avatar>
-            </div>
-        </header>
-    )
-}
 
 const resources = [
     {
@@ -99,18 +78,27 @@ const recentConversations = [
 export default function OfflinePage() {
     const { t } = useTranslation();
     const { user } = useUser();
+    const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
+
 
     const handleRetry = () => {
         window.location.reload();
     }
+    
+    const offlineTips = [
+        "Use Call/SMS for urgent farming queries",
+        "Access downloaded guides anytime",
+        "Your farm data is safely stored locally",
+        "Weather data updates when online"
+    ];
 
     return (
-        <div className="animate-fade-in bg-background min-h-screen">
-            <OfflineHeader />
-
+        <div className="animate-fade-in bg-[#F5F5DC] min-h-screen">
             <div className="p-4 space-y-6 pb-24">
+                <div className="p-4 sm:p-6 pb-0"><AppHeader setActiveFeature={() => {}} isOffline={true}/></div>
 
-                <Card className="bg-red-500 text-white rounded-xl shadow-lg">
+
+                <Card className="bg-red-500 text-white rounded-xl shadow-lg -mt-12">
                     <CardContent className="p-4 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                             <WifiOff className="h-6 w-6" />
@@ -123,47 +111,26 @@ export default function OfflinePage() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-blue-400 to-purple-500 text-white border-none shadow-xl rounded-2xl overflow-hidden">
-                    <CardContent className="p-5 relative">
-                        <div className="flex justify-between items-start">
-                             <div>
-                                <p className="text-sm font-medium">आज का मौसम • Today's Weather (Cached)</p>
-                                <p className="text-4xl font-bold mt-1">28°C</p>
-                                <p className="capitalize">Cloudy</p>
-                                <p className="text-xs opacity-80 mt-1">July 26, 2025 • {user?.name}'s Farm, {user?.location?.split(',')[0]}</p>
-                             </div>
-                             <div className="w-16 h-16 opacity-80">
-                                <Image src="https://openweathermap.org/img/wn/03d@2x.png" alt="Cloudy" width={64} height={64}/>
-                             </div>
-                        </div>
-                        <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-lg p-3 flex items-center gap-3">
-                            <div className="bg-green-500 p-2 rounded-full">
-                                <Sprout className="h-5 w-5 text-white" />
-                            </div>
-                            <div>
-                               <p className="font-bold text-sm">Perfect for {user?.name}'s wheat sowing!</p>
-                               <p className="text-xs opacity-90">Based on last synced weather data.</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                
                 <div>
                     <h2 className="text-xl font-bold font-headline flex items-center gap-2 mb-3">
                        <Phone className="h-5 w-5 text-primary"/>
                         Ask Vyavasaay <Badge variant="outline">Offline Mode</Badge>
                     </h2>
                     <div className="grid grid-cols-2 gap-4">
-                        <Card className="bg-green-500 text-white text-center p-4 flex flex-col items-center justify-center h-40">
-                            <Phone className="h-10 w-10 mb-2" />
-                            <p className="font-bold">Call</p>
-                            <p className="text-xs opacity-90">Instant solution in your own language</p>
-                        </Card>
-                         <Card className="bg-orange-500 text-white text-center p-4 flex flex-col items-center justify-center h-40">
-                            <MessageSquare className="h-10 w-10 mb-2" />
-                            <p className="font-bold">SMS</p>
-                            <p className="text-xs opacity-90">Get answers on your query</p>
-                        </Card>
+                        <a href={`tel:${offlineCallNumber}`} className="block">
+                            <Card className="bg-green-500 text-white text-center p-4 flex flex-col items-center justify-center h-40">
+                                <Phone className="h-10 w-10 mb-2" />
+                                <p className="font-bold">Call</p>
+                                <p className="text-xs opacity-90">Instant solution in your own language</p>
+                            </Card>
+                        </a>
+                         <a href={`sms:${offlineCallNumber}`} className="block">
+                            <Card className="bg-orange-500 text-white text-center p-4 flex flex-col items-center justify-center h-40">
+                                <MessageSquare className="h-10 w-10 mb-2" />
+                                <p className="font-bold">SMS</p>
+                                <p className="text-xs opacity-90">Get answers on your query</p>
+                            </Card>
+                         </a>
                     </div>
                 </div>
 
@@ -197,7 +164,7 @@ export default function OfflinePage() {
 
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold font-headline flex items-center gap-2">
-                        <Tractor className="h-5 w-5 text-primary" /> My Farm (Last Sync)
+                         <Image src="/images/tractor.png" alt="Tractor" width={20} height={20} /> My Farm (Last Sync)
                     </h2>
                     <Card>
                         <CardHeader className="p-4">
@@ -248,7 +215,19 @@ export default function OfflinePage() {
                     </div>
                 </div>
 
-                <Button className="w-full fixed bottom-4 left-1/2 -translate-x-1/2 max-w-sm" size="lg">Offline Tips</Button>
+                <div className="bg-blue-500 text-white rounded-xl p-5 shadow-lg space-y-3">
+                    <h3 className="text-lg font-bold flex items-center gap-2">
+                        <Lightbulb className="h-5 w-5" /> Offline Tips
+                    </h3>
+                    <ul className="space-y-2 text-sm pl-2">
+                        {offlineTips.map((tip, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                                <span className="mt-1">&#8226;</span>
+                                <span>{tip}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );

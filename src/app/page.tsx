@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -53,7 +54,7 @@ interface DataStates {
     weatherTip: { data: WeatherTip | null; error: string | null; loading: boolean; };
 }
 
-const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) => void }) => {
+export const AppHeader = ({ setActiveFeature, isOffline = false }: { setActiveFeature: (feature: Feature) => void, isOffline?: boolean }) => {
     const { user, setUserProfile } = useUser();
     const { setLanguage, t } = useTranslation();
     const { signOutUser } = useAuth();
@@ -75,10 +76,10 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                     </div>
                 </div>
                 <div className="flex items-center gap-2 -mt-16">
-                    <Button variant="ghost" size="icon"> <Bell className="h-5 w-5" /> </Button>
+                    <Button variant="ghost" size="icon" disabled={isOffline}> <Bell className="h-5 w-5" /> </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" disabled={isOffline}>
                           <Globe className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -91,7 +92,7 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
                       </DropdownMenuContent>
                     </DropdownMenu>
                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger asChild disabled={isOffline}>
                              <Avatar className="cursor-pointer">
                                 <Image src={user?.profilePicture || "/images/image.png"} alt={t('header.avatarAlt', 'Farmer avatar')} width={40} height={40} className="rounded-full" />
                             </Avatar>
@@ -113,14 +114,14 @@ const AppHeader = ({ setActiveFeature }: { setActiveFeature: (feature: Feature) 
              <div className="flex items-center gap-2 -mt-6 mb-6">
                  <div 
                     className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
-                    onClick={() => setActiveFeature('ask')}
+                    onClick={() => !isOffline && setActiveFeature('ask')}
                 >
                     <span className="pl-4 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
                     <div className="absolute right-2 flex items-center gap-1">
-                        <Button type="button" size="icon" variant="ghost" className="rounded-full h-9 w-9 text-muted-foreground">
+                        <Button type="button" size="icon" variant="ghost" className="rounded-full h-9 w-9 text-muted-foreground" disabled={isOffline}>
                             <Mic className="h-5 w-5" />
                         </Button>
-                         <Button type="button" size="icon" className="rounded-full h-9 w-9 bg-primary hover:bg-primary/90">
+                         <Button type="button" size="icon" className="rounded-full h-9 w-9 bg-primary hover:bg-primary/90" disabled={isOffline}>
                             <Search className="h-5 w-5 text-primary-foreground" />
                         </Button>
                     </div>
