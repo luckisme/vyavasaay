@@ -306,31 +306,7 @@ export async function getAgriNewsAction(location: string): Promise<{ articles?: 
         return { articles };
     } catch (e) {
         console.error(e);
-        // Fallback to static data if API fails
-        const staticArticles: AgriNewsArticle[] = [
-            {
-                title: 'Pest Outbreak Alert',
-                location: 'Raipur',
-                imageUrl: 'https://placehold.co/300x200.png',
-                dataAiHint: 'pest insect',
-                link: '#'
-            },
-            {
-                title: 'Farmers Market',
-                location: 'Pune',
-                imageUrl: 'https://placehold.co/300x200.png',
-                dataAiHint: 'vegetable market',
-                link: '#'
-            },
-            {
-                title: 'Water Shortage',
-                location: 'Solapur',
-                imageUrl: 'https://placehold.co/300x200.png',
-                dataAiHint: 'dry soil',
-                link: '#'
-            }
-        ];
-        return { articles: staticArticles };
+        return { error: 'An unexpected error occurred while fetching news.' };
     }
 }
 
