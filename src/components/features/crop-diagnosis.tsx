@@ -239,13 +239,13 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
         <header className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                 <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-                <h1 className="text-2xl font-bold">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
+                <h1 className="text-2xl font-bold font-headline text-primary">{t('cropDiagnosis.title', 'Crop Diagnosis')}</h1>
                 <p className="text-muted-foreground">{t('cropDiagnosis.descriptionPage', 'AI-powered crop disease and pest detection')}</p>
             </div>
         </header>

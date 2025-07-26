@@ -80,19 +80,19 @@ export default function GovtSchemes({ state, setActiveFeature }: GovtSchemesProp
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
         <header className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                 <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-                <h1 className="text-2xl font-bold">{t('govtSchemes.title', 'Available Schemes')}</h1>
+                <h1 className="text-2xl font-bold font-headline text-primary">{t('govtSchemes.title', 'Available Schemes')}</h1>
             </div>
         </header>
         
         <SchemeResults state={state} />
 
-        <div className="space-y-4 pt-4">
+        <div className="space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2">{t('govtSchemes.quicklink.title', 'Quick Links')}</h2>
             <div className="grid grid-cols-2 gap-4">
                 {quickLinks.map(link => <QuickLinkCard key={link.title} {...link} />)}

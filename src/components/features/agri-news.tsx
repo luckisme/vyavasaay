@@ -102,7 +102,7 @@ export default function AgriNews({ state }: AgriNewsProps) {
         <div>
             <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-bold tracking-tight text-foreground font-headline flex items-center gap-2">
-                    <Newspaper className="h-5 w-5 text-primary"/>
+                    {/* <Newspaper className="h-5 w-5 text-primary"/> */}
                     Agri News
                 </h2>
                 <Button variant="link" className="text-primary pr-0">

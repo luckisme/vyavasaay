@@ -100,14 +100,14 @@ export default function MarketAnalysis({ state, setActiveFeature }: MarketAnalys
 
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Header */}
             <header className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-bold text-primary">{t('marketAnalysis.title', 'Market Analysis')}</h1>
+                    <h1 className="text-2xl font-bold font-headline text-primary">{t('marketAnalysis.title', 'Market Analysis')}</h1>
                     <p className="text-muted-foreground">{t('marketAnalysis.descriptionPage', 'Real-time market prices for {{location}}', { location: user?.location || t('marketAnalysis.yourArea', 'your area') })}</p>
                 </div>
             </header>

@@ -66,14 +66,14 @@ export default function GrowHub({ setActiveFeature }: { setActiveFeature: (featu
     const resourcesToShow = showAllResources ? knowledgeLibraryItems : knowledgeLibraryItems.slice(0, 1);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Header */}
             <header className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-bold">{t('growHub.title', 'Grow Hub')}</h1>
+                    <h1 className="text-2xl font-bold font-headline text-primary">{t('growHub.title', 'Grow Hub')}</h1>
                     <p className="text-muted-foreground">{t('growHub.description', 'Connect, learn, and grow together with fellow farmers')}</p>
                 </div>
             </header>

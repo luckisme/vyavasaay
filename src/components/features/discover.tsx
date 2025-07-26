@@ -194,8 +194,8 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
 
         {/* Quick Links */}
         <div>
-            <h2 className="text-2xl font-bold font-headline mb-3 flex items-center gap-2">
-                 <Leaf className="h-5 w-5 text-primary"/>
+            <h2 className="text-xl font-bold tracking-tight text-foreground font-headline flex items-center gap-2 mb-3">
+                 {/* <Leaf className="h-5 w-5 text-primary"/> */}
                  {t('discover.quickLinks', 'Quick Links')}
             </h2>
             <div className="space-y-4">
@@ -223,8 +223,8 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
         {/* Farming Resources */}
         <div>
             <div className="flex justify-between items-center mb-3">
-                <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
-                    <Sprout className="h-5 w-5 text-primary"/>
+                <h2 className="text-xl font-bold tracking-tight text-foreground font-headline flex items-center gap-2">
+                    {/* <Sprout className="h-5 w-5 text-primary"/> */}
                     {t('discover.resourcesTitle', 'Farming Resources')}
                 </h2>
                 {!isResourcesLoading && (
