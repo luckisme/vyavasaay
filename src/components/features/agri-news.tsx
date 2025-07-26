@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import type { AgriNewsArticle } from '@/lib/types';
-import { ArrowRight, Newspaper, MapPin } from 'lucide-react';
+import { ArrowRight, Newspaper, MapPin, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 interface AgriNewsProps {
     state: {
@@ -60,9 +61,39 @@ const NewsCardSkeleton = () => (
 export default function AgriNews({ state }: AgriNewsProps) {
     const { t } = useTranslation();
 
-    if (state.error) {
-        return null; // Don't render the section if there's an error
-    }
+    const renderContent = () => {
+        if (state.loading) {
+            return (
+                <>
+                    <NewsCardSkeleton />
+                    <NewsCardSkeleton />
+                    <NewsCardSkeleton />
+                </>
+            );
+        }
+
+        if (state.error) {
+            return (
+                <Alert variant="destructive" className="col-span-full">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error fetching news</AlertTitle>
+                    <AlertDescription>{state.error}</AlertDescription>
+                </Alert>
+            );
+        }
+
+        if (!state.data || state.data.length === 0) {
+            return (
+                <div className="col-span-full text-center text-muted-foreground py-4">
+                    No agricultural news available at the moment.
+                </div>
+            );
+        }
+
+        return state.data.map((article, index) => (
+            <NewsCard key={index} article={article} />
+        ));
+    };
 
     return (
         <div>
@@ -77,16 +108,7 @@ export default function AgriNews({ state }: AgriNewsProps) {
                 </Button>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4">
-                 {state.loading && (
-                    <>
-                        <NewsCardSkeleton />
-                        <NewsCardSkeleton />
-                        <NewsCardSkeleton />
-                    </>
-                )}
-                {state.data?.map((article, index) => (
-                    <NewsCard key={index} article={article} />
-                ))}
+                 {renderContent()}
             </div>
         </div>
     );

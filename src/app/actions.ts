@@ -301,6 +301,7 @@ export async function getAgriNewsAction(location: string): Promise<{ articles?: 
             location: article.source,
             imageUrl: article.thumbnail,
             link: article.url,
+            dataAiHint: 'agriculture news'
         })).slice(0, 3); // Ensure we only take 3 articles
 
         return { articles };
