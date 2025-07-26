@@ -14,7 +14,6 @@ import type { ChatMessage } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUser } from '@/hooks/use-user';
-import { answerFarmerQuestion } from '@/ai/flows/answer-farmer-question';
 
 const useChatLogic = (initialMessages: ChatMessage[] = []) => {
   const { t, language: langCode } = useTranslation();
@@ -128,20 +127,11 @@ const useChatLogic = (initialMessages: ChatMessage[] = []) => {
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
-
-    // Create the history to send to the action
-    const historyForAction = messages
-        .map(msg => ({
-            role: msg.role === 'assistant' ? 'model' as const : 'user' as const,
-            content: typeof msg.content === 'string' ? msg.content : ''
-        }))
-        .filter(msg => typeof msg.content === 'string');
   
     const result = await askVyavasaayAction(
       input,
       user,
       langCode,
-      historyForAction
     );
     
     let assistantMessage: ChatMessage;

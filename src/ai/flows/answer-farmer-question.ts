@@ -1,5 +1,4 @@
 
-// src/ai/flows/answer-farmer-question.ts
 'use server';
 
 /**
@@ -16,12 +15,7 @@ import { googleAI } from '@genkit-ai/googleai';
 import wav from 'wav';
 
 const AnswerFarmerQuestionInputSchema = z.object({
-  messages: z.array(
-    z.object({
-      role: z.enum(['user', 'model']),
-      content: z.string(),
-    })
-  ),
+  question: z.string().describe('The question asked by the farmer.'),
   location: z.string().optional().describe('The location of the farmer, to provide localized information.'),
   language: z.string().describe('The language for the answer.'),
   voice: z.string().optional().describe('The prebuilt voice to use for the text-to-speech response.'),
@@ -38,16 +32,12 @@ export async function answerFarmerQuestion(input: AnswerFarmerQuestionInput): Pr
   return answerFarmerQuestionFlow(input);
 }
 
-const systemPrompt = `You are Vyavasaay, a friendly and helpful AI assistant for farmers. Your answers must be concise, clear, and easy to understand for a farmer. Your main goal is to answer questions about crops, market prices, government schemes, and weather. When mentioning currency, use the Indian Rupee symbol (₹). Keep your responses short and conversational.
+const systemPromptTemplate = `You are Vyavasaay, a friendly and helpful AI assistant for farmers. Your answers must be concise, clear, and easy to understand for a farmer. Your main goal is to answer questions about crops, market prices, government schemes, and weather. When mentioning currency, use the Indian Rupee symbol (₹). Keep your responses short and conversational.
 
 Please provide a simple, localized answer to the farmer’s question in {{{language}}}. Use simple language, avoiding jargon.
-Location: {{{location}}}`;
+Location: {{{location}}}
+Question: {{{question}}}`;
 
-const conversationalPrompt = ai.definePrompt({
-  name: 'conversationalPrompt',
-  input: { schema: AnswerFarmerQuestionInputSchema },
-  prompt: systemPrompt,
-});
 
 async function toWav(
   pcmData: Buffer,
@@ -76,6 +66,12 @@ async function toWav(
   });
 }
 
+const prompt = ai.definePrompt({
+    name: 'answerFarmerQuestionPrompt',
+    input: { schema: AnswerFarmerQuestionInputSchema },
+    prompt: systemPromptTemplate,
+});
+
 const answerFarmerQuestionFlow = ai.defineFlow(
   {
     name: 'answerFarmerQuestionFlow',
@@ -83,7 +79,7 @@ const answerFarmerQuestionFlow = ai.defineFlow(
     outputSchema: AnswerFarmerQuestionOutputSchema,
   },
   async input => {
-    const { text } = await conversationalPrompt(input);
+    const { text } = await prompt(input);
 
     if (!text) {
         throw new Error("AI returned an empty text response.");
