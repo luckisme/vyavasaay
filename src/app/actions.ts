@@ -72,15 +72,23 @@ export async function diagnoseCropAction(
 export async function askVyavasaayAction(
   question: string,
   user: UserProfile,
-  languageCode: string
+  languageCode: string,
+  history: { role: 'user' | 'model'; content: string }[]
 ): Promise<{ answer: string; answerAudio?: string; } | { error: string }> {
   if (!question) {
     return { error: 'Question cannot be empty.' };
   }
   try {
     const languageName = allLanguages.find(l => l.value === languageCode)?.label || 'English';
+
+    // Construct the messages array for the conversation
+    const messages = [
+      ...history,
+      { role: 'user' as const, content: question }
+    ];
+
     const result = await answerFarmerQuestion({ 
-        question, 
+        messages,
         location: user.location, 
         language: languageName,
         voice: 'Achernar', // Use female voice by default
