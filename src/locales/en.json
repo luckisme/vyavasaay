@@ -262,13 +262,27 @@
   "onboarding": {
     "title": "Welcome to Vyavasaay",
     "description": "Please enter your details to get personalized information.",
-    "name": "Name",
-    "namePlaceholder": "e.g. Rohan",
+    "name": "Full Name",
+    "namePlaceholder": "Enter your full name",
     "location": "Location",
     "locationPlaceholder": "e.g. Nashik, Maharashtra",
     "voice": "Voice",
     "voicePlaceholder": "Select a voice",
-    "button": "Save and Continue"
+    "button": "Continue",
+    "details": {
+      "title": "Tell us about yourself",
+      "description": "Help us personalize your experience",
+      "nameHint": "As per your documents",
+      "phoneHint": "For weather alerts & tips",
+      "farmLocation": "Farm Location",
+      "locationHint": "For local weather & market data",
+      "state": "Select State",
+      "district": "Select District",
+      "farmSize": "Farm Size",
+      "farmSizeHint": "Approximate area in acres",
+      "farmSizeSelect": "Select Farm Size",
+      "secure": "Your information will be stored securely"
+    }
   },
   "login": {
     "otpSent": {
@@ -284,7 +298,7 @@
       "description": "You are now logged in."
     },
     "phone": {
-      "title": "Mobile Verification",
+      "title": "Mobile Number",
       "description": "Enter your number to get an OTP",
       "placeholder": "Enter 10-digit number",
       "sendOtpButton": "Send OTP"
@@ -311,3 +325,5 @@
     "male": "Male"
   }
 }
+
+    

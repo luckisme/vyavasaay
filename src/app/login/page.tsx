@@ -10,14 +10,25 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, ArrowLeft, ShieldCheck, MessageSquareText, Timer, Info, Check, Sparkles } from 'lucide-react';
+import { Loader2, ArrowLeft, ShieldCheck, MessageSquareText, Timer, Info, Check, Sparkles, User, Phone, MapPin } from 'lucide-react';
 import { languages } from '@/app/page';
 import { useTranslation, TranslationProvider } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-type OnboardingStep = 'language' | 'details' | 'phone' | 'otp';
+const TractorIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 4H21V6H3V4Z"></path>
+        <path d="M3 10H21V12H3V10Z"></path>
+        <path d="M8 16H16V18H8V16Z"></path>
+        <path d="M12 2V22"></path>
+    </svg>
+);
+
+
+type OnboardingStep = 'language' | 'details' | 'otp';
 
 function LoginPageCore() {
     const [step, setStep] = useState<OnboardingStep>('language');
@@ -29,8 +40,10 @@ function LoginPageCore() {
     
     const [onboardingData, setOnboardingData] = useState({
         name: '',
-        location: '',
         phoneNumber: '',
+        state: '',
+        district: '',
+        farmSize: ''
     });
     
     const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -57,12 +70,7 @@ function LoginPageCore() {
         }
     };
 
-    const handleDetailsSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setStep('phone');
-    }
-
-    const handleSendOtp = async (e: React.FormEvent) => {
+    const handleDetailsSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setResendTimer(30);
@@ -80,22 +88,7 @@ function LoginPageCore() {
         } finally {
             setIsLoading(false);
         }
-    };
-    
-    const handleOtpChange = (index: number, value: string) => {
-        const newOtp = [...otp];
-        newOtp[index] = value;
-        setOtp(newOtp);
-        if (value && index < 5) {
-            inputRefs.current[index + 1]?.focus();
-        }
-    };
-
-    const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Backspace' && !otp[index] && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
+    }
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -112,8 +105,9 @@ function LoginPageCore() {
                 uid: user.uid,
                 phone: user.phoneNumber,
                 name: onboardingData.name,
-                location: onboardingData.location,
+                location: `${onboardingData.district}, ${onboardingData.state}`,
                 language: selectedLanguage,
+                landArea: parseFloat(onboardingData.farmSize),
                 profilePicture: '/images/image.png'
             };
             
@@ -131,8 +125,7 @@ function LoginPageCore() {
 
     const goBack = () => {
         if (step === 'details') setStep('language');
-        if (step === 'phone') setStep('details');
-        if (step === 'otp') setStep('phone');
+        if (step === 'otp') setStep('details');
     };
     
     const maskPhoneNumber = (phone: string) => {
@@ -187,41 +180,41 @@ function LoginPageCore() {
                 );
             case 'details':
                 return (
-                    <Card className="w-full max-w-sm shadow-lg">
-                        <Button variant="ghost" size="icon" className="absolute top-4 left-4" onClick={goBack}><ArrowLeft/></Button>
-                        <CardHeader className="text-center">
-                             <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} className="mx-auto" />
-                            <CardTitle>{t('onboarding.title')}</CardTitle>
-                            <CardDescription>{t('onboarding.description')}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <form onSubmit={handleDetailsSubmit} className="space-y-4">
-                                <div className="space-y-1">
-                                    <Label htmlFor="name">{t('onboarding.name')}</Label>
+                    <div className="w-full max-w-sm flex flex-col h-full">
+                        <header className="flex items-center gap-4 p-4 -ml-4">
+                            <Button variant="ghost" size="icon" onClick={goBack}><ArrowLeft/></Button>
+                            <div className="flex items-center gap-2">
+                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={32} height={32} />
+                                <span className="font-bold text-lg">Vyavasaay</span>
+                            </div>
+                        </header>
+                        <div className="text-center my-4">
+                            <h1 className="text-2xl font-bold text-green-800">{t('onboarding.details.title', 'Tell us about yourself')}</h1>
+                            <p className="text-muted-foreground">{t('onboarding.details.description', 'Help us personalize your experience')}</p>
+                        </div>
+                        <form onSubmit={handleDetailsSubmit} className="space-y-4 flex-1">
+                            <Card>
+                                <CardContent className="p-4 space-y-2">
+                                    <div className="flex items-start gap-3">
+                                        <div className="p-2 bg-blue-100 rounded-full"><User className="h-5 w-5 text-blue-600" /></div>
+                                        <div>
+                                            <Label htmlFor="name" className="font-semibold">{t('onboarding.name', 'Full Name')}</Label>
+                                            <p className="text-xs text-muted-foreground">{t('onboarding.details.nameHint', 'As per your documents')}</p>
+                                        </div>
+                                    </div>
                                     <Input id="name" value={onboardingData.name} onChange={e => setOnboardingData(p => ({...p, name: e.target.value}))} placeholder={t('onboarding.namePlaceholder')} required />
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor="location">{t('onboarding.location')}</Label>
-                                    <Input id="location" value={onboardingData.location} onChange={e => setOnboardingData(p => ({...p, location: e.target.value}))} placeholder={t('onboarding.locationPlaceholder')} required />
-                                </div>
-                                <Button type="submit" className="w-full">{t('onboarding.button')}</Button>
-                            </form>
-                        </CardContent>
-                    </Card>
-                );
-            case 'phone':
-                 return (
-                    <Card className="w-full max-w-sm shadow-lg">
-                        <Button variant="ghost" size="icon" className="absolute top-4 left-4" onClick={goBack}><ArrowLeft/></Button>
-                        <CardHeader className="text-center">
-                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} className="mx-auto" />
-                            <CardTitle>{t('login.phone.title', 'Mobile Verification')}</CardTitle>
-                            <CardDescription>{t('login.phone.description', 'Enter your number to get an OTP')}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <form onSubmit={handleSendOtp} className="space-y-4">
-                                <div>
-                                    <div className="flex items-center mt-1">
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardContent className="p-4 space-y-2">
+                                    <div className="flex items-start gap-3">
+                                        <div className="p-2 bg-green-100 rounded-full"><Phone className="h-5 w-5 text-green-600" /></div>
+                                        <div>
+                                            <Label htmlFor="phone" className="font-semibold">{t('login.phone.title', 'Mobile Number')}</Label>
+                                            <p className="text-xs text-muted-foreground">{t('onboarding.details.phoneHint', 'For weather alerts & tips')}</p>
+                                        </div>
+                                    </div>
+                                     <div className="flex items-center mt-1">
                                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm h-10">
                                             +91
                                         </span>
@@ -236,14 +229,55 @@ function LoginPageCore() {
                                             pattern="[0-9]{10}"
                                         />
                                     </div>
-                                </div>
-                                <Button type="submit" className="w-full" disabled={isLoading}>
-                                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    {t('login.phone.sendOtpButton', 'Send OTP')}
+                                </CardContent>
+                            </Card>
+                             <Card>
+                                <CardContent className="p-4 space-y-2">
+                                    <div className="flex items-start gap-3">
+                                        <div className="p-2 bg-orange-100 rounded-full"><MapPin className="h-5 w-5 text-orange-600" /></div>
+                                        <div>
+                                            <Label className="font-semibold">{t('onboarding.details.farmLocation', 'Farm Location')}</Label>
+                                            <p className="text-xs text-muted-foreground">{t('onboarding.details.locationHint', 'For local weather & market data')}</p>
+                                        </div>
+                                    </div>
+                                    <div className='space-y-2'>
+                                      <Input id="state" value={onboardingData.state} onChange={e => setOnboardingData(p => ({...p, state: e.target.value}))} placeholder={t('onboarding.details.state', 'Select State')} required />
+                                      <Input id="district" value={onboardingData.district} onChange={e => setOnboardingData(p => ({...p, district: e.target.value}))} placeholder={t('onboarding.details.district', 'Select District')} required />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                             <Card>
+                                <CardContent className="p-4 space-y-2">
+                                    <div className="flex items-start gap-3">
+                                        <div className="p-2 bg-purple-100 rounded-full"><TractorIcon className="h-5 w-5 text-purple-600" /></div>
+                                        <div>
+                                            <Label htmlFor="farmSize" className="font-semibold">{t('onboarding.details.farmSize', 'Farm Size')}</Label>
+                                            <p className="text-xs text-muted-foreground">{t('onboarding.details.farmSizeHint', 'Approximate area in acres')}</p>
+                                        </div>
+                                    </div>
+                                    <Select onValueChange={(value) => setOnboardingData(p => ({...p, farmSize: value}))}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={t('onboarding.details.farmSizeSelect', "Select Farm Size")} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="1">1 Acre</SelectItem>
+                                            <SelectItem value="2">2 Acres</SelectItem>
+                                            <SelectItem value="5">5 Acres</SelectItem>
+                                            <SelectItem value="10">10 Acres</SelectItem>
+                                            <SelectItem value="10+">10+ Acres</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </CardContent>
+                            </Card>
+
+                            <div className="!mt-auto pt-4">
+                                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg" disabled={isLoading}>
+                                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t('onboarding.button', 'Continue')}
                                 </Button>
-                            </form>
-                        </CardContent>
-                    </Card>
+                                <p className="text-center text-xs text-gray-500 mt-2">{t('onboarding.details.secure', 'Your information will be stored securely')}</p>
+                            </div>
+                        </form>
+                    </div>
                 );
             case 'otp':
                 return (
@@ -266,7 +300,7 @@ function LoginPageCore() {
                                         <p className="font-semibold">{maskPhoneNumber(onboardingData.phoneNumber)}</p>
                                     </div>
                                 </div>
-                                <Button variant="outline" size="sm" onClick={() => setStep('phone')}>{t('login.otp.changeButton', 'Change')}</Button>
+                                <Button variant="outline" size="sm" onClick={() => setStep('details')}>{t('login.otp.changeButton', 'Change')}</Button>
                             </CardContent>
                         </Card>
                         <form onSubmit={handleVerifyOtp} className="w-full space-y-6">
@@ -293,7 +327,7 @@ function LoginPageCore() {
                                         {t('login.otp.resendTimer', 'Resend in {{seconds}} seconds', { seconds: resendTimer.toString() })}
                                     </p>
                                 ) : (
-                                    <Button variant="link" onClick={e => handleSendOtp(e)} disabled={isLoading}>
+                                    <Button variant="link" onClick={e => handleDetailsSubmit(e)} disabled={isLoading}>
                                         {t('login.otp.resendButton', 'Resend Code')}
                                     </Button>
                                 )}
@@ -325,7 +359,7 @@ function LoginPageCore() {
     return (
         <main className={cn(
             "flex min-h-screen flex-col items-center justify-start p-4",
-            step === 'language' ? 'bg-[#F7FDF3]' : 'bg-gray-50'
+            "bg-[#F7FDF3]"
         )}>
             <div id="recaptcha-container" className="my-4"></div>
             {renderStep()}
@@ -340,3 +374,5 @@ export default function LoginPage() {
         </TranslationProvider>
     )
 }
+
+    
