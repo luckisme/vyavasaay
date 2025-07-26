@@ -11,7 +11,6 @@ import Image from 'next/image';
 import { useUser } from '@/hooks/use-user';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { cn } from '@/lib/utils';
-import { AppHeader } from '@/app/page';
 
 
 const resources = [
@@ -78,8 +77,6 @@ const recentConversations = [
 export default function OfflinePage() {
     const { t } = useTranslation();
     const { user } = useUser();
-    const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
-
 
     const handleRetry = () => {
         window.location.reload();
@@ -87,7 +84,6 @@ export default function OfflinePage() {
     
     return (
         <div className="space-y-6">
-            <AppHeader setActiveFeature={() => {}} isOffline={true}/>
 
             <Card className="bg-red-500 text-white rounded-xl shadow-lg -mt-12">
                 <CardContent className="p-4 flex items-center justify-between gap-3">

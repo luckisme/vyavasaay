@@ -111,29 +111,31 @@ export const AppHeader = ({ setActiveFeature, isOffline = false }: { setActiveFe
                     </DropdownMenu>
                 </div>
             </div>
-             <div className="flex items-center gap-2 -mt-6 mb-6">
-                 <div 
-                    className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
-                    onClick={() => !isOffline && setActiveFeature('ask')}
-                >
-                    <span className="pl-4 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
-                    <div className="absolute right-2 flex items-center gap-1">
-                        <Button type="button" size="icon" variant="ghost" className="rounded-full h-9 w-9 text-muted-foreground" disabled={isOffline}>
-                            <Mic className="h-5 w-5" />
-                        </Button>
-                         <Button type="button" size="icon" className="rounded-full h-9 w-9 bg-primary hover:bg-primary/90" disabled={isOffline}>
-                            <Search className="h-5 w-5 text-primary-foreground" />
-                        </Button>
+             {!isOffline && (
+                <div className="flex items-center gap-2 -mt-6 mb-6">
+                    <div 
+                        className="relative flex-grow h-12 flex items-center bg-white rounded-full cursor-pointer shadow-sm border border-gray-200"
+                        onClick={() => !isOffline && setActiveFeature('ask')}
+                    >
+                        <span className="pl-4 text-muted-foreground">{t('discover.searchPlaceholder', 'Ask Vyavasaay anything...')}</span>
+                        <div className="absolute right-2 flex items-center gap-1">
+                            <Button type="button" size="icon" variant="ghost" className="rounded-full h-9 w-9 text-muted-foreground" disabled={isOffline}>
+                                <Mic className="h-5 w-5" />
+                            </Button>
+                            <Button type="button" size="icon" className="rounded-full h-9 w-9 bg-primary hover:bg-primary/90" disabled={isOffline}>
+                                <Search className="h-5 w-5 text-primary-foreground" />
+                            </Button>
+                        </div>
                     </div>
+                    {offlineCallNumber && (
+                        <a href={`tel:${offlineCallNumber}`}>
+                            <Button variant="destructive" className="h-12 w-12 rounded-full p-0 flex-shrink-0 shadow-sm">
+                                <Phone className="h-5 w-5" />
+                            </Button>
+                        </a>
+                    )}
                 </div>
-                {offlineCallNumber && (
-                    <a href={`tel:${offlineCallNumber}`}>
-                        <Button variant="destructive" className="h-12 w-12 rounded-full p-0 flex-shrink-0 shadow-sm">
-                            <Phone className="h-5 w-5" />
-                        </Button>
-                    </a>
-                )}
-            </div>
+             )}
         </header>
     );
 }
@@ -270,7 +272,7 @@ function AppCore() {
             <div className="flex flex-col w-full min-h-screen">
                 <SidebarInset>
                     <main className="flex-1 flex flex-col overflow-auto bg-[#F5F5DC]">
-                       {activeFeature === 'discover' && !isOffline && <div className="p-4 sm:p-6 pb-0"><AppHeader setActiveFeature={setActiveFeature} /></div>}
+                       {(activeFeature === 'discover' || isOffline) && <div className="p-4 sm:p-6 pb-0"><AppHeader setActiveFeature={setActiveFeature} isOffline={isOffline} /></div>}
                         <div className="p-4 sm:p-6 pt-0 pb-24 md:pb-6 flex-1">
                             {renderFeature()}
                         </div>
