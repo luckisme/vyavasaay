@@ -13,71 +13,70 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import { cn } from '@/lib/utils';
 
 
-const resources = [
-    {
-        title: "Pest Management Manual",
-        description: "Identification and organic control methods for common agricultural pests.",
-        tag: "Pest Control",
-        size: "18.5 MB"
-    },
-    {
-        title: "Monsoon Farming Guide",
-        description: "Seasonal farming strategies for monsoon conditions and water management.",
-        tag: "Seasonal",
-        size: "21.3 MB"
-    }
-];
-
-const farmData = {
-    season: "Kharif 2025",
-    crops: [
-        {
-            name: "Cotton",
-            icon: Sprout,
-            area: 3.2,
-            day: 45,
-            status: "Healthy",
-            statusClass: "text-green-600",
-            action: "Irrigation due in 2 days"
-        },
-        {
-            name: "Sugarcane",
-            icon: Sprout,
-            area: 2.0,
-            day: 120,
-            status: "Monitor",
-            statusClass: "text-orange-600",
-            action: "Pest check required"
-        }
-    ]
-}
-
-const recentConversations = [
-    {
-        question: "When is the best time to harvest wheat?",
-        answer: "Wheat should be harvested when the grain moisture content is around 14-16%. Look for...",
-        tag: "Harvesting",
-        time: "2025-07-25 15:30"
-    },
-    {
-        question: "How to control aphids organically?",
-        answer: "Use neem oil spray (2-3ml per liter), introduce ladybugs, or spray soapy water solution early...",
-        tag: "Pest Control",
-        time: "2025-07-24 09:15"
-    },
-    {
-        question: "Best fertilizer for cotton growth?",
-        answer: "Use NPK 19:19:19 at 50kg/hectare during flowering stage. Add organic compost for better soil health.",
-        tag: "Fertilization",
-        time: "2025-07-23 14:45"
-    }
-];
-
-
-export default function OfflinePage() {
+const OfflinePage = () => {
     const { t } = useTranslation();
     const { user } = useUser();
     const offlineCallNumber = process.env.NEXT_PUBLIC_OFFLINE_CALL_NUMBER;
+
+    const resources = [
+        {
+            title: t('offline.resources.pest.title'),
+            description: t('offline.resources.pest.desc'),
+            tag: t('offline.resources.pest.tag'),
+            size: "18.5 MB"
+        },
+        {
+            title: t('offline.resources.monsoon.title'),
+            description: t('offline.resources.monsoon.desc'),
+            tag: t('offline.resources.monsoon.tag'),
+            size: "21.3 MB"
+        }
+    ];
+
+    const farmData = {
+        season: "Kharif 2025",
+        crops: [
+            {
+                name: t('offline.farm.cotton.name'),
+                icon: Sprout,
+                area: 3.2,
+                day: 45,
+                status: t('offline.farm.status.healthy'),
+                statusClass: "text-green-600",
+                action: t('offline.farm.cotton.action')
+            },
+            {
+                name: t('offline.farm.sugarcane.name'),
+                icon: Sprout,
+                area: 2.0,
+                day: 120,
+                status: t('offline.farm.status.monitor'),
+                statusClass: "text-orange-600",
+                action: t('offline.farm.sugarcane.action')
+            }
+        ]
+    }
+
+    const recentConversations = [
+        {
+            question: t('offline.conversations.wheat.question'),
+            answer: t('offline.conversations.wheat.answer'),
+            tag: t('offline.conversations.wheat.tag'),
+            time: "2025-07-25 15:30"
+        },
+        {
+            question: t('offline.conversations.aphids.question'),
+            answer: t('offline.conversations.aphids.answer'),
+            tag: t('offline.conversations.aphids.tag'),
+            time: "2025-07-24 09:15"
+        },
+        {
+            question: t('offline.conversations.fertilizer.question'),
+            answer: t('offline.conversations.fertilizer.answer'),
+            tag: t('offline.conversations.fertilizer.tag'),
+            time: "2025-07-23 14:45"
+        }
+    ];
 
 
     const handleRetry = () => {
@@ -92,33 +91,33 @@ export default function OfflinePage() {
                     <div className="flex items-center gap-3">
                         <WifiOff className="h-6 w-6" />
                         <div>
-                            <p className="font-bold">You are currently offline</p>
-                            <p className="text-sm opacity-90">Access your downloaded content for help</p>
+                            <p className="font-bold">{t('offline.banner.title')}</p>
+                            <p className="text-sm opacity-90">{t('offline.banner.desc')}</p>
                         </div>
                     </div>
-                    <Button variant="ghost" className="bg-white/20 hover:bg-white/30" onClick={handleRetry}>Retry</Button>
+                    <Button variant="ghost" className="bg-white/20 hover:bg-white/30" onClick={handleRetry}>{t('offline.banner.retry')}</Button>
                 </CardContent>
             </Card>
 
              <div className="space-y-4">
                 <h2 className="text-xl font-bold font-headline flex items-center gap-2">
                     <Phone className="h-5 w-5 text-primary"/>
-                    Ask Vyavasaay
-                    <Badge variant="outline">Offline Mode</Badge>
+                    {t('askVyavasaay.title')}
+                    <Badge variant="outline">{t('offline.badge')}</Badge>
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
                     <a href={`tel:${offlineCallNumber}`}>
                         <Card className="bg-green-500 text-white text-center p-4 h-full flex flex-col justify-center items-center cursor-pointer hover:bg-green-600 transition-colors">
                             <Phone className="h-8 w-8 mb-2" />
-                            <p className="font-bold">Call</p>
-                            <p className="text-xs text-white/90">Instant solution in your own language</p>
+                            <p className="font-bold">{t('offline.ask.call.title')}</p>
+                            <p className="text-xs text-white/90">{t('offline.ask.call.desc')}</p>
                         </Card>
                     </a>
                      <a href={`sms:${offlineCallNumber}`}>
                         <Card className="bg-orange-500 text-white text-center p-4 h-full flex flex-col justify-center items-center cursor-pointer hover:bg-orange-600 transition-colors">
                             <MessageSquare className="h-8 w-8 mb-2" />
-                            <p className="font-bold">SMS</p>
-                            <p className="text-xs text-white/90">Get answers on your query</p>
+                            <p className="font-bold">{t('offline.ask.sms.title')}</p>
+                            <p className="text-xs text-white/90">{t('offline.ask.sms.desc')}</p>
                         </Card>
                     </a>
                 </div>
@@ -128,9 +127,9 @@ export default function OfflinePage() {
                     <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold font-headline flex items-center gap-2">
                         <BookOpen className="h-5 w-5 text-primary"/>
-                        Downloaded Resources
+                        {t('offline.resources.title')}
                     </h2>
-                    <Badge className="bg-green-100 text-green-800">2 Available</Badge>
+                    <Badge className="bg-green-100 text-green-800">{t('offline.resources.available', {count: 2})}</Badge>
                 </div>
                 {resources.map((res, i) => (
                     <Card key={i}>
@@ -143,7 +142,7 @@ export default function OfflinePage() {
                                 <p className="text-sm text-muted-foreground">{res.description}</p>
                                 <div className="flex items-center gap-4 mt-2">
                                     <Badge variant="secondary">{res.tag}</Badge>
-                                    <span className="text-sm text-muted-foreground">Size: {res.size}</span>
+                                    <span className="text-sm text-muted-foreground">{t('offline.resources.size')}: {res.size}</span>
                                 </div>
                             </div>
                                 <Button variant="ghost" size="icon" className="text-primary"><Play className="h-6 w-6" /></Button>
@@ -154,7 +153,7 @@ export default function OfflinePage() {
 
             <div className="space-y-4">
                 <h2 className="text-xl font-bold font-headline flex items-center gap-2">
-                        <Image src="/images/tractor.png" alt="Tractor" width={20} height={20} /> My Farm (Last Sync)
+                        <Image src="/images/tractor.png" alt="Tractor" width={20} height={20} /> {t('offline.farm.title')}
                 </h2>
                 <Card>
                     <CardHeader className="p-4">
@@ -168,7 +167,7 @@ export default function OfflinePage() {
                                 </Avatar>
                                 <div className="flex-1">
                                     <p className="font-semibold">{crop.name}</p>
-                                    <p className="text-sm text-muted-foreground">{crop.area} acres <Dot /> Day {crop.day}</p>
+                                    <p className="text-sm text-muted-foreground">{crop.area} {t('offline.farm.acres')} <Dot /> {t('offline.farm.day')} {crop.day}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className={cn("font-semibold text-sm", crop.statusClass)}>{crop.status}</p>
@@ -182,7 +181,7 @@ export default function OfflinePage() {
 
                 <div className="space-y-4">
                 <h2 className="text-xl font-bold font-headline flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-primary" /> Recent AI Conversations
+                    <MessageSquare className="h-5 w-5 text-primary" /> {t('offline.conversations.title')}
                 </h2>
                 <div className="space-y-3">
                     {recentConversations.map(convo => (
@@ -207,3 +206,5 @@ export default function OfflinePage() {
         </div>
     );
 }
+
+export default OfflinePage;

@@ -35,7 +35,21 @@
     "quickLinks": "Quick Links",
     "resourcesTitle": "Farming Resources",
     "seeAll": "See All",
-    "seeLess": "See Less"
+    "seeLess": "See Less",
+    "resources": {
+      "fertilizer": {
+        "title": "How to make your own fertilizer?",
+        "description": "Complete guide for organic fertilizer preparation using kitchen waste and cow dung."
+      },
+      "irrigation": {
+        "title": "Mastering Drip Irrigation",
+        "description": "Learn how to set up and maintain a drip irrigation system for water conservation."
+      },
+      "pestControl": {
+        "title": "Natural Pest Control Methods",
+        "description": "A guide to using natural predators and neem oil to protect your crops from pests."
+      }
+    }
   },
   "cropDiagnosis": {
     "title": "Crop Diagnosis",
@@ -56,7 +70,27 @@
     "uploadTab": "Upload File",
     "cameraTab": "Use Camera",
     "takePictureButton": "Take Picture",
-    "loadingMessage": "Analyzing your crop... This may take a moment."
+    "loadingMessage": "Analyzing your crop... This may take a moment.",
+    "quickDiagnosisTitle": "Quick Diagnosis",
+    "quickDiagnosisDesc": "Upload a photo of your crop for instant analysis",
+    "takePhotoButton": "Take Photo",
+    "uploadImageButton": "Upload Image",
+    "analyzingAlt": "Analyzing",
+    "recentDiagnoses": "Recent Diagnoses",
+    "commonIssuesTitle": "Common Issues This Season",
+    "noCommonIssues": "No common issues found for your location at this time.",
+    "justNow": "Just now",
+    "cameraDenied": {
+      "title": "Camera Access Denied",
+      "description": "Please enable camera permissions in your browser settings."
+    },
+    "noImageError": "No image selected",
+    "riskLevel": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "risk": "Risk"
+    }
   },
   "cropCalculator": {
     "title": "Cost Calculator",
@@ -323,7 +357,73 @@
   "voices": {
     "female": "Female",
     "male": "Male"
+  },
+  "offline": {
+    "banner": {
+      "title": "You are currently offline",
+      "desc": "Access your downloaded content for help",
+      "retry": "Retry"
+    },
+    "badge": "Offline Mode",
+    "ask": {
+      "call": {
+        "title": "Call",
+        "desc": "Instant solution in your own language"
+      },
+      "sms": {
+        "title": "SMS",
+        "desc": "Get answers on your query"
+      }
+    },
+    "resources": {
+      "title": "Downloaded Resources",
+      "available": "{{count}} Available",
+      "size": "Size",
+      "pest": {
+        "title": "Pest Management Manual",
+        "desc": "Identification and organic control methods for common agricultural pests.",
+        "tag": "Pest Control"
+      },
+      "monsoon": {
+        "title": "Monsoon Farming Guide",
+        "desc": "Seasonal farming strategies for monsoon conditions and water management.",
+        "tag": "Seasonal"
+      }
+    },
+    "farm": {
+      "title": "My Farm (Last Sync)",
+      "acres": "acres",
+      "day": "Day",
+      "cotton": {
+        "name": "Cotton",
+        "action": "Irrigation due in 2 days"
+      },
+      "sugarcane": {
+        "name": "Sugarcane",
+        "action": "Pest check required"
+      },
+      "status": {
+        "healthy": "Healthy",
+        "monitor": "Monitor"
+      }
+    },
+    "conversations": {
+      "title": "Recent AI Conversations",
+      "wheat": {
+        "question": "When is the best time to harvest wheat?",
+        "answer": "Wheat should be harvested when the grain moisture content is around 14-16%. Look for...",
+        "tag": "Harvesting"
+      },
+      "aphids": {
+        "question": "How to control aphids organically?",
+        "answer": "Use neem oil spray (2-3ml per liter), introduce ladybugs, or spray soapy water solution early...",
+        "tag": "Pest Control"
+      },
+      "fertilizer": {
+        "question": "Best fertilizer for cotton growth?",
+        "answer": "Use NPK 19:19:19 at 50kg/hectare during flowering stage. Add organic compost for better soil health.",
+        "tag": "Fertilization"
+      }
+    }
   }
 }
-
-    

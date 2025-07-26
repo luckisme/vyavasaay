@@ -115,24 +115,24 @@ export default function Discover({ setActiveFeature, weatherState, weatherAlertS
 
   const allResources = [
     {
-      title: 'How to make your own fertilizer?',
-      description: 'Complete guide for organic fertilizer preparation using kitchen waste and cow dung.',
+      title: t('discover.resources.fertilizer.title', 'How to make your own fertilizer?'),
+      description: t('discover.resources.fertilizer.description', 'Complete guide for organic fertilizer preparation using kitchen waste and cow dung.'),
       tags: ['AI Query', 'Organic', 'DIY'],
       imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (2).jpeg",
       dataAiHint: 'compost fertilizer',
       link: 'https://www.marthastewart.com/how-to-make-homemade-fertilizer-7481114'
     },
     {
-      title: 'Mastering Drip Irrigation',
-      description: 'Learn how to set up and maintain a drip irrigation system for water conservation.',
+      title: t('discover.resources.irrigation.title', 'Mastering Drip Irrigation'),
+      description: t('discover.resources.irrigation.description', 'Learn how to set up and maintain a drip irrigation system for water conservation.'),
       tags: ['Water Management', 'Modern Farming'],
       imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM.jpeg",
       dataAiHint: 'drip irrigation',
       link: 'https://www.agrivi.com/blog/drip-irrigation-as-the-most-efficient-irrigation-system-type/',
     },
     {
-      title: 'Natural Pest Control Methods',
-      description: 'A guide to using natural predators and neem oil to protect your crops from pests.',
+      title: t('discover.resources.pestControl.title', 'Natural Pest Control Methods'),
+      description: t('discover.resources.pestControl.description', 'A guide to using natural predators and neem oil to protect your crops from pests.'),
       tags: ['Organic', 'Pest Control'],
       imageUrl: "/images/WhatsApp Image 2025-07-10 at 5.26.22 PM (1).jpeg",
       dataAiHint: 'crop pest',

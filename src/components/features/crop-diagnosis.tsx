@@ -87,7 +87,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
                 diagnosis: state.data.disease,
                 details: state.data.detectionDetails,
                 riskLevel: state.data.riskLevel,
-                date: "Just now",
+                date: t('cropDiagnosis.justNow', 'Just now'),
             };
             setRecentDiagnoses(prev => [newDiagnosis, ...prev].slice(0, 3));
         }
@@ -156,12 +156,12 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
         setHasCameraPermission(false);
         toast({
           variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera permissions in your browser settings.',
+          title: t('cropDiagnosis.cameraDenied.title', 'Camera Access Denied'),
+          description: t('cropDiagnosis.cameraDenied.description', 'Please enable camera permissions in your browser settings.'),
         });
       }
     }
-  }, [toast]);
+  }, [toast, t]);
   
   const stopCamera = useCallback(() => {
     if (videoRef.current && videoRef.current.srcObject) {
@@ -200,7 +200,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
 
   const handleDiagnose = async (fileToDiagnose: File) => {
       if (!fileToDiagnose) {
-          toast({ variant: "destructive", title: "No image selected" });
+          toast({ variant: "destructive", title: t('cropDiagnosis.noImageError', 'No image selected') });
           return;
       }
       setState({ ...initialState, loading: true });
@@ -214,12 +214,17 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
   }
 
   const RiskBadge = ({ level }: { level: 'Low' | 'Medium' | 'High' }) => {
+    const riskLevelText = {
+      Low: t('cropDiagnosis.riskLevel.low', 'Low'),
+      Medium: t('cropDiagnosis.riskLevel.medium', 'Medium'),
+      High: t('cropDiagnosis.riskLevel.high', 'High'),
+    };
     const styles = {
       Low: 'text-yellow-600',
       Medium: 'text-orange-600',
       High: 'text-red-600',
     };
-    return <span className={cn("font-semibold", styles[level])}>{level} Risk</span>;
+    return <span className={cn("font-semibold", styles[level])}>{riskLevelText[level]} {t('cropDiagnosis.riskLevel.risk', 'Risk')}</span>;
   };
   
   if (isCameraActive) {
@@ -239,7 +244,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
         <header className="flex items-center gap-4 mt-4">
             <Button variant="ghost" size="icon" onClick={() => setActiveFeature('discover')}>
                 <ArrowLeft className="h-5 w-5" />
@@ -253,16 +258,16 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
         <Card className="bg-green-600 text-white overflow-hidden shadow-lg">
             <CardContent className="p-5 flex items-center justify-between">
                 <div className="space-y-3">
-                    <h2 className="text-xl font-bold">Quick Diagnosis</h2>
-                    <p className="text-sm opacity-90 max-w-[200px]">Upload a photo of your crop for instant analysis</p>
+                    <h2 className="text-xl font-bold">{t('cropDiagnosis.quickDiagnosisTitle', 'Quick Diagnosis')}</h2>
+                    <p className="text-sm opacity-90 max-w-[200px]">{t('cropDiagnosis.quickDiagnosisDesc', 'Upload a photo of your crop for instant analysis')}</p>
                     <div className="flex gap-2 pt-2">
                         <Button variant="secondary" className="bg-white/30 text-white" onClick={startCamera}>
                             <Camera className="mr-2 h-4 w-4"/>
-                            Take Photo
+                            {t('cropDiagnosis.takePhotoButton', 'Take Photo')}
                         </Button>
                          <Button variant="secondary" className="bg-white/30 text-white" onClick={() => fileInputRef.current?.click()}>
                             <Upload className="mr-2 h-4 w-4"/>
-                            Upload Image
+                            {t('cropDiagnosis.uploadImageButton', 'Upload Image')}
                         </Button>
                     </div>
                 </div>
@@ -274,13 +279,13 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
              <div className="text-center p-8 space-y-4">
                  <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
                  <p className="text-muted-foreground">{t('cropDiagnosis.loadingMessage', 'Analyzing your crop... This may take a moment.')}</p>
-                 {preview && <Image src={preview} alt="Diagnosing" width={200} height={200} className="rounded-lg mx-auto" />}
+                 {preview && <Image src={preview} alt={t('cropDiagnosis.analyzingAlt', 'Analyzing')} width={200} height={200} className="rounded-lg mx-auto" />}
              </div>
         )}
 
         {state.data && (
             <div className="space-y-4">
-                 <h2 className="text-xl font-bold">Diagnosis Result</h2>
+                 <h2 className="text-xl font-bold">{t('cropDiagnosis.resultTitle', 'Diagnosis Result')}</h2>
                 <Card>
                     <CardContent className="p-4 space-y-4">
                         <div className="flex items-center gap-4">
@@ -295,7 +300,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
                         </div>
                         <Alert className="bg-green-50 border-green-200 mt-4">
                             <Sparkles className="h-4 w-4 text-green-700" />
-                            <AlertTitle className="text-green-800 font-semibold">{t('cropDiagnosis.recommendedActions')}</AlertTitle>
+                            <AlertTitle className="text-green-800 font-semibold">{t('cropDiagnosis.recommendedActions', 'Recommended Actions')}</AlertTitle>
                             <AlertDescription className="text-green-700 whitespace-pre-wrap">
                                 {state.data.recommendedActions}
                             </AlertDescription>
@@ -307,7 +312,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
 
         {recentDiagnoses.length > 0 && (
           <div className="space-y-4">
-              <h2 className="text-xl font-bold">Recent Diagnoses</h2>
+              <h2 className="text-xl font-bold">{t('cropDiagnosis.recentDiagnoses', 'Recent Diagnoses')}</h2>
               <div className="space-y-3">
                 {recentDiagnoses.map((item, index) => (
                     <Card key={index}>
@@ -331,7 +336,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
         <div className="space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2">
                 <AlertTriangle className="text-orange-500 h-5 w-5" />
-                Common Issues This Season
+                {t('cropDiagnosis.commonIssuesTitle', 'Common Issues This Season')}
             </h2>
             <div className="grid grid-cols-2 gap-4">
                  {isIssuesLoading ? (
@@ -351,7 +356,7 @@ export default function CropDiagnosis({ setActiveFeature }: { setActiveFeature: 
                         )
                     })
                 ) : (
-                    <p className="text-muted-foreground col-span-2">No common issues found for your location at this time.</p>
+                    <p className="text-muted-foreground col-span-2">{t('cropDiagnosis.noCommonIssues', 'No common issues found for your location at this time.')}</p>
                 )}
             </div>
         </div>
