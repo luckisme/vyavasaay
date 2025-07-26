@@ -62,6 +62,23 @@ function LoginPageCore() {
         }
         return () => clearInterval(interval);
     }, [resendTimer]);
+    
+    const handleOtpChange = (index: number, value: string) => {
+        const newOtp = [...otp];
+        newOtp[index] = value;
+        setOtp(newOtp);
+
+        // Move to next input
+        if (value && index < 5) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+    
+    const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+        }
+    };
 
     const handleLanguageContinue = () => {
         if (selectedLanguage) {
@@ -184,8 +201,7 @@ function LoginPageCore() {
                         <header className="flex items-center gap-4 p-4 -ml-4">
                             <Button variant="ghost" size="icon" onClick={goBack}><ArrowLeft/></Button>
                             <div className="flex items-center gap-2">
-                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={32} height={32} />
-                                <span className="font-bold text-lg">Vyavasaay</span>
+                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={40} height={40} />
                             </div>
                         </header>
                         <div className="text-center my-4">
@@ -374,5 +390,7 @@ export default function LoginPage() {
         </TranslationProvider>
     )
 }
+
+    
 
     
