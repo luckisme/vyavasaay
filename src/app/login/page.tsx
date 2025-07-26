@@ -151,7 +151,6 @@ function LoginPageCore() {
                             </div>
                             <h1 className="text-2xl font-bold text-green-800">Welcome to Vyavasaay</h1>
                             <p className="text-muted-foreground mt-1">Choose your preferred language</p>
-                            <p className="text-muted-foreground">अपनी भाषा चुनें</p>
                         </div>
                         <div className="space-y-3 my-6">
                             {languages.filter(l => ['hi', 'en', 'mr', 'gu', 'pa', 'ta'].includes(l.value)).map(lang => (
