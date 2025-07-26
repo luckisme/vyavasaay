@@ -31,6 +31,8 @@ import CropSelector from '@/components/features/crop-selector';
 import AskVyavasaay from '@/components/features/ask-vyavasay';
 import GrowHub from '@/components/features/grow-hub';
 import Profile from '@/components/features/profile';
+import { useOffline } from '@/hooks/use-offline';
+import OfflinePage from '@/components/features/offline-page';
 
 export type Feature = 'discover' | 'diagnose' | 'market' | 'schemes' | 'weather' | 'calculator' | 'selector' | 'ask' | 'grow-hub' | 'profile';
 
@@ -140,6 +142,7 @@ function AppCore() {
   const { user, isUserLoading, needsOnboarding, setUserProfile } = useUser();
   const { setLanguage, t, language } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<Feature>('discover');
+  const isOffline = useOffline();
   
   const [dataStates, setDataStates] = useState<DataStates>({
     weather: { data: null, error: null, loading: true },
@@ -157,7 +160,7 @@ function AppCore() {
   }, [user?.language, setLanguage]);
 
   useEffect(() => {
-    if (user && !needsOnboarding) {
+    if (user && !needsOnboarding && !isOffline) {
         const languageName = languages.find(l => l.value === language)?.label || 'English';
         const farmerDetails = t('govtSchemes.detailsDefault', `I am a farmer in {{location}}. I primarily grow cotton and soybeans. My main challenges are unpredictable weather patterns, access to modern farming equipment, and getting fair market prices for my produce. I own 5 acres of land.`, { location: user.location });
         
@@ -213,7 +216,7 @@ function AppCore() {
             setDataStates(s => ({ ...s, schemes: { data: null, error: e.message, loading: false }}));
         });
     }
-  }, [user, language, t, needsOnboarding]);
+  }, [user, language, t, needsOnboarding, isOffline]);
 
   if (isUserLoading) {
         return (
@@ -225,6 +228,9 @@ function AppCore() {
 
   const renderFeature = () => {
     if (!user) return null;
+    if (isOffline) {
+        return <OfflinePage />;
+    }
     switch (activeFeature) {
       case 'diagnose':
         return <CropDiagnosis setActiveFeature={setActiveFeature} />;
@@ -264,7 +270,7 @@ function AppCore() {
             <div className="flex flex-col w-full min-h-screen">
                 <SidebarInset>
                     <main className="flex-1 flex flex-col overflow-auto bg-[#F5F5DC]">
-                       {activeFeature === 'discover' && <div className="p-4 sm:p-6 pb-0"><AppHeader setActiveFeature={setActiveFeature} /></div>}
+                       {activeFeature === 'discover' && !isOffline && <div className="p-4 sm:p-6 pb-0"><AppHeader setActiveFeature={setActiveFeature} /></div>}
                         <div className="p-4 sm:p-6 pt-0 pb-24 md:pb-6 flex-1">
                             {renderFeature()}
                         </div>
