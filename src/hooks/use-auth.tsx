@@ -41,33 +41,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const sendOtp = useCallback(async (phoneNumber: string) => {
-    // Check if a container element exists, and only then create the RecaptchaVerifier
-    const recaptchaContainer = document.getElementById('recaptcha-container');
+    const recaptchaContainerId = 'recaptcha-container-invisible';
+    let recaptchaContainer = document.getElementById(recaptchaContainerId);
     if (!recaptchaContainer) {
-        throw new Error("reCAPTCHA container not found.");
+        recaptchaContainer = document.createElement('div');
+        recaptchaContainer.id = recaptchaContainerId;
+        document.body.appendChild(recaptchaContainer);
     }
     
-    // Ensure the verifier is only created once per call or managed appropriately
-    if (!(window as any).recaptchaVerifier) {
-        (window as any).recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, recaptchaContainer, {
-          'size': 'invisible'
-        });
-    }
+    const recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, recaptchaContainer, {
+        'size': 'invisible'
+    });
     
-    const recaptchaVerifier = (window as any).recaptchaVerifier;
-
     try {
         const confirmationResult = await signInWithPhoneNumber(firebaseAuth, phoneNumber, recaptchaVerifier);
         return confirmationResult;
     } catch (error) {
-        // Handle specific errors, e.g., reCAPTCHA expired, and reset if necessary
         console.error("Error during signInWithPhoneNumber:", error);
-        recaptchaVerifier.render().then((widgetId: any) => {
-            if (typeof (window as any).grecaptcha !== 'undefined') {
-                (window as any).grecaptcha.reset(widgetId);
-            }
-        });
-        throw error; // Re-throw the error to be handled by the caller
+        // We don't need to manually reset the verifier for invisible reCAPTCHA
+        // It resets automatically on errors like expiration.
+        throw error;
     }
   }, []);
 

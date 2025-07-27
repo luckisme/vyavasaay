@@ -155,8 +155,8 @@ function LoginPageCore() {
                 return (
                     <div className="w-full max-w-sm flex flex-col justify-between h-full py-8">
                         <div className="text-center">
-                            <div className="mx-auto w-40 h-40 flex items-center justify-center mb-4">
-                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} />
+                            <div className="mx-auto w-20 h-20 flex items-center justify-center mb-4">
+                                <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={400} height={400} />
                             </div>
                             <h1 className="text-2xl font-bold text-green-800">Welcome to Vyavasaay</h1>
                             <p className="text-muted-foreground mt-1">Choose your preferred language</p>
@@ -376,7 +376,6 @@ function LoginPageCore() {
             "flex min-h-screen flex-col items-center justify-start p-4",
             "bg-[#F7FDF3]"
         )}>
-            <div id="recaptcha-container"></div>
             {renderStep()}
         </main>
     );
@@ -393,4 +392,3 @@ export default function LoginPage() {
     
 
     
-
