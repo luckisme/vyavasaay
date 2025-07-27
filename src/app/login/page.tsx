@@ -158,9 +158,7 @@ function LoginPageCore() {
             {step === 'language' ? (
                 <div className="w-full max-w-sm flex flex-col justify-between h-full py-8">
                     <div className="text-center">
-                        <div className="mx-auto w-20 h-20 flex items-center justify-center mb-4">
-                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={400} height={400} />
-                        </div>
+                        <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} className="mx-auto mb-4" />
                         <h1 className="text-2xl font-bold text-green-800">Welcome to Vyavasaay</h1>
                         <p className="text-muted-foreground mt-1">Choose your preferred language</p>
                     </div>
@@ -202,9 +200,7 @@ function LoginPageCore() {
                         <Button variant="ghost" size="icon" onClick={goBack}><ArrowLeft/></Button>
                     </header>
                      <div className="text-center">
-                        <div className="mx-auto w-40 h-40 flex items-center justify-center mb-4">
-                            <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} />
-                        </div>
+                        <Image src="/images/Black and Beige Simple Illustration Farmer's Local Market Logo-3.png" alt="Vyavasaay Logo" width={150} height={150} className="mx-auto mb-4" />
                         <h1 className="text-2xl font-bold text-green-800">{t('onboarding.details.title', 'Tell us about yourself')}</h1>
                         <p className="text-muted-foreground">{t('onboarding.details.description', 'Help us personalize your experience')}</p>
                     </div>
