@@ -19,12 +19,18 @@ interface AgriNewsProps {
     }
 }
 
-const NewsCard = ({ article }: { article: AgriNewsOutput['articles'][0] }) => (
+const newsImages = [
+    "/images/WhatsApp Image 2025-07-27 at 7.24.14 AM.jpeg",
+    "/images/WhatsApp Image 2025-07-27 at 7.24.23 AM.jpeg",
+    "/images/WhatsApp Image 2025-07-27 at 7.24.14 AM (1).jpeg"
+];
+
+const NewsCard = ({ article, imageUrl }: { article: AgriNewsOutput['articles'][0], imageUrl: string }) => (
     <div className="block w-[180px] flex-shrink-0 cursor-pointer">
         <Card className="overflow-hidden h-full flex flex-col group transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
             <div className="relative h-24">
                 <Image
-                    src={'https://placehold.co/300x200.png'}
+                    src={imageUrl}
                     alt={article.title}
                     layout="fill"
                     objectFit="cover"
@@ -94,7 +100,7 @@ export default function AgriNews({ state }: AgriNewsProps) {
         }
 
         return state.data.map((article, index) => (
-            <NewsCard key={index} article={article} />
+            <NewsCard key={index} article={article} imageUrl={newsImages[index % newsImages.length]} />
         ));
     };
 
