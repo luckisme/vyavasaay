@@ -41,37 +41,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const sendOtp = useCallback(async (phoneNumber: string): Promise<ConfirmationResult> => {
-    // This is a simplified approach for demonstration, bypassing the visible reCAPTCHA.
-    // In a production environment, you must use a proper RecaptchaVerifier.
-    const confirmationResult = {
-        // This is a mock confirm function.
-        confirm: async (verificationCode: string) => {
-            // In a real scenario, you would not have access to the user object here.
-            // This is simplified to allow login flow to proceed without backend verification.
-            // This mock will not work with real Firebase Auth.
-            
-            // A more robust mock would involve a mock user object.
-            // For now, we rely on the onAuthStateChanged to pick up the logged-in user.
-            // The actual user sign-in will be triggered by a custom backend function
-            // or a different auth method if reCAPTCHA is to be fully avoided.
-             const dummyUser = {
-                uid: `mock-uid-${phoneNumber}`,
-                phoneNumber: phoneNumber,
-                // Add other properties as needed to match Firebase's User interface
-            } as User;
+    // This function will be called when the user clicks the "Send OTP" button.
+    // We will set up the invisible reCAPTCHA verifier here.
+    const recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'sign-in-button', {
+      'size': 'invisible',
+      'callback': (response: any) => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        console.log("reCAPTCHA solved");
+      }
+    });
 
-            // This simulates the result of a successful confirmation.
-            return Promise.resolve({
-                user: dummyUser,
-                // other properties of UserCredential
-            });
-        },
-        // other properties of ConfirmationResult
-    } as ConfirmationResult;
-
-    // Simulate a successful OTP send
-    console.log(`Simulating OTP send to ${phoneNumber}`);
-    return Promise.resolve(confirmationResult);
+    return signInWithPhoneNumber(firebaseAuth, phoneNumber, recaptchaVerifier);
 }, []);
 
 
