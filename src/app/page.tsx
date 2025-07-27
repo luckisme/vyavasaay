@@ -89,7 +89,7 @@ export const AppHeader = ({ setActiveFeature, isOffline = false }: { setActiveFe
                       <DropdownMenuContent align="end">
                         {languages.map((lang) => (
                           <DropdownMenuItem key={lang.value} onClick={() => handleLanguageChange(lang.value)}>
-                            {lang.label}
+                            {lang.native} ({lang.label})
                           </DropdownMenuItem>
                         ))}
                       </DropdownMenuContent>
